@@ -1,0 +1,119 @@
+repo:
+  name: akasha-aetherius
+  ecosystem: akasha
+  version: 1.0.0
+  status: canonical
+  source: Aetherius (Termux prototype by TheGreatOleander)
+  lineage: Aetherius-Termux → akasha-aetherius (Debian 13 canonicalization)
+
+engine:
+  family: management
+  class: issue_management_engine
+  role: github_issue_scan_rank_generate
+
+identity:
+  role: engine
+  layer: management
+  description: >
+    Aetherius is the celestial GitHub issue management engine of the Akasha
+    constellation. It continuously scans declared GitHub repositories, ranks
+    open issues by priority using a heuristic scoring model (body length,
+    label classification), generates code stubs via a pluggable LLM interface,
+    and exposes a live React dashboard backed by Flask + SocketIO. A
+    sliding-window Governor enforces rate limits on both GitHub API and LLM
+    calls, ensuring safe free-tier operation. Every action is recorded in the
+    Aetherius Ledger — an append-only audit trail exposed via REST and
+    pushed live to the dashboard. Human feedback adjusts priority scores
+    in real-time. Aetherius serves as Akasha's instrument for structured
+    observation of repository health and gap-directed code generation.
+
+ownership:
+  steward: human
+  approval_required: true
+
+interfaces:
+  consumes:
+    - github_issue_streams
+    - human_priority_adjustments
+    - llm_code_generation_prompts
+    - governor_configuration_commands
+  produces:
+    - ranked_issue_lists
+    - generated_code_stubs
+    - ledger_audit_entries
+    - github_file_updates
+    - governor_status_snapshots
+    - socketio_live_update_events
+
+capabilities:
+  - github_issue_scanning
+  - priority_ranking
+  - llm_code_generation
+  - human_feedback_integration
+  - sliding_window_rate_limiting
+  - append_only_ledger
+  - live_socketio_dashboard
+  - github_file_create_or_update
+  - label_aware_scoring
+
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+  alignment_statement: >
+    This system is part of the Akasha ecosystem and aligns with
+    akasha-axioms, akasha-world, and akasha-constellation.
+    It expands human capacity to observe repository state and reason about
+    code gaps (Axiom 4 — Augmentation), records every action in an
+    append-only ledger (Axiom 5 — Traceability), separates governor,
+    engine, and backend into independently replaceable modules
+    (Axiom 6 — Modularity), exposes all rate-limit state and audit entries
+    through human-readable REST endpoints and a live dashboard
+    (Axiom 7 — Transparency), continuously scans and re-ranks in a
+    discovery loop (Axiom 8 — Iteration), requires human approval for
+    file writes and priority adjustments (Axiom 9 — Stewardship), and
+    accumulates ledger entries across sessions rather than resetting
+    (Axiom 10 — Continuity).
+
+canonical_status: canonical
+maturity: stable
+
+depends_on:
+  - akasha-axioms
+  - akasha-world
+  - akasha-constellation
+
+adapters:
+  - name: github_api
+    path: backend/aetherius_engine.py::AetheriusEngine._gh_session
+    description: >
+      requests.Session pre-configured with GitHub token, Accept header,
+      and API version. Replaceable with any HTTP client that honours the
+      same interface.
+  - name: llm_generator
+    path: backend/aetherius_engine.py::AetheriusEngine.generate_llm_code
+    description: >
+      Stub LLM adapter. Replace the body of generate_llm_code() with
+      a call to your preferred model endpoint (Anthropic, local Ollama,
+      OpenAI-compatible, etc.).
+  - name: socketio_transport
+    path: backend/aetherius_backend.py::socketio
+    description: >
+      Flask-SocketIO instance. Async mode defaults to threading;
+      install eventlet for production-grade async.
+
+inputs:
+  - github_issue_streams
+  - human_priority_adjustments
+  - governor_configuration_commands
+
+outputs:
+  - ranked_issue_lists
+  - ledger_audit_entries
+  - github_file_updates
+  - socketio_live_update_events
+
+type: organ
+family: management
+role: engine
+generated_by: human-assisted-canonicalization

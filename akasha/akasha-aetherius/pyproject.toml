@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "akasha-aetherius"
+version = "1.0.0"
+description = "Celestial GitHub issue manager — Akasha constellation engine"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+dependencies = [
+    "flask>=3.0",
+    "flask-socketio>=5.3",
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+prod = ["eventlet>=0.35"]
+dev  = ["pytest>=7", "pytest-mock>=3"]
+
+[project.scripts]
+aetherius = "aetherius_backend:main"
+
+[tool.setuptools.packages.find]
+where = ["backend"]
