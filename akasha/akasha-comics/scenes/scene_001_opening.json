@@ -1,0 +1,188 @@
+{
+  "scene_id": "scene_001",
+  "title": "Pre-Rush Awakening",
+  "location": "Store Interior & Exterior",
+  "time": "5:47 AM",
+
+  "summary": "The store transitions from quiet early morning into a fully active system as each character enters and their traits begin influencing the environment.",
+
+  "characters_present": [
+    "Mavis",
+    "Kalm Kelsey",
+    "Amanda",
+    "Boss Debbie"
+  ],
+
+  "environment": {
+    "lighting": "dim early morning interior lighting with exterior darkness",
+    "mood": "calm building into controlled chaos",
+    "background_elements": [
+      "coffee machines humming",
+      "grill heating up",
+      "empty shelves partially stocked",
+      "train passing in distance"
+    ]
+  },
+
+  "panels": [
+    {
+      "panel_number": 1,
+      "type": "wide",
+      "description": "Exterior shot of the store before sunrise. Lights glow against the darkness. A train moves in the distance.",
+      "characters": [],
+      "dialogue": [],
+      "caption": "Boyd County wakes… because it has to.",
+      "effects": [
+        "train motion blur",
+        "soft ambient glow"
+      ]
+    },
+    {
+      "panel_number": 2,
+      "type": "wide",
+      "description": "Interior wide shot. Empty store. Equipment quietly running.",
+      "characters": [
+        "Kalm Kelsey"
+      ],
+      "dialogue": [],
+      "caption": "",
+      "effects": [
+        "low hum atmosphere"
+      ]
+    },
+    {
+      "panel_number": 3,
+      "type": "medium",
+      "description": "Kelsey slowly working in the background, slightly out of sync with the environment.",
+      "characters": [
+        "Kalm Kelsey"
+      ],
+      "dialogue": [
+        {
+          "character": "Kalm Kelsey",
+          "line": "...morning..."
+        }
+      ],
+      "caption": "",
+      "effects": [
+        "subtle delay blur"
+      ]
+    },
+    {
+      "panel_number": 4,
+      "type": "action",
+      "description": "Mavis bursts into motion, immediately engaging multiple tasks in fluid sequence.",
+      "characters": [
+        "Mavis"
+      ],
+      "dialogue": [
+        {
+          "character": "Mavis",
+          "line": "MAVIS POWERS ACTIVATE!"
+        }
+      ],
+      "caption": "",
+      "effects": [
+        "motion trails",
+        "multi-arm illusion",
+        "energy pulses"
+      ]
+    },
+    {
+      "panel_number": 5,
+      "type": "close",
+      "description": "Kelsey reacts slightly late, still processing the shift in energy.",
+      "characters": [
+        "Kalm Kelsey"
+      ],
+      "dialogue": [
+        {
+          "character": "Kalm Kelsey",
+          "line": "...Kelsey powers... activating..."
+        }
+      ],
+      "caption": "",
+      "effects": [
+        "delayed motion"
+      ]
+    },
+    {
+      "panel_number": 6,
+      "type": "medium",
+      "description": "Amanda steps into position at the register, scanning the environment instantly.",
+      "characters": [
+        "Amanda"
+      ],
+      "dialogue": [
+        {
+          "character": "Amanda",
+          "line": "I’ve BEEN active."
+        }
+      ],
+      "caption": "",
+      "effects": [
+        "sharp focus lines"
+      ]
+    },
+    {
+      "panel_number": 7,
+      "type": "action",
+      "description": "First customer enters. The system begins to accelerate.",
+      "characters": [],
+      "dialogue": [],
+      "caption": "",
+      "effects": [
+        "door chime",
+        "motion increase"
+      ]
+    },
+    {
+      "panel_number": 8,
+      "type": "wide",
+      "description": "Full store in motion. Mavis moving rapidly, Amanda controlling the front, Kelsey drifting behind.",
+      "characters": [
+        "Mavis",
+        "Amanda",
+        "Kalm Kelsey"
+      ],
+      "dialogue": [],
+      "caption": "",
+      "effects": [
+        "layered motion",
+        "energy flow"
+      ]
+    },
+    {
+      "panel_number": 9,
+      "type": "medium",
+      "description": "Debbie stands calmly observing. The environment subtly stabilizes.",
+      "characters": [
+        "Boss Debbie"
+      ],
+      "dialogue": [],
+      "caption": "",
+      "effects": [
+        "soft glow",
+        "environment settling"
+      ]
+    },
+    {
+      "panel_number": 10,
+      "type": "wide",
+      "description": "The store is fully operational. Everything in balance.",
+      "characters": [
+        "Mavis",
+        "Amanda",
+        "Kalm Kelsey",
+        "Boss Debbie"
+      ],
+      "dialogue": [],
+      "caption": "And just like that… the day begins.",
+      "effects": [
+        "stable composition"
+      ]
+    }
+  ],
+
+  "notes": "Establishes tone, character dynamics, and environment as a living system"
+}
