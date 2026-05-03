@@ -1,0 +1,5 @@
+Metadata-Version: 2.4
+Name: akasha-anomaly
+Version: 0.2.0
+Summary: Akasha anomaly and observation intake system
+Requires-Python: >=3.10

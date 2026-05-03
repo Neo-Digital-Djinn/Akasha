@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "akasha-anomaly"
+version = "0.2.0"
+description = "Akasha anomaly and observation intake system"
+requires-python = ">=3.10"
+
+[project.scripts]
+akasha-anomaly = "akasha_anomaly.cli.log:main"
+
+[tool.setuptools.packages.find]
+include = ["akasha_anomaly*"]

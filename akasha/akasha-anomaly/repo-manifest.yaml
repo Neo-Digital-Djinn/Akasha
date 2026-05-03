@@ -1,0 +1,47 @@
+repo:
+  name: akasha-anomaly
+  ecosystem: akasha
+  version: 0.1.0
+  status: active
+engine:
+  family: observation
+  class: intake_engine
+  role: anomaly_capture
+identity:
+  role: engine
+  layer: intake
+  description: 'Anomaly intake engine for the Akasha constellation. Responsible for
+    recording irregular, surprising, or exceptional observations that may deserve
+    special attention, escalation, or deeper interpretation.
+
+    '
+ownership:
+  steward: human
+  approval_required: true
+interfaces:
+  consumes:
+  - anomaly_reports
+  - observation_inputs
+  - contextual_time
+  produces:
+  - anomaly_records
+  - flagged_observations
+  - escalated_inputs
+capabilities:
+- anomaly_capture
+- irregularity_flagging
+- exceptional_event_recording
+- escalated_observation_intake
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+depends_on:
+- akasha-events
+- akasha-time-nexus
+type: organ
+family: discovery
+role: anomaly
+name: akasha-anomaly
+version: 1.0.0
+generated_by: akasha-canon

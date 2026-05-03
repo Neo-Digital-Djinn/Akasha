@@ -1,0 +1,15 @@
+akasha-anomaly-v2
+├── akasha_anomaly
+│   ├── cli
+│   │   └── log.py
+│   ├── storage
+│   └── __init__.py
+├── docs
+│   └── ARCHITECTURE.md
+├── examples
+│   └── example_log.sh
+├── tests
+│   └── test_cli_smoke.py
+├── README.md
+├── pyproject.toml
+└── repo-manifest.yaml

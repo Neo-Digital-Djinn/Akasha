@@ -1,0 +1,29 @@
+akasha-apis-v2
+├── akasha_apis
+│   ├── astronomy
+│   │   ├── __init__.py
+│   │   ├── lunar_stub.py
+│   │   └── sunrise_sunset.py
+│   ├── geo
+│   │   ├── __init__.py
+│   │   └── timezone_lookup.py
+│   ├── weather
+│   │   ├── __init__.py
+│   │   └── open_meteo.py
+│   ├── __init__.py
+│   ├── base_adapter.py
+│   ├── models.py
+│   └── registry.py
+├── docs
+│   ├── API_USAGE.md
+│   └── AUTHENTICATION.md
+├── schemas
+│   └── artifact.schema.json
+├── tests
+│   └── test_registry_smoke.py
+├── .gitignore
+├── API_KEYS.env.example
+├── API_REGISTRY.yaml
+├── pyproject.toml
+├── README.md
+└── repo-manifest.yaml
