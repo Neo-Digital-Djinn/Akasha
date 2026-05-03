@@ -1,0 +1,45 @@
+{
+  "event_id": "900ac26d-08b4-43b0-9f1b-4ba0e77ba2e7",
+  "timestamp": "2026-05-03T20:00:15.701766+00:00",
+  "location": "0.0,0.0",
+  "category": "observation",
+  "source": "pipeline",
+  "payload": {
+    "title": "gravity and music",
+    "notes": "",
+    "event_type": "observation",
+    "metadata": {},
+    "context": {
+      "clock": {
+        "utc": "2026-05-03T20:00:15.701766+00:00",
+        "local": "2026-05-03T20:00:15.701766+00:00",
+        "timezone_name": "UTC",
+        "day_of_week": "Sunday",
+        "day_of_year": 123,
+        "season": "spring",
+        "hour_local": 20,
+        "is_weekend": true
+      },
+      "solar": {
+        "sunrise_local": null,
+        "sunset_local": null,
+        "is_daylight": null,
+        "minutes_from_sunrise": null,
+        "minutes_from_sunset": null
+      },
+      "lunar": {
+        "moon_phase": null,
+        "moon_illumination_pct": null
+      },
+      "weather": {
+        "temperature_c": null,
+        "humidity_pct": null,
+        "pressure_mb": null,
+        "wind_kph": null,
+        "precipitation_mm": null,
+        "summary": null
+      },
+      "extra": {}
+    }
+  }
+}

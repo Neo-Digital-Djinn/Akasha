@@ -1,0 +1,45 @@
+{
+  "event_id": "e58b4a92-01cc-4339-b3e6-c2ff1257b72c",
+  "timestamp": "2026-05-03T18:53:43.205793+00:00",
+  "location": "0.0,0.0",
+  "category": "observation",
+  "source": "pipeline",
+  "payload": {
+    "title": "test input",
+    "notes": "",
+    "event_type": "observation",
+    "metadata": {},
+    "context": {
+      "clock": {
+        "utc": "2026-05-03T18:53:43.205793+00:00",
+        "local": "2026-05-03T18:53:43.205793+00:00",
+        "timezone_name": "UTC",
+        "day_of_week": "Sunday",
+        "day_of_year": 123,
+        "season": "spring",
+        "hour_local": 18,
+        "is_weekend": true
+      },
+      "solar": {
+        "sunrise_local": "2026-05-03T05:52:19+00:00",
+        "sunset_local": "2026-05-03T18:01:26+00:00",
+        "is_daylight": false,
+        "minutes_from_sunrise": 781,
+        "minutes_from_sunset": 52
+      },
+      "lunar": {
+        "moon_phase": null,
+        "moon_illumination_pct": null
+      },
+      "weather": {
+        "temperature_c": 28.1,
+        "humidity_pct": 78,
+        "pressure_mb": 1010.9,
+        "wind_kph": 21.6,
+        "precipitation_mm": 0.0,
+        "summary": "open-meteo current snapshot"
+      },
+      "extra": {}
+    }
+  }
+}

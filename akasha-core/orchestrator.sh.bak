@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Resolve Akasha root dynamically
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+INPUT="${1:-}"
+if [[ -z "$INPUT" ]]; then
+  echo "Usage: ./akasha-run \"your input here\""
+  exit 1
+fi
+
+MEMORY_FILE="$ROOT/akasha-core/memory.json"
+mkdir -p "$(dirname "$MEMORY_FILE")"
+touch "$MEMORY_FILE"
+
+echo "[AKASHA] Input: $INPUT"
+
+run_engine() {
+  NAME="$1"
+  CMD="$2"
+
+  echo "[AKASHA] Running $NAME..."
+
+  OUTPUT=$(echo "$INPUT" | eval "$CMD" 2>&1)
+  STATUS=$?
+
+  if [ $STATUS -ne 0 ]; then
+    echo "[AKASHA] ❌ $NAME FAILED"
+    echo "$OUTPUT"
+    return
+  fi
+
+  if [ -z "$OUTPUT" ]; then
+    echo "[AKASHA] ⚠️ $NAME returned empty output"
+  else
+    echo "[AKASHA] ✅ $NAME output:"
+    echo "$OUTPUT"
+  fi
+
+  echo
+}
+
+echo "========== AKASHA OUTPUT =========="
+
+run_engine "ANOMALY" "python3 $ROOT/akasha/akasha-anomaly/akasha_anomaly/log.py"
+run_engine "ATTRACTOR" "python3 $ROOT/akasha/akasha-attractor/akasha_attractor/cli/cli.py"
+run_engine "ANALOGY" "python3 $ROOT/akasha/akasha/akasha-analogy-engine/src/main.py"
+run_engine "ATLAS" "python3 $ROOT/akasha/akasha/akasha-atlas-engine/src/main.py"
+
+echo "=================================="

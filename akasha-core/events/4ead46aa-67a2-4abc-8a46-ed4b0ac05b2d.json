@@ -1,0 +1,45 @@
+{
+  "event_id": "4ead46aa-67a2-4abc-8a46-ed4b0ac05b2d",
+  "timestamp": "2026-05-02T21:15:31.581760+00:00",
+  "location": "0.0,0.0",
+  "category": "observation",
+  "source": "pipeline",
+  "payload": {
+    "title": "an engine for cryptocurrency",
+    "notes": "",
+    "event_type": "observation",
+    "metadata": {},
+    "context": {
+      "clock": {
+        "utc": "2026-05-02T21:15:31.581760+00:00",
+        "local": "2026-05-02T21:15:31.581760+00:00",
+        "timezone_name": "UTC",
+        "day_of_week": "Saturday",
+        "day_of_year": 122,
+        "season": "spring",
+        "hour_local": 21,
+        "is_weekend": true
+      },
+      "solar": {
+        "sunrise_local": null,
+        "sunset_local": null,
+        "is_daylight": null,
+        "minutes_from_sunrise": null,
+        "minutes_from_sunset": null
+      },
+      "lunar": {
+        "moon_phase": null,
+        "moon_illumination_pct": null
+      },
+      "weather": {
+        "temperature_c": null,
+        "humidity_pct": null,
+        "pressure_mb": null,
+        "wind_kph": null,
+        "precipitation_mm": null,
+        "summary": null
+      },
+      "extra": {}
+    }
+  }
+}

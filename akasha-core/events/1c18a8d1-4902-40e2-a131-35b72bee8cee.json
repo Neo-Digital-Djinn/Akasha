@@ -1,0 +1,45 @@
+{
+  "event_id": "1c18a8d1-4902-40e2-a131-35b72bee8cee",
+  "timestamp": "2026-05-03T20:00:22.608896+00:00",
+  "location": "0.0,0.0",
+  "category": "observation",
+  "source": "pipeline",
+  "payload": {
+    "title": "tonal resolution in jazz",
+    "notes": "",
+    "event_type": "observation",
+    "metadata": {},
+    "context": {
+      "clock": {
+        "utc": "2026-05-03T20:00:22.608896+00:00",
+        "local": "2026-05-03T20:00:22.608896+00:00",
+        "timezone_name": "UTC",
+        "day_of_week": "Sunday",
+        "day_of_year": 123,
+        "season": "spring",
+        "hour_local": 20,
+        "is_weekend": true
+      },
+      "solar": {
+        "sunrise_local": null,
+        "sunset_local": null,
+        "is_daylight": null,
+        "minutes_from_sunrise": null,
+        "minutes_from_sunset": null
+      },
+      "lunar": {
+        "moon_phase": null,
+        "moon_illumination_pct": null
+      },
+      "weather": {
+        "temperature_c": null,
+        "humidity_pct": null,
+        "pressure_mb": null,
+        "wind_kph": null,
+        "precipitation_mm": null,
+        "summary": null
+      },
+      "extra": {}
+    }
+  }
+}
