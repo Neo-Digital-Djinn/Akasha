@@ -1,0 +1,2815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atlas Ranked Review</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #111;
+  --panel: #1b1b1b;
+  --panel2: #1f1f1f;
+  --text: #eee;
+  --muted: #aaa;
+  --border: #2f2f2f;
+  --link: #7cc7ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding: 18px;
+}
+
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: rgba(17, 17, 17, 0.97);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0 16px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(8px);
+}
+
+.toolbar h1 {
+  margin: 0 0 8px 0;
+  font-size: 1.5rem;
+}
+
+.toolbar-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.counts {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+button {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #222;
+  color: var(--text);
+  cursor: pointer;
+}
+
+button:hover {
+  background: #2a2a2a;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.card {
+  background: var(--panel);
+  padding: 18px;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.card h3 {
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.card a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.card a:hover {
+  text-decoration: underline;
+}
+
+.desc {
+  margin: 0 0 10px 0;
+}
+
+.meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 6px 0;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.reasons {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #c7c7c7;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.footer-tools {
+  margin-top: 24px;
+  padding: 16px 0 40px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.note {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  body {
+    padding: 12px;
+  }
+
+  .toolbar h1 {
+    font-size: 1.25rem;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .actions button,
+  .toolbar-row button {
+    width: auto;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="toolbar" id="top">
+  <h1>Atlas Ranked Review Queue</h1>
+
+  <div class="counts">
+    <span id="visibleCount">Visible: 0</span> ·
+    <span id="approvedCount">Approved: 0</span>
+  </div>
+
+  <div class="toolbar-row">
+    <button onclick="exportApproved()">Save Approved List</button>
+    <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">Go to Top</button>
+    <button onclick="window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })">Go to Bottom</button>
+    <div class="spacer"></div>
+    <span class="note">Only items in the <strong>review</strong> bucket are shown here.</span>
+  </div>
+</div>
+
+<div id="cards">
+
+        <div class="card" data-url="https://archive.org/details/opensource_movies" data-score="88">
+          <h3><a href="https://archive.org/details/opensource_movies" target="_blank" rel="noopener noreferrer">Internet Archive: Open Source Videos</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: AI</span>
+            <span>subcategory: OSINT</span>
+            <span>rank: 88</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: archive,awesome_list</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/jivoi/awesome-osint/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=65 | domain:archive.org+16 | tag:archive+6 | tag:awesome_list+8 | category:AI+12 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://archive.org/details/opensource_movies', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://gitlab.com/simple-nixos-mailserver/nixos-mailserver" data-score="88">
+          <h3><a href="https://gitlab.com/simple-nixos-mailserver/nixos-mailserver" target="_blank" rel="noopener noreferrer">Simple NixOS Mailserver</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: AI</span>
+            <span>subcategory: harvested</span>
+            <span>rank: 88</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: gitlab,ai,awesome_list</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/awesome-selfhosted/awesome-selfhosted/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=65 | domain:gitlab.com+14 | tag:ai+8 | tag:awesome_list+8 | category:AI+12 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://gitlab.com/simple-nixos-mailserver/nixos-mailserver', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://arxiv.org/abs/2603.20639" data-score="86">
+          <h3><a href="https://arxiv.org/abs/2603.20639" target="_blank" rel="noopener noreferrer">Agentic AI and the next intelligence explosion</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: AI</span>
+            <span>subcategory: harvested</span>
+            <span>rank: 86</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: hackernews,ai</span>
+            <span>source: hackernews</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:arxiv.org+16 | tag:hackernews+4 | tag:ai+8 | category:AI+12 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://arxiv.org/abs/2603.20639', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://arxiv.org/abs/2603.26524" data-score="86">
+          <h3><a href="https://arxiv.org/abs/2603.26524" target="_blank" rel="noopener noreferrer">Mathematical methods and human thought in the age of AI</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: AI</span>
+            <span>subcategory: harvested</span>
+            <span>rank: 86</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: hackernews,ai</span>
+            <span>source: hackernews</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:arxiv.org+16 | tag:hackernews+4 | tag:ai+8 | category:AI+12 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://arxiv.org/abs/2603.26524', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://arxiv.org/abs/2603.21687" data-score="86">
+          <h3><a href="https://arxiv.org/abs/2603.21687" target="_blank" rel="noopener noreferrer">Stanford study reveals AI vision models invent images they never see</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: AI</span>
+            <span>subcategory: harvested</span>
+            <span>rank: 86</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: hackernews,ai,model</span>
+            <span>source: hackernews</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:arxiv.org+16 | tag:hackernews+4 | tag:ai+8 | category:AI+12 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://arxiv.org/abs/2603.21687', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/RocktimSaikia/anime-chan" data-score="84">
+          <h3><a href="https://github.com/RocktimSaikia/anime-chan" target="_blank" rel="noopener noreferrer">AnimeChan</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: AI</span>
+            <span>subcategory: API</span>
+            <span>rank: 84</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:AI+12 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/RocktimSaikia/anime-chan', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/gumyr/build123d" data-score="84">
+          <h3><a href="https://github.com/gumyr/build123d" target="_blank" rel="noopener noreferrer">Build123d: A Python CAD programming library</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Archives</span>
+            <span>subcategory: Library</span>
+            <span>rank: 84</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github,hackernews,library</span>
+            <span>source: hackernews</span>
+          </div>
+
+          <div class="reasons">base_conf=71 | domain:github.com+18 | tag:github+8 | tag:hackernews+4 | category:Archives+8 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/gumyr/build123d', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/chenglou/pretext" data-score="84">
+          <h3><a href="https://github.com/chenglou/pretext" target="_blank" rel="noopener noreferrer">Pretext: TypeScript library for multiline text measurement and layout</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Archives</span>
+            <span>subcategory: Library</span>
+            <span>rank: 84</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github,hackernews,library</span>
+            <span>source: hackernews</span>
+          </div>
+
+          <div class="reasons">base_conf=71 | domain:github.com+18 | tag:github+8 | tag:hackernews+4 | category:Archives+8 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/chenglou/pretext', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/Hipo/university-domains-list" data-score="84">
+          <h3><a href="https://github.com/Hipo/university-domains-list" target="_blank" rel="noopener noreferrer">Universities List</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: AI</span>
+            <span>subcategory: API</span>
+            <span>rank: 84</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:AI+12 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/Hipo/university-domains-list', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/4chan/4chan-API" data-score="82">
+          <h3><a href="https://github.com/4chan/4chan-API" target="_blank" rel="noopener noreferrer">4chan</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/4chan/4chan-API', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/kamikazechaser/administrative-divisions-db" data-score="82">
+          <h3><a href="https://github.com/kamikazechaser/administrative-divisions-db" target="_blank" rel="noopener noreferrer">administrative-divisons-db</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/kamikazechaser/administrative-divisions-db', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/AniList/ApiV2-GraphQL-Docs" data-score="82">
+          <h3><a href="https://github.com/AniList/ApiV2-GraphQL-Docs" target="_blank" rel="noopener noreferrer">AniList</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/AniList/ApiV2-GraphQL-Docs', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/davemachado/public-api" data-score="82">
+          <h3><a href="https://github.com/davemachado/public-api" target="_blank" rel="noopener noreferrer">API for this project</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github,api</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=63 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/davemachado/public-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/fingerprintjs/aev" data-score="82">
+          <h3><a href="https://github.com/fingerprintjs/aev" target="_blank" rel="noopener noreferrer">Application Environment Verification</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/fingerprintjs/aev', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/didadadida93/autochess-vng-api" data-score="82">
+          <h3><a href="https://github.com/didadadida93/autochess-vng-api" target="_blank" rel="noopener noreferrer">Autochess VNG</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/didadadida93/autochess-vng-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/bartervg/barter.vg/wiki" data-score="82">
+          <h3><a href="https://github.com/bartervg/barter.vg/wiki" target="_blank" rel="noopener noreferrer">Barter.VG</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/bartervg/barter.vg/wiki', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/binance/binance-spot-api-docs" data-score="82">
+          <h3><a href="https://github.com/binance/binance-spot-api-docs" target="_blank" rel="noopener noreferrer">Binance</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/binance/binance-spot-api-docs', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/fingerprintjs/botd" data-score="82">
+          <h3><a href="https://github.com/fingerprintjs/botd" target="_blank" rel="noopener noreferrer">Botd</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/fingerprintjs/botd', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/shevabam/breaking-bad-quotes" data-score="82">
+          <h3><a href="https://github.com/shevabam/breaking-bad-quotes" target="_blank" rel="noopener noreferrer">Breaking Bad Quotes</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/shevabam/breaking-bad-quotes', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/M-Media-Group/Cartes.io/wiki/API" data-score="82">
+          <h3><a href="https://github.com/M-Media-Group/Cartes.io/wiki/API" target="_blank" rel="noopener noreferrer">Cartes.io</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/M-Media-Group/Cartes.io/wiki/API', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/polarspetroll/ciprand" data-score="82">
+          <h3><a href="https://github.com/polarspetroll/ciprand" target="_blank" rel="noopener noreferrer">Ciprand</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/polarspetroll/ciprand', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/fawazahmed0/cloudflare-trace-api" data-score="82">
+          <h3><a href="https://github.com/fawazahmed0/cloudflare-trace-api" target="_blank" rel="noopener noreferrer">Cloudflare Trace</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/fawazahmed0/cloudflare-trace-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/Jaagrav/CodeX" data-score="82">
+          <h3><a href="https://github.com/Jaagrav/CodeX" target="_blank" rel="noopener noreferrer">Codex</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/Jaagrav/CodeX', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/transitland/transitland-datastore/blob/master/README.md#api-endpoints" data-score="82">
+          <h3><a href="https://github.com/transitland/transitland-datastore/blob/master/README.md#api-endpoints" target="_blank" rel="noopener noreferrer">Community Transit</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Datasets</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Datasets+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/transitland/transitland-datastore/blob/master/README.md#api-endpoints', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/sameerkumar18/corporate-bs-generator-api" data-score="82">
+          <h3><a href="https://github.com/sameerkumar18/corporate-bs-generator-api" target="_blank" rel="noopener noreferrer">Corporate Buzz Words</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/sameerkumar18/corporate-bs-generator-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/burhanuday/cors-proxy" data-score="82">
+          <h3><a href="https://github.com/burhanuday/cors-proxy" target="_blank" rel="noopener noreferrer">CORS Proxy</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/burhanuday/cors-proxy', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/M-Media-Group/Covid-19-API" data-score="82">
+          <h3><a href="https://github.com/M-Media-Group/Covid-19-API" target="_blank" rel="noopener noreferrer">Covid-19</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/M-Media-Group/Covid-19-API', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/mathdroid/covid-19-api" data-score="82">
+          <h3><a href="https://github.com/mathdroid/covid-19-api" target="_blank" rel="noopener noreferrer">Covid-19 Live Data</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Datasets</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github,data</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Datasets+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/mathdroid/covid-19-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/Simperfy/Covid-19-API-Philippines-DOH" data-score="82">
+          <h3><a href="https://github.com/Simperfy/Covid-19-API-Philippines-DOH" target="_blank" rel="noopener noreferrer">Covid-19 Philippines</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/Simperfy/Covid-19-API-Philippines-DOH', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/CrossRef/rest-api-doc" data-score="82">
+          <h3><a href="https://github.com/CrossRef/rest-api-doc" target="_blank" rel="noopener noreferrer">Crossref Metadata Search</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Datasets</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github,data</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Datasets+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/CrossRef/rest-api-doc', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/fawazahmed0/currency-api#readme" data-score="82">
+          <h3><a href="https://github.com/fawazahmed0/currency-api#readme" target="_blank" rel="noopener noreferrer">Currency-api</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github,api</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=63 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/fawazahmed0/currency-api#readme', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/Dehash-lt/api" data-score="82">
+          <h3><a href="https://github.com/Dehash-lt/api" target="_blank" rel="noopener noreferrer">Dehash.lt</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/Dehash-lt/api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/fisenkodv/dictum" data-score="82">
+          <h3><a href="https://github.com/fisenkodv/dictum" target="_blank" rel="noopener noreferrer">Dictum</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/fisenkodv/dictum', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/ywalia01/dune-api" data-score="82">
+          <h3><a href="https://github.com/ywalia01/dune-api" target="_blank" rel="noopener noreferrer">Dune</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/ywalia01/dune-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/cheatsnake/emojihub" data-score="82">
+          <h3><a href="https://github.com/cheatsnake/emojihub" target="_blank" rel="noopener noreferrer">EmojiHub</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/cheatsnake/emojihub', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/polarspetroll/EscapeAPI" data-score="82">
+          <h3><a href="https://github.com/polarspetroll/EscapeAPI" target="_blank" rel="noopener noreferrer">Escape</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/polarspetroll/EscapeAPI', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/EverexIO/Ethplorer/wiki/Ethplorer-API" data-score="82">
+          <h3><a href="https://github.com/EverexIO/Ethplorer/wiki/Ethplorer-API" target="_blank" rel="noopener noreferrer">Ethplorer</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/EverexIO/Ethplorer/wiki/Ethplorer-API', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/feedbin/feedbin-api" data-score="82">
+          <h3><a href="https://github.com/feedbin/feedbin-api" target="_blank" rel="noopener noreferrer">Feedbin</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/feedbin/feedbin-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/surhud004/Foodish#readme" data-score="82">
+          <h3><a href="https://github.com/surhud004/Foodish#readme" target="_blank" rel="noopener noreferrer">Foodish</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/surhud004/Foodish#readme', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/azharimm/football-standings-api" data-score="82">
+          <h3><a href="https://github.com/azharimm/football-standings-api" target="_blank" rel="noopener noreferrer">Football Standings</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/azharimm/football-standings-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/cyberboysumanjay/GaanaAPI" data-score="82">
+          <h3><a href="https://github.com/cyberboysumanjay/GaanaAPI" target="_blank" rel="noopener noreferrer">Gaana</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/cyberboysumanjay/GaanaAPI', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/sameerkumar18/geek-joke-api" data-score="82">
+          <h3><a href="https://github.com/sameerkumar18/geek-joke-api" target="_blank" rel="noopener noreferrer">Geek-Jokes</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/sameerkumar18/geek-joke-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://docs.github.com/en/free-pro-team@latest/rest" data-score="82">
+          <h3><a href="https://docs.github.com/en/free-pro-team@latest/rest" target="_blank" rel="noopener noreferrer">GitHub</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://docs.github.com/en/free-pro-team@latest/rest', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/anuraghazra/github-readme-stats" data-score="82">
+          <h3><a href="https://github.com/anuraghazra/github-readme-stats" target="_blank" rel="noopener noreferrer">GitHub ReadMe Stats</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/anuraghazra/github-readme-stats', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/robvanbakel/gotiny-api" data-score="82">
+          <h3><a href="https://github.com/robvanbakel/gotiny-api" target="_blank" rel="noopener noreferrer">GoTiny</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/robvanbakel/gotiny-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/lennertVanSever/graphcountries" data-score="82">
+          <h3><a href="https://github.com/lennertVanSever/graphcountries" target="_blank" rel="noopener noreferrer">Graph Countries</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/lennertVanSever/graphcountries', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/favware/graphql-pokemon" data-score="82">
+          <h3><a href="https://github.com/favware/graphql-pokemon" target="_blank" rel="noopener noreferrer">GraphQL Pokemon</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/favware/graphql-pokemon', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/GurbaniNow/api" data-score="82">
+          <h3><a href="https://github.com/GurbaniNow/api" target="_blank" rel="noopener noreferrer">GurbaniNow</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/GurbaniNow/api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/rubensayshi/gw2spidy/wiki" data-score="82">
+          <h3><a href="https://github.com/rubensayshi/gw2spidy/wiki" target="_blank" rel="noopener noreferrer">GW2Spidy</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/rubensayshi/gw2spidy/wiki', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/HackerNews/API" data-score="82">
+          <h3><a href="https://github.com/HackerNews/API" target="_blank" rel="noopener noreferrer">HackerNews</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/HackerNews/API', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/harvardartmuseums/api-docs" data-score="82">
+          <h3><a href="https://github.com/harvardartmuseums/api-docs" target="_blank" rel="noopener noreferrer">Harvard Art Museums</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/harvardartmuseums/api-docs', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/gadhagod/Hyrule-Compendium-API" data-score="82">
+          <h3><a href="https://github.com/gadhagod/Hyrule-Compendium-API" target="_blank" rel="noopener noreferrer">Hyrule Compendium</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/gadhagod/Hyrule-Compendium-API', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/idigbio/idigbio-search-api/wiki" data-score="82">
+          <h3><a href="https://github.com/idigbio/idigbio-search-api/wiki" target="_blank" rel="noopener noreferrer">iDigBio</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/idigbio/idigbio-search-api/wiki', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/SpEcHiDe/IMDbOT" data-score="82">
+          <h3><a href="https://github.com/SpEcHiDe/IMDbOT" target="_blank" rel="noopener noreferrer">IMDbOT</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/SpEcHiDe/IMDbOT', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/btcid/indodax-official-api-docs" data-score="82">
+          <h3><a href="https://github.com/btcid/indodax-official-api-docs" target="_blank" rel="noopener noreferrer">Indodax</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/btcid/indodax-official-api-docs', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/cyberboysumanjay/Inshorts-News-API" data-score="82">
+          <h3><a href="https://github.com/cyberboysumanjay/Inshorts-News-API" target="_blank" rel="noopener noreferrer">Inshorts News</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/cyberboysumanjay/Inshorts-News-API', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/inspirehep/rest-api-doc" data-score="82">
+          <h3><a href="https://github.com/inspirehep/rest-api-doc" target="_blank" rel="noopener noreferrer">inspirehep.net</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/inspirehep/rest-api-doc', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/IntelligenceX/SDK/blob/master/Intelligence%20X%20API.pdf" data-score="82">
+          <h3><a href="https://github.com/IntelligenceX/SDK/blob/master/Intelligence%20X%20API.pdf" target="_blank" rel="noopener noreferrer">Intelligence X</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: PDF</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/IntelligenceX/SDK/blob/master/Intelligence%20X%20API.pdf', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/public-apis/public-apis/issues" data-score="82">
+          <h3><a href="https://github.com/public-apis/public-apis/issues" target="_blank" rel="noopener noreferrer">Issues</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/public-apis/public-apis/issues', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/cyberboysumanjay/JioSaavnAPI" data-score="82">
+          <h3><a href="https://github.com/cyberboysumanjay/JioSaavnAPI" target="_blank" rel="noopener noreferrer">JioSaavn</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/cyberboysumanjay/JioSaavnAPI', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/jsdelivr/data.jsdelivr.com" data-score="82">
+          <h3><a href="https://github.com/jsdelivr/data.jsdelivr.com" target="_blank" rel="noopener noreferrer">jsDelivr</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Datasets</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Datasets+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/jsdelivr/data.jsdelivr.com', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/Phineas/lanyard" data-score="82">
+          <h3><a href="https://github.com/Phineas/lanyard" target="_blank" rel="noopener noreferrer">Lanyard</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/Phineas/lanyard', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/0x0is1/lowy-index-api-docs" data-score="82">
+          <h3><a href="https://github.com/0x0is1/lowy-index-api-docs" target="_blank" rel="noopener noreferrer">Lowy Asia Power Index</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/0x0is1/lowy-index-api-docs', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/shadowoff09/lucifer-quotes" data-score="82">
+          <h3><a href="https://github.com/shadowoff09/lucifer-quotes" target="_blank" rel="noopener noreferrer">Lucifer Quotes</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/shadowoff09/lucifer-quotes', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/DiljotSG/MCU-Countdown" data-score="82">
+          <h3><a href="https://github.com/DiljotSG/MCU-Countdown" target="_blank" rel="noopener noreferrer">MCU Countdown</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/DiljotSG/MCU-Countdown', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/Medium/medium-api-docs" data-score="82">
+          <h3><a href="https://github.com/Medium/medium-api-docs" target="_blank" rel="noopener noreferrer">Medium</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/Medium/medium-api-docs', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/wh-iterabb-it/meowfacts" data-score="82">
+          <h3><a href="https://github.com/wh-iterabb-it/meowfacts" target="_blank" rel="noopener noreferrer">MeowFacts</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/wh-iterabb-it/meowfacts', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/IcaliaLabs/sepomex" data-score="82">
+          <h3><a href="https://github.com/IcaliaLabs/sepomex" target="_blank" rel="noopener noreferrer">Mexico</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/IcaliaLabs/sepomex', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/movebank/movebank-api-doc" data-score="82">
+          <h3><a href="https://github.com/movebank/movebank-api-doc" target="_blank" rel="noopener noreferrer">Movebank</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/movebank/movebank-api-doc', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/F4R4N/movie-quote/" data-score="82">
+          <h3><a href="https://github.com/F4R4N/movie-quote/" target="_blank" rel="noopener noreferrer">Movie Quote</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/F4R4N/movie-quote/', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/mozilla/http-observatory/blob/master/httpobs/docs/api.md" data-score="82">
+          <h3><a href="https://github.com/mozilla/http-observatory/blob/master/httpobs/docs/api.md" target="_blank" rel="noopener noreferrer">Mozilla http scanner</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/mozilla/http-observatory/blob/master/httpobs/docs/api.md', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/mozilla/tls-observatory#api-endpoints" data-score="82">
+          <h3><a href="https://github.com/mozilla/tls-observatory#api-endpoints" target="_blank" rel="noopener noreferrer">Mozilla tls scanner</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/mozilla/tls-observatory#api-endpoints', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/theIYD/NaMoMemes" data-score="82">
+          <h3><a href="https://github.com/theIYD/NaMoMemes" target="_blank" rel="noopener noreferrer">NaMoMemes</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/theIYD/NaMoMemes', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/gadael/icsdb" data-score="82">
+          <h3><a href="https://github.com/gadael/icsdb" target="_blank" rel="noopener noreferrer">Non-Working Days</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/gadael/icsdb', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md" data-score="82">
+          <h3><a href="https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md" target="_blank" rel="noopener noreferrer">npm Registry</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/workforce-data-initiative/skills-api/wiki/API-Overview" data-score="82">
+          <h3><a href="https://github.com/workforce-data-initiative/skills-api/wiki/API-Overview" target="_blank" rel="noopener noreferrer">Open Skills</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Datasets</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Datasets+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/workforce-data-initiative/skills-api/wiki/API-Overview', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/fawazsullia/password-generator/" data-score="82">
+          <h3><a href="https://github.com/fawazsullia/password-generator/" target="_blank" rel="noopener noreferrer">Passwordinator</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/fawazsullia/password-generator/', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/azharimm/phone-specs-api" data-score="82">
+          <h3><a href="https://github.com/azharimm/phone-specs-api" target="_blank" rel="noopener noreferrer">Phone Specification</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/azharimm/phone-specs-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/thundercomb/poetrydb#readme" data-score="82">
+          <h3><a href="https://github.com/thundercomb/poetrydb#readme" target="_blank" rel="noopener noreferrer">PoetryDB</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/thundercomb/poetrydb#readme', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/mazipan/graphql-pokeapi" data-score="82">
+          <h3><a href="https://github.com/mazipan/graphql-pokeapi" target="_blank" rel="noopener noreferrer">PokéAPI (GraphQL)</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github,api</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=63 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/mazipan/graphql-pokeapi', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/skolakoda/programming-quotes-api" data-score="82">
+          <h3><a href="https://github.com/skolakoda/programming-quotes-api" target="_blank" rel="noopener noreferrer">Programming Quotes</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/skolakoda/programming-quotes-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/public-apis/public-apis/pulls" data-score="82">
+          <h3><a href="https://github.com/public-apis/public-apis/pulls" target="_blank" rel="noopener noreferrer">Pull Requests</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/public-apis/public-apis/pulls', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/deltadex7/puyodb-api-deno" data-score="82">
+          <h3><a href="https://github.com/deltadex7/puyodb-api-deno" target="_blank" rel="noopener noreferrer">Puyo Nexus</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/deltadex7/puyodb-api-deno', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/lukePeavey/quotable" data-score="82">
+          <h3><a href="https://github.com/lukePeavey/quotable" target="_blank" rel="noopener noreferrer">Quotable Quotes</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/lukePeavey/quotable', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/fawazahmed0/quran-api#readme" data-score="82">
+          <h3><a href="https://github.com/fawazahmed0/quran-api#readme" target="_blank" rel="noopener noreferrer">Quran-api</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github,api</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=63 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/fawazahmed0/quran-api#readme', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/DenverCoder1/readme-typing-svg" data-score="82">
+          <h3><a href="https://github.com/DenverCoder1/readme-typing-svg" target="_blank" rel="noopener noreferrer">Readme typing SVG</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/DenverCoder1/readme-typing-svg', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/Real-time-finance/finance-websocket-API/" data-score="82">
+          <h3><a href="https://github.com/Real-time-finance/finance-websocket-API/" target="_blank" rel="noopener noreferrer">Real Time Finance</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/Real-time-finance/finance-websocket-API/', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/elizabethadegbaju/remotecalc" data-score="82">
+          <h3><a href="https://github.com/elizabethadegbaju/remotecalc" target="_blank" rel="noopener noreferrer">Remote Calc</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/elizabethadegbaju/remotecalc', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/jamesseanwright/ron-swanson-quotes#ron-swanson-quotes-api" data-score="82">
+          <h3><a href="https://github.com/jamesseanwright/ron-swanson-quotes#ron-swanson-quotes-api" target="_blank" rel="noopener noreferrer">Ron Swanson Quotes</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/jamesseanwright/ron-swanson-quotes#ron-swanson-quotes-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/egno/work-calendar" data-score="82">
+          <h3><a href="https://github.com/egno/work-calendar" target="_blank" rel="noopener noreferrer">Russian Calendar</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/egno/work-calendar', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/JessVel/sakura-card-captor-api" data-score="82">
+          <h3><a href="https://github.com/JessVel/sakura-card-captor-api" target="_blank" rel="noopener noreferrer">Sakura CardCaptor</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/JessVel/sakura-card-captor-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/FayasNoushad/Short-Link-API" data-score="82">
+          <h3><a href="https://github.com/FayasNoushad/Short-Link-API" target="_blank" rel="noopener noreferrer">Short Link</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/FayasNoushad/Short-Link-API', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/Cgboal/SonarSearch" data-score="82">
+          <h3><a href="https://github.com/Cgboal/SonarSearch" target="_blank" rel="noopener noreferrer">Sonar</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/Cgboal/SonarSearch', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/r-spacex/SpaceX-API" data-score="82">
+          <h3><a href="https://github.com/r-spacex/SpaceX-API" target="_blank" rel="noopener noreferrer">SpaceX</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/r-spacex/SpaceX-API', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/Revadike/InternalSteamWebAPI/wiki" data-score="82">
+          <h3><a href="https://github.com/Revadike/InternalSteamWebAPI/wiki" target="_blank" rel="noopener noreferrer">Steam</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/Revadike/InternalSteamWebAPI/wiki', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/tlcheah2/stoic-quote-lambda-public-api" data-score="82">
+          <h3><a href="https://github.com/tlcheah2/stoic-quote-lambda-public-api" target="_blank" rel="noopener noreferrer">Stoicism Quote</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/tlcheah2/stoic-quote-lambda-public-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/shadowoff09/strangerthings-quotes" data-score="82">
+          <h3><a href="https://github.com/shadowoff09/strangerthings-quotes" target="_blank" rel="noopener noreferrer">Stranger Things Quotes</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/shadowoff09/strangerthings-quotes', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/evz/tacofancy-api" data-score="82">
+          <h3><a href="https://github.com/evz/tacofancy-api" target="_blank" rel="noopener noreferrer">TacoFancy</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/evz/tacofancy-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/theoldreader/api" data-score="82">
+          <h3><a href="https://github.com/theoldreader/api" target="_blank" rel="noopener noreferrer">The Old Reader</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/theoldreader/api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/andyklimczak/TheReportOfTheWeek-API" data-score="82">
+          <h3><a href="https://github.com/andyklimczak/TheReportOfTheWeek-API" target="_blank" rel="noopener noreferrer">The Report of the Week</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/andyklimczak/TheReportOfTheWeek-API', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/FranP-code/API-Times-Adder" data-score="82">
+          <h3><a href="https://github.com/FranP-code/API-Times-Adder" target="_blank" rel="noopener noreferrer">Times Adder</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/FranP-code/API-Times-Adder', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/derhuerst/vbb-rest/blob/3/docs/index.md" data-score="82">
+          <h3><a href="https://github.com/derhuerst/vbb-rest/blob/3/docs/index.md" target="_blank" rel="noopener noreferrer">Transport for Berlin, Germany</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/derhuerst/vbb-rest/blob/3/docs/index.md', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/skywave/KV78Turbo-OVAPI/wiki" data-score="82">
+          <h3><a href="https://github.com/skywave/KV78Turbo-OVAPI/wiki" target="_blank" rel="noopener noreferrer">Transport for The Netherlands</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/skywave/KV78Turbo-OVAPI/wiki', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/melpon/wandbox/blob/master/kennel2/API.rst" data-score="82">
+          <h3><a href="https://github.com/melpon/wandbox/blob/master/kennel2/API.rst" target="_blank" rel="noopener noreferrer">Wandbox</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/melpon/wandbox/blob/master/kennel2/API.rst', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/robertoduessmann/weather-api" data-score="82">
+          <h3><a href="https://github.com/robertoduessmann/weather-api" target="_blank" rel="noopener noreferrer">weather-api</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github,api</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=63 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/robertoduessmann/weather-api', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/yogeshwaran01/web-series-quotes" data-score="82">
+          <h3><a href="https://github.com/yogeshwaran01/web-series-quotes" target="_blank" rel="noopener noreferrer">Web Series Quotes Generator</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/yogeshwaran01/web-series-quotes', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/DiljotSG/MCU-Countdown/blob/develop/docs/API.md" data-score="82">
+          <h3><a href="https://github.com/DiljotSG/MCU-Countdown/blob/develop/docs/API.md" target="_blank" rel="noopener noreferrer">When is next MCU film</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/DiljotSG/MCU-Countdown/blob/develop/docs/API.md', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/beanboi7/yomomma-apiv2" data-score="82">
+          <h3><a href="https://github.com/beanboi7/yomomma-apiv2" target="_blank" rel="noopener noreferrer">Yo Momma Jokes</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: Web Tools</span>
+            <span>subcategory: API</span>
+            <span>rank: 82</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/public-apis/public-apis/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=53 | domain:github.com+18 | tag:github+8 | category:Web Tools+10 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/beanboi7/yomomma-apiv2', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://gitlab.com/mailman/hyperkitty" data-score="80">
+          <h3><a href="https://gitlab.com/mailman/hyperkitty" target="_blank" rel="noopener noreferrer">Source Code</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: AI</span>
+            <span>subcategory: harvested</span>
+            <span>rank: 80</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: gitlab,awesome_list</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/awesome-selfhosted/awesome-selfhosted/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=65 | domain:gitlab.com+14 | tag:awesome_list+8 | category:AI+12 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://gitlab.com/mailman/hyperkitty', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://gitlab.com/mailman/" data-score="80">
+          <h3><a href="https://gitlab.com/mailman/" target="_blank" rel="noopener noreferrer">Source Code</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: AI</span>
+            <span>subcategory: harvested</span>
+            <span>rank: 80</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: gitlab,awesome_list</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/awesome-selfhosted/awesome-selfhosted/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=65 | domain:gitlab.com+14 | tag:awesome_list+8 | category:AI+12 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://gitlab.com/mailman/', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://gitlab.com/mailman/postorius/" data-score="80">
+          <h3><a href="https://gitlab.com/mailman/postorius/" target="_blank" rel="noopener noreferrer">Source Code</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: AI</span>
+            <span>subcategory: harvested</span>
+            <span>rank: 80</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: gitlab,awesome_list</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/awesome-selfhosted/awesome-selfhosted/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=65 | domain:gitlab.com+14 | tag:awesome_list+8 | category:AI+12 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://gitlab.com/mailman/postorius/', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+        <div class="card" data-url="https://github.com/OpenSMTPD/OpenSMTPD/" data-score="80">
+          <h3><a href="https://github.com/OpenSMTPD/OpenSMTPD/" target="_blank" rel="noopener noreferrer">Source Code</a></h3>
+          <p class="desc">discovered by atlas harvester</p>
+
+          <div class="meta">
+            <span>category: candidate</span>
+            <span>subcategory: harvested</span>
+            <span>rank: 80</span>
+          </div>
+
+          <div class="meta">
+            <span>tags: github,awesome_list</span>
+            <span>source: raw markdown: https://raw.githubusercontent.com/awesome-selfhosted/awesome-selfhosted/master/README.md</span>
+          </div>
+
+          <div class="reasons">base_conf=73 | domain:github.com+18 | tag:github+8 | tag:awesome_list+8 | generic_desc-4</div>
+
+          <div class="actions">
+            <button onclick="approve('https://github.com/OpenSMTPD/OpenSMTPD/', this)">Approve</button>
+            <button onclick="rejectCard(this)">Reject</button>
+          </div>
+        </div>
+        
+</div>
+
+<div class="footer-tools">
+  <button onclick="exportApproved()">Save Approved List</button>
+  <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">Go to Top</button>
+</div>
+
+<script>
+let approved = [];
+
+function updateCounts() {
+  const visible = document.querySelectorAll(".card").length;
+  document.getElementById("visibleCount").textContent = "Visible: " + visible;
+  document.getElementById("approvedCount").textContent = "Approved: " + approved.length;
+}
+
+function approve(url, btn) {
+  if (!approved.includes(url)) {
+    approved.push(url);
+  }
+  btn.textContent = "Approved";
+  btn.disabled = true;
+  updateCounts();
+}
+
+function rejectCard(btn) {
+  const card = btn.closest(".card");
+  if (card) {
+    card.remove();
+    updateCounts();
+  }
+}
+
+function exportApproved() {
+  let csv = "url\n";
+  approved.forEach(u => {
+    csv += u + "\n";
+  });
+
+  const blob = new Blob([csv], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "approved-ranked-candidates.csv";
+  a.click();
+}
+
+updateCounts();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+repo:
+  name: akasha-lens
+  ecosystem: akasha
+  version: 0.1.0
+  status: active
+engine:
+  family: ontology
+  class: concept_engine
+  role: interpretive_view_modeling
+identity:
+  role: engine
+  layer: theory
+  description: 'Lens engine for the Akasha constellation. Responsible for defining
+    interpretive viewpoints, frames, and structured ways of examining the same underlying
+    data or relation from multiple angles without collapsing them into a single flattened
+    reading.
+
+    '
+ownership:
+  steward: human
+  approval_required: true
+interfaces:
+  consumes:
+  - ontology_models
+  - event_records
+  - graph_structures
+  - conceptual_views
+  produces:
+  - lens_definitions
+  - perspective_models
+  - framed_interpretations
+capabilities:
+- viewpoint_modeling
+- perspective_structuring
+- interpretive_frame_definition
+- multi_angle_analysis_support
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+depends_on:
+- akasha-ontology
+- akasha-axioms
+type: organ
+family: discovery
+role: lens
+name: akasha-lens
+version: 1.0.0
+generated_by: akasha-canon

@@ -1,0 +1,47 @@
+repo:
+  name: akasha-observer
+  ecosystem: akasha
+  version: 0.1.0
+  status: active
+engine:
+  family: observation
+  class: intake_engine
+  role: observation_capture
+identity:
+  role: engine
+  layer: intake
+  description: 'Observation capture engine for the Akasha constellation. Responsible
+    for receiving direct observations, recording them faithfully, and preparing them
+    for event storage and downstream pattern analysis.
+
+    '
+ownership:
+  steward: human
+  approval_required: true
+interfaces:
+  consumes:
+  - direct_observations
+  - contextual_inputs
+  - source_signals
+  produces:
+  - captured_observations
+  - event_ready_records
+  - observation_logs
+capabilities:
+- observation_capture
+- direct_signal_recording
+- intake_logging
+- event_preparation
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+depends_on:
+- akasha-events
+- akasha-time-nexus
+type: organ
+family: discovery
+role: observer
+name: akasha-observer
+version: 1.0.0
+generated_by: akasha-canon

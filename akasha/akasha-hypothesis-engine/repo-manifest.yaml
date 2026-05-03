@@ -1,0 +1,32 @@
+repo: akasha-hypothesis-engine
+type: organ
+family: unspecified
+role: hypothesis-engine
+engine:
+  name: akasha-hypothesis-engine
+  class: organ
+  maturity: seed
+identity:
+  repo: akasha-hypothesis-engine
+  slug: akasha-hypothesis-engine
+  title: Hypothesis Engine
+ownership:
+  steward: JimmyDev
+  authority: local-first
+interfaces:
+  cli: []
+  files:
+  - README.md
+  - repo-manifest.yaml
+capabilities:
+- initialize
+- describe
+alignment:
+  constellation_role: engine
+  canon_status: provisional
+depends_on:
+- akasha-requests
+- akasha-suite
+name: akasha-hypothesis-engine
+version: 1.0.0
+generated_by: akasha-canon
