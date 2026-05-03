@@ -1,0 +1,538 @@
+{
+  "input_path": "data/kryptos/k4.txt",
+  "structural_report": {
+    "length": 97,
+    "entropy": 4.5547809200742915,
+    "char_frequency": {
+      "A": 0.041237113402061855,
+      "B": 0.05154639175257732,
+      "C": 0.020618556701030927,
+      "D": 0.030927835051546393,
+      "E": 0.020618556701030927,
+      "F": 0.041237113402061855,
+      "G": 0.041237113402061855,
+      "H": 0.020618556701030927,
+      "I": 0.041237113402061855,
+      "J": 0.030927835051546393,
+      "K": 0.08247422680412371,
+      "L": 0.041237113402061855,
+      "M": 0.010309278350515464,
+      "N": 0.030927835051546393,
+      "O": 0.05154639175257732,
+      "P": 0.030927835051546393,
+      "Q": 0.041237113402061855,
+      "R": 0.041237113402061855,
+      "S": 0.061855670103092786,
+      "T": 0.061855670103092786,
+      "U": 0.061855670103092786,
+      "V": 0.020618556701030927,
+      "W": 0.05154639175257732,
+      "X": 0.020618556701030927,
+      "Y": 0.010309278350515464,
+      "Z": 0.041237113402061855
+    },
+    "repeated_trigrams": {},
+    "repeated_tetragrams": {},
+    "line_lengths": [
+      97
+    ],
+    "token_count": 1
+  },
+  "section_analysis": {
+    "mode": "fixed",
+    "section_count": 5,
+    "sections": [
+      {
+        "section_id": "section_001",
+        "text_preview": "OBKRUOXOGHULBSOLIFBBWFLR",
+        "report": {
+          "length": 24,
+          "entropy": 3.4701755214643453,
+          "char_frequency": {
+            "B": 0.16666666666666666,
+            "F": 0.08333333333333333,
+            "G": 0.041666666666666664,
+            "H": 0.041666666666666664,
+            "I": 0.041666666666666664,
+            "K": 0.041666666666666664,
+            "L": 0.125,
+            "O": 0.16666666666666666,
+            "R": 0.08333333333333333,
+            "S": 0.041666666666666664,
+            "U": 0.08333333333333333,
+            "W": 0.041666666666666664,
+            "X": 0.041666666666666664
+          },
+          "repeated_trigrams": {},
+          "repeated_tetragrams": {},
+          "line_lengths": [
+            24
+          ],
+          "token_count": 1
+        }
+      },
+      {
+        "section_id": "section_002",
+        "text_preview": "VQQPRNGKSSOTWTQSJQSSEKZZ",
+        "report": {
+          "length": 24,
+          "entropy": 3.517894147619623,
+          "char_frequency": {
+            "E": 0.041666666666666664,
+            "G": 0.041666666666666664,
+            "J": 0.041666666666666664,
+            "K": 0.08333333333333333,
+            "N": 0.041666666666666664,
+            "O": 0.041666666666666664,
+            "P": 0.041666666666666664,
+            "Q": 0.16666666666666666,
+            "R": 0.041666666666666664,
+            "S": 0.20833333333333334,
+            "T": 0.08333333333333333,
+            "V": 0.041666666666666664,
+            "W": 0.041666666666666664,
+            "Z": 0.08333333333333333
+          },
+          "repeated_trigrams": {},
+          "repeated_tetragrams": {},
+          "line_lengths": [
+            24
+          ],
+          "token_count": 1
+        }
+      },
+      {
+        "section_id": "section_003",
+        "text_preview": "WATJKLUDIAWINFBNYPVTTMZF",
+        "report": {
+          "length": 24,
+          "entropy": 3.9701755214643457,
+          "char_frequency": {
+            "A": 0.08333333333333333,
+            "B": 0.041666666666666664,
+            "D": 0.041666666666666664,
+            "F": 0.08333333333333333,
+            "I": 0.08333333333333333,
+            "J": 0.041666666666666664,
+            "K": 0.041666666666666664,
+            "L": 0.041666666666666664,
+            "M": 0.041666666666666664,
+            "N": 0.08333333333333333,
+            "P": 0.041666666666666664,
+            "T": 0.125,
+            "U": 0.041666666666666664,
+            "V": 0.041666666666666664,
+            "W": 0.08333333333333333,
+            "Y": 0.041666666666666664,
+            "Z": 0.041666666666666664
+          },
+          "repeated_trigrams": {},
+          "repeated_tetragrams": {},
+          "line_lengths": [
+            24
+          ],
+          "token_count": 1
+        }
+      },
+      {
+        "section_id": "section_004",
+        "text_preview": "PKWGDKZXTJCDIGKUHUAUEKCA",
+        "report": {
+          "length": 24,
+          "entropy": 3.7201755214643453,
+          "char_frequency": {
+            "A": 0.08333333333333333,
+            "C": 0.08333333333333333,
+            "D": 0.08333333333333333,
+            "E": 0.041666666666666664,
+            "G": 0.08333333333333333,
+            "H": 0.041666666666666664,
+            "I": 0.041666666666666664,
+            "J": 0.041666666666666664,
+            "K": 0.16666666666666666,
+            "P": 0.041666666666666664,
+            "T": 0.041666666666666664,
+            "U": 0.125,
+            "W": 0.041666666666666664,
+            "X": 0.041666666666666664,
+            "Z": 0.041666666666666664
+          },
+          "repeated_trigrams": {},
+          "repeated_tetragrams": {},
+          "line_lengths": [
+            24
+          ],
+          "token_count": 1
+        }
+      },
+      {
+        "section_id": "section_005",
+        "text_preview": "R",
+        "report": {
+          "length": 1,
+          "entropy": 0.0,
+          "char_frequency": {
+            "R": 1.0
+          },
+          "repeated_trigrams": {},
+          "repeated_tetragrams": {},
+          "line_lengths": [
+            1
+          ],
+          "token_count": 1
+        }
+      }
+    ]
+  },
+  "substitution_lenses": {
+    "frequency_remap_preview": "INEHTIBIRVTDNAIDLCNNSCDHKUUFHGREAAIOSOUAYUAAJEMMSWOYEDTPLWSLGCNGQFKOOZMCFESRPEMBOYXPLRETVTWTJEXWH",
+    "rare_symbol_collapse_preview": "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBN?PVTT?ZFPKWGDKZXTJCDIGKUHUAUEKCAR",
+    "symbol_pattern_signature": "0.1.2.3.4.0.5.0.6.7.4.8.1.9.0.8.10.11.1.1.12.11.8.3.13.14.14.15.3.16.6.2.9.9.0.17.12.17.14.9.18.14.9.9.19.2.20.20.12.21.17.18.2.8.4.22.10.21.12.10.16.11.1.16.23.15.13.17.17.24.20.11.15.2.12.6.22.2.20.5"
+  },
+  "constraint_search_preview": {
+    "frequency_hint_mapping": {
+      "K": "E",
+      "U": "T",
+      "S": "A",
+      "T": "O",
+      "O": "I",
+      "B": "N",
+      "W": "S",
+      "R": "H",
+      "G": "R",
+      "L": "D",
+      "I": "L",
+      "F": "C",
+      "Q": "U",
+      "Z": "M",
+      "A": "W",
+      "P": "F",
+      "N": "G",
+      "J": "Y",
+      "D": "P",
+      "X": "B",
+      "H": "V",
+      "V": "K",
+      "E": "J",
+      "C": "X",
+      "Y": "Q",
+      "M": "Z"
+    }
+  },
+  "pattern_attack": {
+    "token": "OBKRUOXOGH",
+    "pattern": "0.1.2.3.4.0.5.0.6.7",
+    "dictionary_candidates": []
+  },
+  "baseline_score": {
+    "english_ngram_hint": 0.0,
+    "vowel_ratio_score": 0.8468,
+    "repeat_penalty": -0.0,
+    "total_score": 0.8468
+  },
+  "candidate_count": 7,
+  "top_candidates": [
+    {
+      "branch_id": "branch_006",
+      "source_path": "data/kryptos/k4.txt",
+      "transform_name": "columnar",
+      "transform_params": {
+        "width": 5
+      },
+      "output_text": "OOULWQGTJKTDNPZGTGAABXLIFQKWQZJIFVFDJKURKOBFLPSTSZKABTPKCUERGSBRRSQSWLWNTKZDHKUHOBVNOSEAUIYMWXIUC",
+      "score": {
+        "english_ngram_hint": 1.0,
+        "vowel_ratio_score": 0.8468,
+        "repeat_penalty": -0.0,
+        "total_score": 1.8468
+      },
+      "comparison_to_identity": {
+        "score_delta": 1.0,
+        "entropy_delta": -0.0,
+        "repeated_trigram_delta": 0,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_004",
+      "source_path": "data/kryptos/k4.txt",
+      "transform_name": "caesar",
+      "transform_params": {
+        "shift": 3
+      },
+      "output_text": "RENUXRARJKXOEVROLIEEZIOUYTTSUQJNVVRWZWTVMTVVHNCCZDWMNOXGLDZLQIEQBSYWWPCISNZJGNCAWMFGLJNXKXDXHNFDU",
+      "score": {
+        "english_ngram_hint": 1.0,
+        "vowel_ratio_score": 0.8365,
+        "repeat_penalty": -0.0,
+        "total_score": 1.8365
+      },
+      "comparison_to_identity": {
+        "score_delta": 0.9897,
+        "entropy_delta": 0.0,
+        "repeated_trigram_delta": 0,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_003",
+      "source_path": "data/kryptos/k4.txt",
+      "transform_name": "caesar",
+      "transform_params": {
+        "shift": 1
+      },
+      "output_text": "PCLSVPYPHIVMCTPMJGCCXGMSWRRQSOHLTTPUXURTKRTTFLAAXBUKLMVEJBXJOGCOZQWUUNAGQLXHELAYUKDEJHLVIVBVFLDBS",
+      "score": {
+        "english_ngram_hint": 1.0,
+        "vowel_ratio_score": 0.8262,
+        "repeat_penalty": -0.0,
+        "total_score": 1.8262
+      },
+      "comparison_to_identity": {
+        "score_delta": 0.9794,
+        "entropy_delta": 0.0,
+        "repeated_trigram_delta": 0,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_001",
+      "source_path": "data/kryptos/k4.txt",
+      "transform_name": "identity",
+      "transform_params": {},
+      "output_text": "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR",
+      "score": {
+        "english_ngram_hint": 0.0,
+        "vowel_ratio_score": 0.8468,
+        "repeat_penalty": -0.0,
+        "total_score": 0.8468
+      },
+      "comparison_to_identity": {
+        "score_delta": 0.0,
+        "entropy_delta": 0.0,
+        "repeated_trigram_delta": 0,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_002",
+      "source_path": "data/kryptos/k4.txt",
+      "transform_name": "reverse",
+      "transform_params": {},
+      "output_text": "RACKEUAUHUKGIDCJTXZKDGWKPFZMTTVPYNBFNIWAIDULKJTAWZZKESSQJSQTWTOSSKGNRPQQVRLFWBBFILOSBLUHGOXOURKBO",
+      "score": {
+        "english_ngram_hint": 0.0,
+        "vowel_ratio_score": 0.8468,
+        "repeat_penalty": -0.0,
+        "total_score": 0.8468
+      },
+      "comparison_to_identity": {
+        "score_delta": 0.0,
+        "entropy_delta": -0.0,
+        "repeated_trigram_delta": 0,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_007",
+      "source_path": "data/kryptos/k4.txt",
+      "transform_name": "columnar",
+      "transform_params": {
+        "width": 7
+      },
+      "output_text": "OOOFRTSAINZKIUBGLLNWSTAYFZGEKHIRGTEJWPPXKKRUFVKQKKIVKTUCULBQSSZLNTWJHAOBBQSJZUFTGCURXSWPOQWDBMDDA",
+      "score": {
+        "english_ngram_hint": 0.0,
+        "vowel_ratio_score": 0.8468,
+        "repeat_penalty": -0.0,
+        "total_score": 0.8468
+      },
+      "comparison_to_identity": {
+        "score_delta": 0.0,
+        "entropy_delta": 0.0,
+        "repeated_trigram_delta": 1,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_005",
+      "source_path": "data/kryptos/k4.txt",
+      "transform_name": "caesar",
+      "transform_params": {
+        "shift": 13
+      },
+      "output_text": "BOXEHBKBTUHYOFBYVSOOJSYEIDDCEATXFFBGJGDFWDFFRXMMJNGWXYHQVNJVASOALCIGGZMSCXJTQXMKGWPQVTXHUHNHRXPNE",
+      "score": {
+        "english_ngram_hint": 0.0,
+        "vowel_ratio_score": 0.8262,
+        "repeat_penalty": -0.0,
+        "total_score": 0.8262
+      },
+      "comparison_to_identity": {
+        "score_delta": -0.0206,
+        "entropy_delta": 0.0,
+        "repeated_trigram_delta": 0,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    }
+  ],
+  "all_candidates": [
+    {
+      "branch_id": "branch_006",
+      "source_path": "data/kryptos/k4.txt",
+      "transform_name": "columnar",
+      "transform_params": {
+        "width": 5
+      },
+      "output_text": "OOULWQGTJKTDNPZGTGAABXLIFQKWQZJIFVFDJKURKOBFLPSTSZKABTPKCUERGSBRRSQSWLWNTKZDHKUHOBVNOSEAUIYMWXIUC",
+      "score": {
+        "english_ngram_hint": 1.0,
+        "vowel_ratio_score": 0.8468,
+        "repeat_penalty": -0.0,
+        "total_score": 1.8468
+      },
+      "comparison_to_identity": {
+        "score_delta": 1.0,
+        "entropy_delta": -0.0,
+        "repeated_trigram_delta": 0,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_004",
+      "source_path": "data/kryptos/k4.txt",
+      "transform_name": "caesar",
+      "transform_params": {
+        "shift": 3
+      },
+      "output_text": "RENUXRARJKXOEVROLIEEZIOUYTTSUQJNVVRWZWTVMTVVHNCCZDWMNOXGLDZLQIEQBSYWWPCISNZJGNCAWMFGLJNXKXDXHNFDU",
+      "score": {
+        "english_ngram_hint": 1.0,
+        "vowel_ratio_score": 0.8365,
+        "repeat_penalty": -0.0,
+        "total_score": 1.8365
+      },
+      "comparison_to_identity": {
+        "score_delta": 0.9897,
+        "entropy_delta": 0.0,
+        "repeated_trigram_delta": 0,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_003",
+      "source_path": "data/kryptos/k4.txt",
+      "transform_name": "caesar",
+      "transform_params": {
+        "shift": 1
+      },
+      "output_text": "PCLSVPYPHIVMCTPMJGCCXGMSWRRQSOHLTTPUXURTKRTTFLAAXBUKLMVEJBXJOGCOZQWUUNAGQLXHELAYUKDEJHLVIVBVFLDBS",
+      "score": {
+        "english_ngram_hint": 1.0,
+        "vowel_ratio_score": 0.8262,
+        "repeat_penalty": -0.0,
+        "total_score": 1.8262
+      },
+      "comparison_to_identity": {
+        "score_delta": 0.9794,
+        "entropy_delta": 0.0,
+        "repeated_trigram_delta": 0,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_001",
+      "source_path": "data/kryptos/k4.txt",
+      "transform_name": "identity",
+      "transform_params": {},
+      "output_text": "OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR",
+      "score": {
+        "english_ngram_hint": 0.0,
+        "vowel_ratio_score": 0.8468,
+        "repeat_penalty": -0.0,
+        "total_score": 0.8468
+      },
+      "comparison_to_identity": {
+        "score_delta": 0.0,
+        "entropy_delta": 0.0,
+        "repeated_trigram_delta": 0,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_002",
+      "source_path": "data/kryptos/k4.txt",
+      "transform_name": "reverse",
+      "transform_params": {},
+      "output_text": "RACKEUAUHUKGIDCJTXZKDGWKPFZMTTVPYNBFNIWAIDULKJTAWZZKESSQJSQTWTOSSKGNRPQQVRLFWBBFILOSBLUHGOXOURKBO",
+      "score": {
+        "english_ngram_hint": 0.0,
+        "vowel_ratio_score": 0.8468,
+        "repeat_penalty": -0.0,
+        "total_score": 0.8468
+      },
+      "comparison_to_identity": {
+        "score_delta": 0.0,
+        "entropy_delta": -0.0,
+        "repeated_trigram_delta": 0,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_007",
+      "source_path": "data/kryptos/k4.txt",
+      "transform_name": "columnar",
+      "transform_params": {
+        "width": 7
+      },
+      "output_text": "OOOFRTSAINZKIUBGLLNWSTAYFZGEKHIRGTEJWPPXKKRUFVKQKKIVKTUCULBQSSZLNTWJHAOBBQSJZUFTGCURXSWPOQWDBMDDA",
+      "score": {
+        "english_ngram_hint": 0.0,
+        "vowel_ratio_score": 0.8468,
+        "repeat_penalty": -0.0,
+        "total_score": 0.8468
+      },
+      "comparison_to_identity": {
+        "score_delta": 0.0,
+        "entropy_delta": 0.0,
+        "repeated_trigram_delta": 1,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_005",
+      "source_path": "data/kryptos/k4.txt",
+      "transform_name": "caesar",
+      "transform_params": {
+        "shift": 13
+      },
+      "output_text": "BOXEHBKBTUHYOFBYVSOOJSYEIDDCEATXFFBGJGDFWDFFRXMMJNGWXYHQVNJVASOALCIGGZMSCXJTQXMKGWPQVTXHUHNHRXPNE",
+      "score": {
+        "english_ngram_hint": 0.0,
+        "vowel_ratio_score": 0.8262,
+        "repeat_penalty": -0.0,
+        "total_score": 0.8262
+      },
+      "comparison_to_identity": {
+        "score_delta": -0.0206,
+        "entropy_delta": 0.0,
+        "repeated_trigram_delta": 0,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    }
+  ]
+}

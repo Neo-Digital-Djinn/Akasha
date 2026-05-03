@@ -1,0 +1,349 @@
+{
+  "input_path": "data/voynich/sample.txt",
+  "structural_report": {
+    "length": 68,
+    "entropy": 3.5467570928483574,
+    "char_frequency": {
+      "A": 0.08823529411764706,
+      "C": 0.014705882352941176,
+      "D": 0.1323529411764706,
+      "E": 0.10294117647058823,
+      "H": 0.029411764705882353,
+      "I": 0.10294117647058823,
+      "K": 0.08823529411764706,
+      "L": 0.04411764705882353,
+      "N": 0.058823529411764705,
+      "O": 0.11764705882352941,
+      "Q": 0.10294117647058823,
+      "S": 0.014705882352941176,
+      "T": 0.014705882352941176,
+      "Y": 0.08823529411764706
+    },
+    "repeated_trigrams": {
+      "QOK": 6,
+      "OKE": 3,
+      "EDY": 6,
+      "DYQ": 4,
+      "YQO": 4,
+      "KED": 2,
+      "OKA": 3,
+      "DAI": 2,
+      "AII": 3,
+      "IIN": 3,
+      "HED": 2,
+      "KAI": 2
+    },
+    "repeated_tetragrams": {
+      "QOKE": 3,
+      "EDYQ": 4,
+      "DYQO": 4,
+      "YQOK": 4,
+      "OKED": 2,
+      "KEDY": 2,
+      "QOKA": 3,
+      "DAII": 2,
+      "AIIN": 3,
+      "HEDY": 2,
+      "OKAI": 2
+    },
+    "line_lengths": [
+      26,
+      24,
+      18
+    ],
+    "token_count": 12
+  },
+  "section_analysis": {
+    "mode": "lines",
+    "section_count": 3,
+    "sections": [
+      {
+        "section_id": "section_001",
+        "text_preview": "QOKEEDYQOKEDYDALQOKALDAIIN",
+        "report": {
+          "length": 26,
+          "entropy": 3.2475767369558097,
+          "char_frequency": {
+            "A": 0.11538461538461539,
+            "D": 0.15384615384615385,
+            "E": 0.11538461538461539,
+            "I": 0.07692307692307693,
+            "K": 0.11538461538461539,
+            "L": 0.07692307692307693,
+            "N": 0.038461538461538464,
+            "O": 0.11538461538461539,
+            "Q": 0.11538461538461539,
+            "Y": 0.07692307692307693
+          },
+          "repeated_trigrams": {
+            "QOK": 3,
+            "OKE": 2,
+            "EDY": 2
+          },
+          "repeated_tetragrams": {
+            "QOKE": 2
+          },
+          "line_lengths": [
+            26
+          ],
+          "token_count": 5
+        }
+      },
+      {
+        "section_id": "section_002",
+        "text_preview": "SHEDYQOKAINOLCHEDYQOKEDY",
+        "report": {
+          "length": 24,
+          "entropy": 3.5424812503605785,
+          "char_frequency": {
+            "A": 0.041666666666666664,
+            "C": 0.041666666666666664,
+            "D": 0.125,
+            "E": 0.125,
+            "H": 0.08333333333333333,
+            "I": 0.041666666666666664,
+            "K": 0.08333333333333333,
+            "L": 0.041666666666666664,
+            "N": 0.041666666666666664,
+            "O": 0.125,
+            "Q": 0.08333333333333333,
+            "S": 0.041666666666666664,
+            "Y": 0.125
+          },
+          "repeated_trigrams": {
+            "HED": 2,
+            "EDY": 3,
+            "DYQ": 2,
+            "YQO": 2,
+            "QOK": 2
+          },
+          "repeated_tetragrams": {
+            "HEDY": 2,
+            "EDYQ": 2,
+            "DYQO": 2,
+            "YQOK": 2
+          },
+          "line_lengths": [
+            24
+          ],
+          "token_count": 4
+        }
+      },
+      {
+        "section_id": "section_003",
+        "text_preview": "QOKAIINDAIINQOTEDY",
+        "report": {
+          "length": 18,
+          "entropy": 3.169925001442312,
+          "char_frequency": {
+            "A": 0.1111111111111111,
+            "D": 0.1111111111111111,
+            "E": 0.05555555555555555,
+            "I": 0.2222222222222222,
+            "K": 0.05555555555555555,
+            "N": 0.1111111111111111,
+            "O": 0.1111111111111111,
+            "Q": 0.1111111111111111,
+            "T": 0.05555555555555555,
+            "Y": 0.05555555555555555
+          },
+          "repeated_trigrams": {
+            "AII": 2,
+            "IIN": 2
+          },
+          "repeated_tetragrams": {
+            "AIIN": 2
+          },
+          "line_lengths": [
+            18
+          ],
+          "token_count": 3
+        }
+      }
+    ]
+  },
+  "substitution_lenses": {
+    "frequency_remap_preview": "ATNOOESATNOESEHDATNHDEHIIRCLOESATNHIRTDULOESATNOESATNHIIREHIIRATMOES",
+    "rare_symbol_collapse_preview": "QOKEEDYQOKEDYDALQOKALDAIIN?HEDYQOKAINOL?HEDYQOKEDYQOKAIINDAIINQO?EDY",
+    "symbol_pattern_signature": "0.1.2.3.3.4.5.0.1.2.3.4.5.4.6.7.0.1.2.6.7.4.6.8.8.9.10.11.3.4.5.0.1.2.6.8.9.1.7.12.11.3.4.5.0.1.2.3.4.5.0.1.2.6.8.8.9.4.6.8.8.9.0.1.13.3.4.5"
+  },
+  "baseline_score": {
+    "english_ngram_hint": 2.0,
+    "vowel_ratio_score": 0.88,
+    "repeat_penalty": -0.0,
+    "total_score": 2.88
+  },
+  "candidate_count": 4,
+  "top_candidates": [
+    {
+      "branch_id": "branch_003",
+      "source_path": "data/voynich/sample.txt",
+      "transform_name": "columnar",
+      "transform_params": {
+        "width": 3
+      },
+      "output_text": "QEYKYLKDIHYKNCDODOIDIODOEQEDQAANEQAOHYKYKIANTYKDODAOLISDOILEQEQANIQE",
+      "score": {
+        "english_ngram_hint": 3.0,
+        "vowel_ratio_score": 0.88,
+        "repeat_penalty": -0.0,
+        "total_score": 3.88
+      },
+      "comparison_to_identity": {
+        "score_delta": 1.0,
+        "entropy_delta": 0.0,
+        "repeated_trigram_delta": -5,
+        "repeated_tetragram_delta": -11,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_001",
+      "source_path": "data/voynich/sample.txt",
+      "transform_name": "identity",
+      "transform_params": {},
+      "output_text": "QOKEEDYQOKEDYDALQOKALDAIINSHEDYQOKAINOLCHEDYQOKEDYQOKAIINDAIINQOTEDY",
+      "score": {
+        "english_ngram_hint": 2.0,
+        "vowel_ratio_score": 0.88,
+        "repeat_penalty": -0.0,
+        "total_score": 2.88
+      },
+      "comparison_to_identity": {
+        "score_delta": 0.0,
+        "entropy_delta": 0.0,
+        "repeated_trigram_delta": 0,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_002",
+      "source_path": "data/voynich/sample.txt",
+      "transform_name": "reverse",
+      "transform_params": {},
+      "output_text": "YDETOQNIIADNIIAKOQYDEKOQYDEHCLONIAKOQYDEHSNIIADLAKOQLADYDEKOQYDEEKOQ",
+      "score": {
+        "english_ngram_hint": 0.0,
+        "vowel_ratio_score": 0.88,
+        "repeat_penalty": -0.0,
+        "total_score": 0.88
+      },
+      "comparison_to_identity": {
+        "score_delta": -2.0,
+        "entropy_delta": -0.0,
+        "repeated_trigram_delta": 0,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_004",
+      "source_path": "data/voynich/sample.txt",
+      "transform_name": "columnar",
+      "transform_params": {
+        "width": 4
+      },
+      "output_text": "QEOYQLIEONHQDKNITODKDODNDKOEOYADNEKYEAKASYALDKQIAQDEQDLAIHQICYEOIIOY",
+      "score": {
+        "english_ngram_hint": 0.0,
+        "vowel_ratio_score": 0.88,
+        "repeat_penalty": -0.0,
+        "total_score": 0.88
+      },
+      "comparison_to_identity": {
+        "score_delta": -2.0,
+        "entropy_delta": 0.0,
+        "repeated_trigram_delta": -11,
+        "repeated_tetragram_delta": -11,
+        "length_delta": 0
+      }
+    }
+  ],
+  "all_candidates": [
+    {
+      "branch_id": "branch_003",
+      "source_path": "data/voynich/sample.txt",
+      "transform_name": "columnar",
+      "transform_params": {
+        "width": 3
+      },
+      "output_text": "QEYKYLKDIHYKNCDODOIDIODOEQEDQAANEQAOHYKYKIANTYKDODAOLISDOILEQEQANIQE",
+      "score": {
+        "english_ngram_hint": 3.0,
+        "vowel_ratio_score": 0.88,
+        "repeat_penalty": -0.0,
+        "total_score": 3.88
+      },
+      "comparison_to_identity": {
+        "score_delta": 1.0,
+        "entropy_delta": 0.0,
+        "repeated_trigram_delta": -5,
+        "repeated_tetragram_delta": -11,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_001",
+      "source_path": "data/voynich/sample.txt",
+      "transform_name": "identity",
+      "transform_params": {},
+      "output_text": "QOKEEDYQOKEDYDALQOKALDAIINSHEDYQOKAINOLCHEDYQOKEDYQOKAIINDAIINQOTEDY",
+      "score": {
+        "english_ngram_hint": 2.0,
+        "vowel_ratio_score": 0.88,
+        "repeat_penalty": -0.0,
+        "total_score": 2.88
+      },
+      "comparison_to_identity": {
+        "score_delta": 0.0,
+        "entropy_delta": 0.0,
+        "repeated_trigram_delta": 0,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_002",
+      "source_path": "data/voynich/sample.txt",
+      "transform_name": "reverse",
+      "transform_params": {},
+      "output_text": "YDETOQNIIADNIIAKOQYDEKOQYDEHCLONIAKOQYDEHSNIIADLAKOQLADYDEKOQYDEEKOQ",
+      "score": {
+        "english_ngram_hint": 0.0,
+        "vowel_ratio_score": 0.88,
+        "repeat_penalty": -0.0,
+        "total_score": 0.88
+      },
+      "comparison_to_identity": {
+        "score_delta": -2.0,
+        "entropy_delta": -0.0,
+        "repeated_trigram_delta": 0,
+        "repeated_tetragram_delta": 0,
+        "length_delta": 0
+      }
+    },
+    {
+      "branch_id": "branch_004",
+      "source_path": "data/voynich/sample.txt",
+      "transform_name": "columnar",
+      "transform_params": {
+        "width": 4
+      },
+      "output_text": "QEOYQLIEONHQDKNITODKDODNDKOEOYADNEKYEAKASYALDKQIAQDEQDLAIHQICYEOIIOY",
+      "score": {
+        "english_ngram_hint": 0.0,
+        "vowel_ratio_score": 0.88,
+        "repeat_penalty": -0.0,
+        "total_score": 0.88
+      },
+      "comparison_to_identity": {
+        "score_delta": -2.0,
+        "entropy_delta": 0.0,
+        "repeated_trigram_delta": -11,
+        "repeated_tetragram_delta": -11,
+        "length_delta": 0
+      }
+    }
+  ]
+}

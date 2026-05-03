@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AkashaCapitalRegimeEvent",
+  "description": "Regime state snapshot emitted by akasha-capital for ingestion by akasha-events.",
+  "type": "object",
+  "required": ["source", "tick", "regime", "score", "confidence"],
+  "properties": {
+    "source": {
+      "type": "string",
+      "const": "akasha-capital",
+      "description": "Emitting organ identifier."
+    },
+    "tick": {
+      "type": "integer",
+      "description": "Simulation or live tick counter."
+    },
+    "regime": {
+      "type": "string",
+      "enum": ["EXPANSION", "ROTATION", "CONTRACTION", "TRANSITION"],
+      "description": "Classified capital market regime."
+    },
+    "score": {
+      "type": "number",
+      "description": "CMI composite score for this tick."
+    },
+    "inflow": {
+      "type": "number",
+      "description": "Stablecoin inflow signal."
+    },
+    "outflow": {
+      "type": "number",
+      "description": "Stablecoin outflow signal."
+    },
+    "funding": {
+      "type": "number",
+      "description": "Funding bias signal."
+    },
+    "volatility": {
+      "type": "number",
+      "description": "Volatility reading."
+    },
+    "btc_dominance": {
+      "type": "number",
+      "description": "BTC dominance percentage."
+    },
+    "flow_trend": {
+      "type": "string",
+      "enum": ["ACCELERATING_INFLOW", "ACCELERATING_OUTFLOW", "STABLE", "INSUFFICIENT_DATA"],
+      "description": "Rolling trend direction."
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Regime signal confidence (0-1)."
+    },
+    "score_stddev": {
+      "type": ["number", "null"],
+      "description": "Score standard deviation over rolling window. Null if insufficient data."
+    },
+    "divergences": {
+      "type": "array",
+      "description": "Active divergence signals detected this tick.",
+      "items": {
+        "type": "object",
+        "required": ["kind", "severity", "description"],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": ["FUNDING_FLIP", "DOM_SPIKE", "VOL_COMPRESSION", "SCORE_INVERSION"]
+          },
+          "severity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "alerts": {
+      "type": "array",
+      "description": "Watchdog alerts fired this tick.",
+      "items": {
+        "type": "object",
+        "required": ["level", "code", "message", "tick"],
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": ["INFO", "WARN", "CRITICAL"]
+          },
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "tick": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "portfolio": {
+      "type": ["object", "null"],
+      "description": "Multi-asset portfolio summary. Present when CS_ASSETS=multi.",
+      "properties": {
+        "composite_score": { "type": "number" },
+        "regime_consensus_pct": { "type": "number" },
+        "dispersion": { "type": "number" },
+        "assets": {
+          "type": "object",
+          "description": "Per-asset regime state keyed by asset symbol."
+        }
+      }
+    },
+    "forecast": {
+      "type": ["object", "null"],
+      "description": "Markov regime forecast. Present after 20 observed spells.",
+      "properties": {
+        "next_regime_probabilities": {
+          "type": "object",
+          "description": "Probability of transitioning to each regime."
+        },
+        "expected_duration_remaining": {
+          "type": ["number", "null"]
+        },
+        "spells_observed": {
+          "type": "integer"
+        }
+      }
+    },
+    "memory_summary": {
+      "type": ["object", "null"],
+      "description": "Regime memory statistics snapshot."
+    }
+  }
+}

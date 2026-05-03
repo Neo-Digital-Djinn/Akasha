@@ -1,0 +1,2703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capital Suite v5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg:          #080b0f;
+    --bg2:         #0e1318;
+    --bg3:         #141b22;
+    --bg4:         #1a2330;
+    --border:      #1c2733;
+    --border2:     #243040;
+    --text:        #c2d0de;
+    --text2:       #627585;
+    --text3:       #354d60;
+    --accent:      #00e5a0;
+    --accent2:     #0094ff;
+    --accent3:     #9d6ef7;
+    --red:         #ff4444;
+    --amber:       #f5a623;
+    --green:       #00c97a;
+    --cyan:        #00d4e8;
+    --expansion:   #00e5a0;
+    --contraction: #ff4444;
+    --rotation:    #0094ff;
+    --transition:  #f5a623;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+
+    /* light theme vars (overridden) */
+    --shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+
+  [data-theme="light"] {
+    --bg:     #f0f4f8;
+    --bg2:    #ffffff;
+    --bg3:    #e8eef5;
+    --bg4:    #dde5ef;
+    --border: #c8d5e2;
+    --border2:#b0c2d5;
+    --text:   #1a2e40;
+    --text2:  #4a6680;
+    --text3:  #8aabcc;
+    --shadow: 0 2px 12px rgba(0,0,0,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* Scan-line + grid overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,160,0.012) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,160,0.012) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.3s;
+  }
+
+  [data-theme="light"] body::before { opacity: 0.3; }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.025) 2px,
+      rgba(0,0,0,0.025) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  [data-theme="light"] body::after { display: none; }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 18px 22px 52px;
+  }
+
+  /* ── HEADER ─────────────────────────────────────────────────── */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-left { display: flex; flex-direction: column; gap: 4px; }
+
+  .suite-label {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--text3);
+    text-transform: uppercase;
+  }
+
+  .suite-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.03em;
+    font-family: var(--sans);
+  }
+
+  .suite-title .v { color: var(--accent); }
+  .suite-title .n { color: var(--accent2); }
+
+  .suite-tagline {
+    font-size: 9px;
+    color: var(--text3);
+    letter-spacing: 0.12em;
+    margin-top: 2px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .live-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    text-transform: uppercase;
+    background: rgba(0,229,160,0.07);
+    border: 1px solid rgba(0,229,160,0.18);
+    padding: 4px 9px;
+    border-radius: 3px;
+  }
+
+  .live-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse-dot 1.6s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,229,160,0.6); }
+    50% { opacity: 0.5; box-shadow: 0 0 0 5px rgba(0,229,160,0); }
+  }
+
+  .tick-badge {
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.08em;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 4px 9px;
+    border-radius: 3px;
+  }
+
+  .theme-toggle {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--border2); color: var(--text); }
+
+  /* ── ALERT BAR ───────────────────────────────────────────────── */
+  .alert-bar {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,68,68,0.08);
+    border: 1px solid rgba(255,68,68,0.25);
+    border-radius: 4px;
+    padding: 7px 12px;
+    margin-bottom: 12px;
+    font-size: 10px;
+    color: var(--red);
+    letter-spacing: 0.06em;
+    animation: slide-in 0.3s ease;
+  }
+
+  .alert-bar.show { display: flex; }
+  .alert-bar.warn { background: rgba(245,166,35,0.08); border-color: rgba(245,166,35,0.25); color: var(--amber); }
+  .alert-bar.info { background: rgba(0,148,255,0.08); border-color: rgba(0,148,255,0.2); color: var(--accent2); }
+
+  @keyframes slide-in {
+    from { opacity:0; transform: translateY(-4px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  .alert-icon { font-size: 13px; }
+  .alert-dismiss { margin-left: auto; cursor: pointer; opacity: 0.6; }
+  .alert-dismiss:hover { opacity: 1; }
+
+  /* ── METRICS ─────────────────────────────────────────────────── */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 7px;
+    margin-bottom: 10px;
+  }
+
+  .metric {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 11px 13px 9px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    cursor: default;
+  }
+
+  .metric::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .metric.flash::after { transform: scaleX(1); }
+  .metric.flash { border-color: rgba(0,229,160,0.3); box-shadow: 0 0 14px rgba(0,229,160,0.06); }
+
+  .metric-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .metric-value {
+    font-size: 20px;
+    font-weight: 500;
+    font-family: var(--sans);
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 4px;
+    transition: color 0.3s;
+  }
+
+  .metric-sub {
+    font-size: 9px;
+    color: var(--text2);
+    letter-spacing: 0.06em;
+  }
+
+  /* sparkline canvas per metric */
+  .metric-spark {
+    position: absolute;
+    bottom: 6px;
+    right: 8px;
+    opacity: 0.4;
+  }
+
+  /* confidence gauge */
+  .conf-gauge-wrap {
+    margin-top: 5px;
+  }
+
+  .conf-gauge-track {
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .conf-gauge-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.5s ease, background 0.3s;
+    border-radius: 1px;
+  }
+
+  .conf-gauge-fill.low { background: var(--red); }
+  .conf-gauge-fill.mid { background: var(--amber); }
+
+  /* ── MAIN LAYOUT ─────────────────────────────────────────────── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 220px;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 13px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .card-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--text3);
+    text-transform: uppercase;
+  }
+
+  /* ── CHART ───────────────────────────────────────────────────── */
+  .chart-wrap {
+    position: relative;
+    height: 130px;
+  }
+
+  .chart-legend {
+    display: flex;
+    gap: 14px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 9px;
+    color: var(--text2);
+  }
+
+  .legend-line {
+    width: 16px; height: 2px;
+    border-radius: 1px;
+  }
+
+  /* ── DIVERGENCE PANEL ────────────────────────────────────────── */
+  .div-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .div-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 7px 9px;
+    animation: div-in 0.3s ease;
+  }
+
+  @keyframes div-in {
+    from { opacity:0; transform: translateX(6px); }
+    to   { opacity:1; transform: translateX(0); }
+  }
+
+  .div-kind {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .div-bar-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 3px;
+  }
+
+  .div-bar-fill {
+    height: 100%;
+    background: var(--amber);
+    transition: width 0.4s ease;
+  }
+
+  .div-bar-fill.high { background: var(--red); }
+
+  .div-desc { font-size: 9px; color: var(--text3); }
+
+  .div-empty { font-size: 10px; color: var(--text3); text-align: center; padding: 16px 0; }
+
+  /* ── REGIME CARD ─────────────────────────────────────────────── */
+  .regime-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 13px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: border-color 0.4s, box-shadow 0.4s;
+  }
+
+  .regime-name {
+    font-size: 26px;
+    font-weight: 600;
+    font-family: var(--sans);
+    letter-spacing: -0.03em;
+    transition: color 0.3s;
+    line-height: 1;
+  }
+
+  .regime-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    font-weight: 500;
+    width: fit-content;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .regime-signals {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+  }
+
+  .sig-row { display: flex; justify-content: space-between; font-size: 10px; }
+  .sig-key { color: var(--text2); }
+  .sig-val { color: var(--text); font-weight: 500; }
+
+  /* ── BOTTOM GRID ─────────────────────────────────────────────── */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  /* ── BARS ────────────────────────────────────────────────────── */
+  .history-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 52px;
+  }
+
+  .h-bar {
+    flex: 1;
+    border-radius: 1px 1px 0 0;
+    min-height: 2px;
+    transition: height 0.3s ease, background 0.3s;
+  }
+
+  .flow-row { display: flex; align-items: center; gap: 7px; margin-top: 5px; }
+  .flow-label { color: var(--text2); width: 48px; font-size: 9px; letter-spacing: 0.06em; }
+
+  .flow-track {
+    flex: 1;
+    height: 4px;
+    background: var(--bg3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .flow-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .flow-num { font-size: 9px; color: var(--text2); width: 38px; text-align: right; }
+
+  /* ── CONTROLS ────────────────────────────────────────────────── */
+  .controls-card { gap: 7px; }
+
+  .ctrl-btn {
+    width: 100%;
+    padding: 7px 10px;
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    font-family: var(--mono);
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+
+  .ctrl-btn:hover { background: var(--bg4); color: #fff; border-color: var(--text3); }
+  .ctrl-btn.primary { color: var(--accent); border-color: rgba(0,229,160,0.25); }
+  .ctrl-btn.primary:hover { background: rgba(0,229,160,0.08); }
+  .ctrl-btn.ai-btn { color: var(--accent2); border-color: rgba(0,148,255,0.25); }
+  .ctrl-btn.ai-btn:hover { background: rgba(0,148,255,0.08); }
+  .ctrl-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .speed-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 9px;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+    padding: 4px 0;
+  }
+
+  input[type="range"] {
+    flex: 1;
+    accent-color: var(--accent);
+    height: 3px;
+    cursor: pointer;
+  }
+
+  /* ── LOG ─────────────────────────────────────────────────────── */
+  .log-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-height: 130px;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .log-list::-webkit-scrollbar { display: none; }
+
+  .log-entry {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 9px;
+    animation: log-in 0.25s ease;
+  }
+
+  @keyframes log-in {
+    from { opacity:0; transform: translateX(-6px); }
+    to   { opacity:1; transform: translateX(0); }
+  }
+
+  .log-entry:last-child { border-bottom: none; }
+  .log-tick { color: var(--text3); width: 44px; }
+  .log-from { color: var(--text2); }
+  .log-arrow { color: var(--text3); }
+  .log-to { font-weight: 500; }
+  .log-empty { color: var(--text3); font-size: 9px; }
+
+  /* ── ALERT LOG ───────────────────────────────────────────────── */
+  .alert-log-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-height: 130px;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .alert-log-list::-webkit-scrollbar { display: none; }
+
+  .alert-log-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 9px;
+    animation: log-in 0.25s ease;
+  }
+
+  .alert-log-entry:last-child { border-bottom: none; }
+
+  .alert-log-level {
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    padding: 1px 4px;
+    border-radius: 2px;
+    white-space: nowrap;
+    margin-top: 1px;
+  }
+
+  .alert-log-level.CRITICAL { background: rgba(255,68,68,0.15); color: var(--red); }
+  .alert-log-level.WARN     { background: rgba(245,166,35,0.12); color: var(--amber); }
+  .alert-log-level.INFO     { background: rgba(0,148,255,0.1); color: var(--accent2); }
+
+  .alert-log-msg  { color: var(--text2); flex: 1; }
+  .alert-log-tick { color: var(--text3); white-space: nowrap; }
+
+  .alert-log-empty { color: var(--text3); font-size: 9px; }
+
+  /* ── AI SECTION ──────────────────────────────────────────────── */
+  .ai-section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+  }
+
+  .ai-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .ai-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--text3);
+    text-transform: uppercase;
+  }
+
+  .ai-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ai-model-tag {
+    font-size: 9px;
+    color: var(--accent2);
+    letter-spacing: 0.08em;
+    background: rgba(0,148,255,0.07);
+    border: 1px solid rgba(0,148,255,0.15);
+    padding: 2px 7px;
+    border-radius: 2px;
+  }
+
+  .ai-history-btn {
+    font-size: 9px;
+    color: var(--text3);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 2px;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .ai-history-btn:hover { color: var(--text); border-color: var(--border2); }
+
+  .ai-body {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 14px;
+  }
+
+  .ai-output {
+    font-size: 11px;
+    line-height: 1.65;
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 52px;
+  }
+
+  .ai-output.idle { color: var(--text3); font-family: var(--mono); font-size: 10px; }
+
+  .cursor {
+    display: inline-block;
+    width: 7px; height: 12px;
+    background: var(--accent2);
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .ai-status {
+    font-size: 9px;
+    color: var(--text3);
+    letter-spacing: 0.08em;
+    margin-top: 8px;
+  }
+
+  .ai-status.thinking { color: var(--accent2); }
+
+  .ai-spinner {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border: 1px solid var(--border2);
+    border-top-color: var(--accent2);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* AI history sidebar */
+  .ai-history {
+    border-left: 1px solid var(--border);
+    padding-left: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .ai-history-label {
+    font-size: 9px;
+    color: var(--text3);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .ai-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-height: 100px;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .ai-history-list::-webkit-scrollbar { display: none; }
+
+  .ai-hist-entry {
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .ai-hist-entry:hover { opacity: 0.7; }
+  .ai-hist-entry:last-child { border-bottom: none; }
+
+  .ai-hist-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2px;
+  }
+
+  .ai-hist-regime { font-size: 9px; color: var(--accent); letter-spacing: 0.08em; }
+  .ai-hist-tick   { font-size: 9px; color: var(--text3); }
+  .ai-hist-preview { font-size: 9px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--sans); }
+
+  /* ── HEATMAP ─────────────────────────────────────────────────── */
+  .heatmap-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    align-items: flex-end;
+  }
+
+  .hm-cell {
+    width: 10px;
+    height: 10px;
+    border-radius: 1px;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+
+  .hm-cell:hover { outline: 1px solid rgba(255,255,255,0.3); }
+
+  /* ── ROADMAP ─────────────────────────────────────────────────── */
+  .roadmap-section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+  }
+
+  .roadmap-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .roadmap-title {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--text3);
+    text-transform: uppercase;
+  }
+
+  .roadmap-subtitle { font-size: 9px; color: var(--text3); }
+
+  .roadmap-track {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-left: 20px;
+    border-left: 1px solid var(--border);
+  }
+
+  .roadmap-item {
+    display: flex;
+    gap: 14px;
+    padding: 0 0 16px 20px;
+    position: relative;
+  }
+
+  .roadmap-item:last-child { padding-bottom: 0; }
+
+  .roadmap-node {
+    position: absolute;
+    left: -5px;
+    top: 3px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    border: 2px solid var(--border2);
+    background: var(--bg);
+  }
+
+  .roadmap-item.done .roadmap-node { border-color: var(--accent); background: var(--accent); }
+  .roadmap-item.active .roadmap-node {
+    border-color: var(--accent2);
+    background: var(--bg);
+    box-shadow: 0 0 0 3px rgba(0,148,255,0.15);
+  }
+
+  .roadmap-meta { display: flex; align-items: center; gap: 8px; width: 80px; flex-shrink: 0; }
+  .roadmap-phase { font-size: 9px; color: var(--text3); letter-spacing: 0.1em; }
+
+  .roadmap-tag {
+    font-size: 8px;
+    padding: 1px 5px;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .tag-done   { background: rgba(0,229,160,0.1); color: var(--accent); border: 1px solid rgba(0,229,160,0.2); }
+  .tag-active { background: rgba(0,148,255,0.1); color: var(--accent2); border: 1px solid rgba(0,148,255,0.2); }
+  .tag-next   { background: rgba(53,77,96,0.4); color: var(--text3); border: 1px solid var(--border); }
+  .tag-future { background: transparent; color: var(--text3); border: 1px solid var(--border); }
+
+  .roadmap-content { flex: 1; }
+  .roadmap-name { font-size: 11px; color: var(--text); font-family: var(--sans); font-weight: 500; margin-bottom: 4px; }
+  .roadmap-desc { font-size: 9px; color: var(--text2); line-height: 1.6; margin-bottom: 5px; }
+
+  .roadmap-pills { display: flex; flex-wrap: wrap; gap: 3px; }
+
+  .pill {
+    font-size: 8px;
+    padding: 1px 5px;
+    border-radius: 2px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text3);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── FOOTER ──────────────────────────────────────────────────── */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 9px;
+    color: var(--text3);
+    letter-spacing: 0.08em;
+  }
+
+  .footer-left { display: flex; gap: 14px; align-items: center; }
+  .kbd {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 2px;
+    padding: 1px 4px;
+    font-size: 8px;
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .metrics { grid-template-columns: repeat(3, 1fr); }
+    .main-grid { grid-template-columns: 1fr 220px; }
+    .main-grid > .card:nth-child(2) { display: none; }
+    .bottom-grid { grid-template-columns: 1fr 1fr; }
+    .ai-body { grid-template-columns: 1fr; }
+    .ai-history { display: none; }
+  }
+
+  /* ── FLASH ───────────────────────────────────────────────────── */
+  @keyframes flash-regime {
+    0% { box-shadow: none; }
+    30% { box-shadow: 0 0 20px var(--flash-col, rgba(0,229,160,0.3)); }
+    100% { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="suite-label">observational liquidity instrument</div>
+      <div class="suite-title">Capital Suite <span class="v">v</span><span class="n">5</span></div>
+      <div class="suite-tagline">cmi · multi-asset · forecast · regime memory · ai</div>
+    </div>
+    <div class="header-right">
+      <div class="tick-badge" id="tick-display">tick: 0</div>
+      <div class="live-badge"><span class="live-dot"></span>live sim</div>
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">◑</button>
+    </div>
+  </div>
+
+  <!-- ALERT BAR -->
+  <div class="alert-bar" id="alert-bar">
+    <span class="alert-icon" id="alert-icon">✖</span>
+    <span id="alert-text">—</span>
+    <span class="alert-dismiss" onclick="dismissAlert()">✕</span>
+  </div>
+
+  <!-- METRICS (6) -->
+  <div class="metrics">
+    <div class="metric" id="m-cmi">
+      <div class="metric-label">CMI signal</div>
+      <div class="metric-value" id="cmi-val">—</div>
+      <div class="metric-sub" id="cmi-desc">awaiting data</div>
+      <canvas class="metric-spark" id="spark-cmi" width="50" height="22"></canvas>
+    </div>
+    <div class="metric" id="m-score">
+      <div class="metric-label">Flow score</div>
+      <div class="metric-value" id="score-val">—</div>
+      <div class="metric-sub" id="score-desc">composite</div>
+      <canvas class="metric-spark" id="spark-score" width="50" height="22"></canvas>
+    </div>
+    <div class="metric" id="m-vol">
+      <div class="metric-label">Volatility</div>
+      <div class="metric-value" id="vol-val">—</div>
+      <div class="metric-sub" id="vol-desc">awaiting data</div>
+      <canvas class="metric-spark" id="spark-vol" width="50" height="22"></canvas>
+    </div>
+    <div class="metric" id="m-dom">
+      <div class="metric-label">BTC dominance</div>
+      <div class="metric-value" id="dom-val">—</div>
+      <div class="metric-sub" id="dom-desc">awaiting data</div>
+      <canvas class="metric-spark" id="spark-dom" width="50" height="22"></canvas>
+    </div>
+    <div class="metric" id="m-trend">
+      <div class="metric-label">Flow trend</div>
+      <div class="metric-value" style="font-size:11px;padding-top:5px;" id="trend-val">—</div>
+      <div class="metric-sub" id="trend-desc">rolling window</div>
+    </div>
+    <div class="metric" id="m-conf">
+      <div class="metric-label">Confidence</div>
+      <div class="metric-value" id="conf-val">—</div>
+      <div class="conf-gauge-wrap">
+        <div class="conf-gauge-track">
+          <div class="conf-gauge-fill" id="conf-gauge" style="width:0%;"></div>
+        </div>
+      </div>
+      <div class="metric-sub" id="conf-desc">window agreement</div>
+    </div>
+  </div>
+
+  <!-- MAIN GRID: chart / divergences / regime -->
+  <div class="main-grid">
+    <div class="card">
+      <div class="card-label">Flow score history  ·  window = 24</div>
+      <div class="chart-wrap">
+        <canvas id="flowChart" aria-label="Capital flow score over time"></canvas>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-line" style="background:#00c97a;"></div>inflow</div>
+        <div class="legend-item"><div class="legend-line" style="background:#ff4444;"></div>outflow</div>
+        <div class="legend-item"><div class="legend-line" style="background:#0094ff;"></div>score</div>
+        <div class="legend-item"><div class="legend-line" style="background:#9d6ef7;"></div>funding</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Divergence signals  ·  <span id="div-count" style="color:var(--amber);">0 active</span></div>
+      <div class="div-panel" id="div-panel">
+        <div class="div-empty">no divergences detected</div>
+      </div>
+    </div>
+
+    <div class="regime-card" id="regime-card">
+      <div class="card-label">Current regime</div>
+      <div class="regime-name" id="regime-name">—</div>
+      <div class="regime-badge" id="regime-badge">INIT</div>
+      <div class="regime-signals" style="margin-top:4px;">
+        <div class="sig-row"><span class="sig-key">flow</span><span class="sig-val" id="r-flow">—</span></div>
+        <div class="sig-row"><span class="sig-key">vol</span><span class="sig-val" id="r-vol">—</span></div>
+        <div class="sig-row"><span class="sig-key">dom</span><span class="sig-val" id="r-dom">—</span></div>
+        <div class="sig-row"><span class="sig-key">funding</span><span class="sig-val" id="r-fund">—</span></div>
+        <div class="sig-row"><span class="sig-key">transitions</span><span class="sig-val" id="r-count">0</span></div>
+        <div class="sig-row"><span class="sig-key">stddev</span><span class="sig-val" id="r-stddev">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM ROW: bars / regime heatmap / controls / transition log / alert log -->
+  <div class="bottom-grid">
+
+    <div class="card">
+      <div class="card-label">Rolling bars + flow decomp</div>
+      <div class="history-bars" id="history-bars"></div>
+      <div>
+        <div class="flow-row">
+          <span class="flow-label">inflow</span>
+          <div class="flow-track"><div class="flow-fill" id="f-in"  style="background:var(--green);width:50%;"></div></div>
+          <span class="flow-num" id="fv-in">—</span>
+        </div>
+        <div class="flow-row">
+          <span class="flow-label">outflow</span>
+          <div class="flow-track"><div class="flow-fill" id="f-out" style="background:var(--red);width:50%;"></div></div>
+          <span class="flow-num" id="fv-out">—</span>
+        </div>
+        <div class="flow-row">
+          <span class="flow-label">funding</span>
+          <div class="flow-track"><div class="flow-fill" id="f-fund" style="background:var(--accent2);width:50%;"></div></div>
+          <span class="flow-num" id="fv-fund">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Regime heatmap  ·  last 80 ticks</div>
+      <div class="heatmap-row" id="heatmap-row" style="min-height:44px;"></div>
+      <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;">
+        <div class="legend-item"><div class="legend-line" style="background:var(--expansion);width:10px;height:10px;border-radius:1px;"></div><span style="font-size:8px;color:var(--text3);">exp</span></div>
+        <div class="legend-item"><div class="legend-line" style="background:var(--contraction);width:10px;height:10px;border-radius:1px;"></div><span style="font-size:8px;color:var(--text3);">con</span></div>
+        <div class="legend-item"><div class="legend-line" style="background:var(--rotation);width:10px;height:10px;border-radius:1px;"></div><span style="font-size:8px;color:var(--text3);">rot</span></div>
+        <div class="legend-item"><div class="legend-line" style="background:var(--transition);width:10px;height:10px;border-radius:1px;"></div><span style="font-size:8px;color:var(--text3);">tra</span></div>
+      </div>
+    </div>
+
+    <div class="card controls-card">
+      <div class="card-label">Controls  <span style="color:var(--text3);font-size:8px;letter-spacing:0.06em;">[ space ] pause · [ r ] reset · [ a ] ai · [ b ] backtest · [ e ] export</span></div>
+      <button class="ctrl-btn primary" id="pause-btn" onclick="togglePause()">⏸ pause</button>
+      <button class="ctrl-btn" onclick="resetSim()">↺ reset sim</button>
+      <button class="ctrl-btn ai-btn" onclick="triggerAI()" id="ai-btn">◈ ask claude — analyze regime</button>
+      <button class="ctrl-btn" onclick="runBacktest()" id="bt-btn" style="background:rgba(157,110,247,0.15);border-color:rgba(157,110,247,0.4);color:#9d6ef7;">⚡ run backtest (<span id="bt-tick-label">100</span> ticks)</button>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
+        <span style="font-family:var(--mono);font-size:9px;color:var(--text3);">bt ticks</span>
+        <select id="bt-tick-select" onchange="document.getElementById('bt-tick-label').textContent=this.value" style="background:var(--bg2);border:1px solid var(--border);color:var(--text2);font-family:var(--mono);font-size:9px;padding:2px 4px;border-radius:3px;">
+          <option value="100" selected>100</option>
+          <option value="250">250</option>
+          <option value="500">500</option>
+        </select>
+      </div>
+      <button class="ctrl-btn" onclick="exportJSON()" style="background:rgba(0,148,255,0.1);border-color:rgba(0,148,255,0.3);color:#0094ff;">↓ export session JSON</button>
+      <div class="speed-row">
+        <span style="width:46px;">speed</span>
+        <input type="range" min="1" max="5" value="2" id="speed-slider" oninput="updateSpeed(this.value)">
+        <span id="speed-label" style="width:20px;color:var(--accent);">2×</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;gap:0;flex-direction:column;height:100%;">
+        <div class="card-label" style="margin-bottom:6px;">Transition log</div>
+        <div class="log-list" id="log-list">
+          <div class="log-empty">no transitions yet</div>
+        </div>
+        <div class="card-label" style="margin-top:10px;margin-bottom:6px;">Watchdog alerts</div>
+        <div class="alert-log-list" id="alert-log-list">
+          <div class="alert-log-empty">no alerts</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- AI SECTION -->
+  <div class="ai-section">
+    <div class="ai-header">
+      <div class="ai-label">◈ Claude — regime analysis</div>
+      <div class="ai-controls">
+        <span class="ai-history-btn" onclick="clearAiHistory()">clear history</span>
+        <div class="ai-model-tag">claude-sonnet-4-6</div>
+      </div>
+    </div>
+    <div class="ai-body">
+      <div>
+        <div class="ai-output idle" id="ai-output">Click "ask claude — analyze regime" or press <span class="kbd">A</span> to get live AI interpretation of current market conditions.</div>
+        <div class="ai-status" id="ai-status">idle · auto-analysis every 30 ticks</div>
+      </div>
+      <div class="ai-history">
+        <div class="ai-history-label">Analysis history</div>
+        <div class="ai-history-list" id="ai-history-list">
+          <div class="log-empty">no analyses yet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BACKTEST PANEL -->
+  <div class="ai-section" id="backtest-panel" style="display:none;">
+    <div class="ai-header">
+      <div class="ai-label">⚡ Backtest Results  <span style="color:var(--text3);font-size:9px;letter-spacing:0.06em;" id="bt-meta"></span></div>
+      <div class="ai-controls">
+        <span class="ai-history-btn" onclick="document.getElementById('backtest-panel').style.display='none'">dismiss</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;padding:12px 0;">
+      <div id="bt-regime-dist" style="font-family:var(--mono);font-size:11px;line-height:1.9;"></div>
+      <div id="bt-score-stats" style="font-family:var(--mono);font-size:11px;line-height:1.9;"></div>
+      <div id="bt-alert-stats" style="font-family:var(--mono);font-size:11px;line-height:1.9;"></div>
+      <div id="bt-spell-stats" style="font-family:var(--mono);font-size:11px;line-height:1.9;"></div>
+    </div>
+    <div style="padding:6px 0 2px;">
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.1em;margin-bottom:4px;">SCORE TRAJECTORY</div>
+      <canvas id="bt-score-chart" height="48" style="width:100%;display:block;"></canvas>
+    </div>
+  </div>
+
+  <!-- CORRELATION MATRIX -->
+  <div class="ai-section" id="corr-panel">
+    <div class="ai-header">
+      <div class="ai-label">⊞ Metric Correlation Matrix  <span style="color:var(--text3);font-size:9px;" id="corr-meta">updates every 10 ticks · min 10 samples</span></div>
+    </div>
+    <div style="padding:10px 0 4px;">
+      <canvas id="corrCanvas" width="340" height="120" style="max-width:100%;display:block;width:100%;"></canvas>
+      <div id="corr-legend" style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap;font-family:var(--mono);font-size:9px;color:var(--text2);"></div>
+    </div>
+  </div>
+
+
+  <!-- MULTI-ASSET PANEL (v5) -->
+  <div class="ai-section" id="multi-panel" style="display:none;">
+    <div class="ai-header">
+      <div class="ai-label">◈ Multi-Asset Portfolio  <span style="color:var(--text3);font-size:9px;">BTC · ETH · SOL · BNB  ·  loading-weighted composite</span></div>
+      <div class="ai-controls">
+        <div id="multi-status" style="font-size:9px;color:var(--text2);">off — press M to enable</div>
+      </div>
+    </div>
+    <div id="multi-body" style="padding:10px 0 4px;">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;" id="asset-cards">
+        <!-- injected by JS -->
+      </div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;font-size:10px;">
+        <div>
+          <div style="color:var(--text3);font-size:9px;letter-spacing:.1em;margin-bottom:4px;">COMPOSITE SCORE</div>
+          <div id="composite-score" style="font-size:18px;font-weight:600;color:var(--accent);">—</div>
+        </div>
+        <div>
+          <div style="color:var(--text3);font-size:9px;letter-spacing:.1em;margin-bottom:4px;">COMPOSITE REGIME</div>
+          <div id="composite-regime" style="font-size:14px;font-weight:600;">—</div>
+        </div>
+        <div>
+          <div style="color:var(--text3);font-size:9px;letter-spacing:.1em;margin-bottom:4px;">CONSENSUS</div>
+          <div id="composite-consensus" style="font-size:14px;">—</div>
+        </div>
+        <div>
+          <div style="color:var(--text3);font-size:9px;letter-spacing:.1em;margin-bottom:4px;">DISPERSION</div>
+          <div id="composite-dispersion" style="font-size:14px;">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORECAST PANEL (v5) -->
+  <div class="ai-section" id="forecast-panel">
+    <div class="ai-header">
+      <div class="ai-label">◈ Regime Forecast  <span style="color:var(--text3);font-size:9px;">online Markov transition matrix · updates every spell</span></div>
+      <div class="ai-controls">
+        <div id="forecast-reliability" style="font-size:9px;color:var(--text2);">warming up · need 20 spells</div>
+      </div>
+    </div>
+    <div style="padding:10px 0 4px;">
+      <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:12px;">
+        <div>
+          <div style="color:var(--text3);font-size:9px;letter-spacing:.1em;margin-bottom:4px;">MOST LIKELY NEXT</div>
+          <div id="fc-next-regime" style="font-size:16px;font-weight:600;">—</div>
+        </div>
+        <div>
+          <div style="color:var(--text3);font-size:9px;letter-spacing:.1em;margin-bottom:4px;">PROBABILITY</div>
+          <div id="fc-next-prob" style="font-size:16px;font-weight:500;color:var(--accent);">—</div>
+        </div>
+        <div>
+          <div style="color:var(--text3);font-size:9px;letter-spacing:.1em;margin-bottom:4px;">SPELL REMAINING</div>
+          <div id="fc-remaining" style="font-size:16px;color:var(--text2);">—</div>
+        </div>
+        <div>
+          <div style="color:var(--text3);font-size:9px;letter-spacing:.1em;margin-bottom:4px;">SPELLS OBSERVED</div>
+          <div id="fc-spells" style="font-size:16px;color:var(--text2);">—</div>
+        </div>
+      </div>
+      <div id="fc-bars" style="display:flex;flex-direction:column;gap:6px;">
+        <!-- injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- REGIME MEMORY PANEL (v5) -->
+  <div class="ai-section" id="memory-panel">
+    <div class="ai-header">
+      <div class="ai-label">◈ Regime Memory  <span style="color:var(--text3);font-size:9px;">spell journal · duration stats · mean-reversion timing</span></div>
+    </div>
+    <div style="padding:10px 0 4px;">
+      <div id="memory-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;">
+        <!-- injected by JS -->
+      </div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:10px;">
+        <div>
+          <div style="color:var(--text3);font-size:9px;letter-spacing:.1em;margin-bottom:4px;">CONTRACTION→EXPANSION LAG</div>
+          <div id="mem-c2e" style="font-size:14px;color:var(--text);">—</div>
+        </div>
+        <div>
+          <div style="color:var(--text3);font-size:9px;letter-spacing:.1em;margin-bottom:4px;">HIGH-DIV SPELL LEN</div>
+          <div id="mem-hdiv" style="font-size:14px;color:var(--amber);">—</div>
+        </div>
+        <div>
+          <div style="color:var(--text3);font-size:9px;letter-spacing:.1em;margin-bottom:4px;">LOW-DIV SPELL LEN</div>
+          <div id="mem-ldiv" style="font-size:14px;color:var(--accent);">—</div>
+        </div>
+        <div>
+          <div style="color:var(--text3);font-size:9px;letter-spacing:.1em;margin-bottom:4px;">TOTAL SPELLS</div>
+          <div id="mem-spells" style="font-size:14px;color:var(--text2);">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROADMAP -->
+  <div class="roadmap-section">
+    <div class="roadmap-header">
+      <div class="roadmap-title">Roadmap</div>
+      <div class="roadmap-subtitle">capital suite development arc</div>
+    </div>
+    <div class="roadmap-track">
+
+      <div class="roadmap-item done">
+        <div class="roadmap-node"></div>
+        <div class="roadmap-meta">
+          <div class="roadmap-phase">Phase 1</div>
+          <span class="roadmap-tag tag-done">done</span>
+        </div>
+        <div class="roadmap-content">
+          <div class="roadmap-name">Core Architecture</div>
+          <div class="roadmap-desc">CapitalFlowIndicator with rolling deque window, CapitalCompass regime classifier, MarketData adapter layer. Multi-environment CLI (Debian + Termux).</div>
+          <div class="roadmap-pills">
+            <span class="pill">flow.py</span><span class="pill">compass.py</span><span class="pill">api_client.py</span><span class="pill">deque window</span><span class="pill">4 regimes</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item done">
+        <div class="roadmap-node"></div>
+        <div class="roadmap-meta">
+          <div class="roadmap-phase">Phase 2</div>
+          <span class="roadmap-tag tag-done">done</span>
+        </div>
+        <div class="roadmap-content">
+          <div class="roadmap-name">Live Dashboard + AI Analysis</div>
+          <div class="roadmap-desc">Real-time Chart.js visualization, regime transition log, flow bar gauges, variable speed control, Claude API integration for live regime commentary.</div>
+          <div class="roadmap-pills">
+            <span class="pill">chart.js</span><span class="pill">claude api</span><span class="pill">typewriter</span><span class="pill">transition log</span><span class="pill">auto-analysis</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item done">
+        <div class="roadmap-node"></div>
+        <div class="roadmap-meta">
+          <div class="roadmap-phase">Phase 2.5</div>
+          <span class="roadmap-tag tag-done">done</span>
+        </div>
+        <div class="roadmap-content">
+          <div class="roadmap-name">v3 Dashboard + Intelligence Layer</div>
+          <div class="roadmap-desc">DivergenceDetector (funding flip, dom spike, vol compression, score inversion), RegimeWatchdog (confidence alerts, transition streak, contraction/expansion events), per-metric sparklines, regime heatmap, watchdog alert log, AI analysis history, confidence gauge, config.py centralized thresholds, JSON export mode.</div>
+          <div class="roadmap-pills">
+            <span class="pill">signals.py</span><span class="pill">watchdog.py</span><span class="pill">config.py</span><span class="pill">sparklines</span><span class="pill">heatmap</span><span class="pill">ai history</span><span class="pill">theme toggle</span><span class="pill">json export</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item active">
+        <div class="roadmap-node"></div>
+        <div class="roadmap-meta">
+          <div class="roadmap-phase">Phase 3</div>
+          <span class="roadmap-tag tag-active">next</span>
+        </div>
+        <div class="roadmap-content">
+          <div class="roadmap-name">Real Data Adapter</div>
+          <div class="roadmap-desc">Replace random stubs with live API calls — Binance perpetual funding rates, stablecoin flow via Glassnode/CryptoQuant, real BTC dominance feed. Rate-limit aware with caching layer.</div>
+          <div class="roadmap-pills">
+            <span class="pill">binance ws</span><span class="pill">glassnode api</span><span class="pill">coingecko</span><span class="pill">cache layer</span><span class="pill">rate limiter</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item done">
+        <div class="roadmap-node"></div>
+        <div class="roadmap-meta">
+          <div class="roadmap-phase">Phase 4</div>
+          <span class="roadmap-tag tag-done">done</span>
+        </div>
+        <div class="roadmap-content">
+          <div class="roadmap-name">Backtest Engine + OU Simulation</div>
+          <div class="roadmap-desc">BacktestEngine runs N-tick pipeline sweeps with regime distribution, spell analysis, divergence breakdown, and JSON export. MarketData upgraded from pure random to mean-reverting Ornstein-Uhlenbeck process for realistic regime cycling. In-dashboard backtest runner with live results panel. Correlation matrix. Session JSON export.</div>
+          <div class="roadmap-pills">
+            <span class="pill">backtest.py</span><span class="pill">OU process</span><span class="pill">spell analysis</span><span class="pill">corr matrix</span><span class="pill">json export</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item future">
+        <div class="roadmap-node"></div>
+        <div class="roadmap-meta">
+          <div class="roadmap-phase">Phase 5</div>
+          <span class="roadmap-tag tag-future">future</span>
+        </div>
+        <div class="roadmap-content">
+          <div class="roadmap-name">Multi-Asset + Alert Layer</div>
+          <div class="roadmap-desc">Track multiple asset pairs simultaneously. Push alerts (Telegram/webhook) when regime changes or watchdog fires critical events. Per-asset regime comparison view.</div>
+          <div class="roadmap-pills">
+            <span class="pill">multi-asset</span><span class="pill">telegram bot</span><span class="pill">webhooks</span><span class="pill">alert routing</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roadmap-item future">
+        <div class="roadmap-node"></div>
+        <div class="roadmap-meta">
+          <div class="roadmap-phase">Phase 6</div>
+          <span class="roadmap-tag tag-future">future</span>
+        </div>
+        <div class="roadmap-content">
+          <div class="roadmap-name">Intelligent Regime Model (ML)</div>
+          <div class="roadmap-desc">Replace threshold-based classifier with trained model. Feature engineering from flow history, funding curves, and dominance dynamics. Probabilistic regime outputs.</div>
+          <div class="roadmap-pills">
+            <span class="pill">sklearn / torch</span><span class="pill">feature eng</span><span class="pill">probabilistic</span><span class="pill">online learning</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left">
+      <span>capital suite v5 · not financial advice · OU sim mode</span>
+      <span><span class="kbd">space</span> pause &nbsp;<span class="kbd">r</span> reset &nbsp;<span class="kbd">a</span> ai &nbsp;<span class="kbd">b</span> backtest &nbsp;<span class="kbd">e</span> export &nbsp;<span class="kbd">m</span> multi-asset &nbsp;<span class="kbd">t</span> theme</span>
+    </div>
+    <div>phase 5 complete · phase 3 next (live data)</div>
+  </div>
+
+</div>
+
+<script>
+// ── CONSTANTS ────────────────────────────────────────────────────────────────
+const WINDOW  = 24;
+const SIGNAL_THRESHOLD = 0.2;
+const TREND_THRESHOLD  = 0.3;
+const VERSION = 'v5';
+
+// ── OU SIMULATION STATE ───────────────────────────────────────────────────────
+// Ornstein-Uhlenbeck mean-reverting process — mirrors backtest.py _MarketState
+const OU = {
+  risk: 0, domAxis: 0, volLevel: 0.5, funding: 0,
+  tRisk: 0.12, tDom: 0.08, tVol: 0.10, tFunding: 0.15,
+  sRisk: 0.30, sDom: 0.20, sVol: 0.18, sFunding: 0.25,
+  gauss() {
+    // Box-Muller transform
+    const u = 1 - Math.random(), v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  },
+  ou(x, theta, sigma, mean = 0) {
+    return x + theta * (mean - x) + sigma * this.gauss();
+  },
+  advance() {
+    this.risk     = Math.max(-1, Math.min(1, this.ou(this.risk,     this.tRisk,    this.sRisk)));
+    this.domAxis  = Math.max(-1, Math.min(1, this.ou(this.domAxis,  this.tDom,     this.sDom)));
+    this.volLevel = Math.max( 0, Math.min(1, this.ou(this.volLevel, this.tVol,     this.sVol, 0.5 + 0.3 * Math.abs(this.risk))));
+    this.funding  = Math.max(-1, Math.min(1, this.ou(this.funding,  this.tFunding, this.sFunding, 0.4 * this.risk)));
+  },
+  getInflow()    { return Math.max(-1, Math.min(1, 0.5 * this.risk + 0.5 + 0.20 * this.gauss())); },
+  getOutflow()   { return Math.max(-1, Math.min(1, -0.4 * this.risk + 0.5 + 0.20 * this.gauss())); },
+  getFunding()   { return Math.max(-1, Math.min(1, this.funding + 0.08 * this.gauss())); },
+  getVol()       { return Math.max( 0, Math.min(1, this.volLevel + 0.05 * this.gauss())); },
+  getDom()       { return Math.max(30, Math.min(70, 50 + 10 * this.domAxis + this.gauss())); },
+};
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let tickCount = 0, regimeCount = 0;
+let paused = false, aiLocked = false;
+let currentRegime = null;
+let intervalId = null, speed = 2;
+let lastAutoAI = 0;
+
+let history   = [], inflowH  = [], outflowH = [];
+let scoreH    = [], fundingH = [], volH     = [], domH = [];
+let signalH   = [];
+
+let transitionLog = [];
+let alertLog      = [];
+let aiAnalyses    = [];
+
+let prevDom = null, prevScore = null;
+
+const REGIME_COLORS = {
+  EXPANSION:   { text: '#00e5a0', bg: 'rgba(0,229,160,0.12)',   border: 'rgba(0,229,160,0.35)',  hm: '#00e5a0' },
+  CONTRACTION: { text: '#ff4444', bg: 'rgba(255,68,68,0.12)',   border: 'rgba(255,68,68,0.35)',  hm: '#ff4444' },
+  ROTATION:    { text: '#0094ff', bg: 'rgba(0,148,255,0.12)',   border: 'rgba(0,148,255,0.35)',  hm: '#0094ff' },
+  TRANSITION:  { text: '#f5a623', bg: 'rgba(245,166,35,0.1)',   border: 'rgba(245,166,35,0.3)',  hm: '#f5a623' },
+};
+
+// ── SPARKLINE STATE ───────────────────────────────────────────────────────────
+const sparkData = { cmi: [], score: [], vol: [], dom: [] };
+
+// ── CHART ─────────────────────────────────────────────────────────────────────
+const ctx = document.getElementById('flowChart').getContext('2d');
+const chart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: Array(WINDOW).fill(''),
+    datasets: [
+      { label: 'inflow',  data: Array(WINDOW).fill(null), borderColor: '#00c97a', borderWidth: 1.5, pointRadius: 0, tension: 0.4, fill: false },
+      { label: 'outflow', data: Array(WINDOW).fill(null), borderColor: '#ff4444', borderWidth: 1.5, pointRadius: 0, tension: 0.4, fill: false },
+      { label: 'score',   data: Array(WINDOW).fill(null), borderColor: '#0094ff', borderWidth: 2,   pointRadius: 0, tension: 0.4, fill: false, borderDash: [] },
+      { label: 'funding', data: Array(WINDOW).fill(null), borderColor: '#9d6ef7', borderWidth: 1,   pointRadius: 0, tension: 0.4, fill: false },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    animation: false,
+    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+    scales: {
+      x: { display: false },
+      y: {
+        min: -1.4, max: 1.4,
+        ticks: { font: { size: 9, family: "'IBM Plex Mono'" }, color: '#354d60', maxTicksLimit: 5 },
+        grid: { color: 'rgba(28,39,51,0.8)' },
+        border: { display: false }
+      }
+    }
+  }
+});
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function rand(lo, hi) { return lo + Math.random() * (hi - lo); }
+function pad(arr)     { return arr.concat(Array(WINDOW - arr.length).fill(null)); }
+function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+function colorEl(id, c)   { const el = document.getElementById(id); if (el) el.style.color = c; }
+function push(arr, v)     { arr.push(v); if (arr.length > WINDOW) arr.shift(); }
+
+function computeSignal(score) {
+  if (score > SIGNAL_THRESHOLD) return 1;
+  if (score < -SIGNAL_THRESHOLD) return -1;
+  return 0;
+}
+
+function getTrend(arr) {
+  if (arr.length < 3) return 'INSUFFICIENT_DATA';
+  const delta = arr[arr.length - 1] - arr[0];
+  if (delta > TREND_THRESHOLD)  return 'ACCELERATING_INFLOW';
+  if (delta < -TREND_THRESHOLD) return 'ACCELERATING_OUTFLOW';
+  return 'STABLE';
+}
+
+function classifyRegime(signal, vol, dom, trend) {
+  if (signal === 1  && vol > 0.6)  return 'EXPANSION';
+  if (signal === 0  && dom > 50.0) return 'ROTATION';
+  if (signal === -1)               return 'CONTRACTION';
+  return 'TRANSITION';
+}
+
+function confidence() {
+  if (signalH.length < 3) return 0;
+  const latest = signalH[signalH.length - 1];
+  return signalH.filter(s => s === latest).length / signalH.length;
+}
+
+function scoreStddev() {
+  if (scoreH.length < 2) return null;
+  const mean = scoreH.reduce((a, b) => a + b, 0) / scoreH.length;
+  const variance = scoreH.reduce((a, b) => a + (b - mean) ** 2, 0) / scoreH.length;
+  return Math.sqrt(variance);
+}
+
+// ── DIVERGENCE DETECTOR ───────────────────────────────────────────────────────
+function detectDivergences(score, inflow, outflow, funding, vol, dom) {
+  const found = [];
+  const netFlow = inflow - outflow;
+
+  if (Math.abs(funding - netFlow) > 0.5) {
+    const sev = Math.min(1, Math.abs(funding - netFlow) / 2);
+    found.push({ kind: 'FUNDING_FLIP', severity: sev,
+      desc: `funding=${funding.toFixed(2)} vs net_flow=${netFlow.toFixed(2)}` });
+  }
+
+  if (prevDom !== null) {
+    const delta = Math.abs(dom - prevDom);
+    if (delta >= 5) {
+      const sev = Math.min(1, delta / 15);
+      found.push({ kind: 'DOM_SPIKE', severity: sev,
+        desc: `dom Δ${delta > 0 ? '+' : ''}${(dom - prevDom).toFixed(1)}% (${prevDom.toFixed(1)}→${dom.toFixed(1)})` });
+    }
+  }
+
+  if (score > 0.2 && vol < 0.25) {
+    const sev = Math.min(1, (0.25 - vol) / 0.25);
+    found.push({ kind: 'VOL_COMPRESSION', severity: sev,
+      desc: `inflow score=${score.toFixed(3)} but vol=${vol.toFixed(3)}` });
+  }
+
+  if (prevScore !== null) {
+    if ((prevScore > 0.2 && score < -0.2) || (prevScore < -0.2 && score > 0.2)) {
+      const sev = Math.min(1, Math.abs(score - prevScore));
+      found.push({ kind: 'SCORE_INVERSION', severity: sev,
+        desc: `score flipped ${prevScore.toFixed(3)}→${score.toFixed(3)}` });
+    }
+  }
+
+  prevDom   = dom;
+  prevScore = score;
+  return found;
+}
+
+// ── WATCHDOG ──────────────────────────────────────────────────────────────────
+let prevWatchdogRegime = null, transitionStreak = 0;
+
+function runWatchdog(regime, conf, stddev) {
+  const newAlerts = [];
+
+  if (regime === 'TRANSITION') transitionStreak++;
+  else transitionStreak = 0;
+
+  if (transitionStreak >= 3) {
+    newAlerts.push({ level: 'WARN', code: 'PROLONGED_TRANSITION',
+      msg: `${transitionStreak} consecutive TRANSITION ticks` });
+  }
+  if (conf < 0.35) {
+    newAlerts.push({ level: 'INFO', code: 'LOW_CONVICTION',
+      msg: `confidence=${(conf * 100).toFixed(0)}% — signal unreliable` });
+  }
+  if (stddev !== null && stddev > 0.4) {
+    newAlerts.push({ level: 'WARN', code: 'HIGH_SIGNAL_NOISE',
+      msg: `score stddev=${stddev.toFixed(3)} — erratic flow` });
+  }
+  if (regime !== prevWatchdogRegime) {
+    if (regime === 'CONTRACTION') newAlerts.push({ level: 'CRITICAL', code: 'CONTRACTION_ENTRY', msg: `capital outflow regime began (was ${prevWatchdogRegime})` });
+    else if (regime === 'EXPANSION') newAlerts.push({ level: 'INFO', code: 'EXPANSION_ENTRY', msg: `capital inflow regime detected (was ${prevWatchdogRegime})` });
+    else if (regime === 'ROTATION') newAlerts.push({ level: 'INFO', code: 'ROTATION_ENTRY', msg: `alt→BTC rotation regime (was ${prevWatchdogRegime})` });
+  }
+
+  prevWatchdogRegime = regime;
+  return newAlerts;
+}
+
+// ── TICK ──────────────────────────────────────────────────────────────────────
+function tick() {
+  if (paused) return;
+  tickCount++;
+
+  OU.advance();
+  const inflow  = OU.getInflow();
+  const outflow = OU.getOutflow();
+  const funding = OU.getFunding();
+  const vol     = OU.getVol();
+  const dom     = OU.getDom();
+  const score   = (inflow - outflow) * 0.5 + funding * 0.5;
+  const signal  = computeSignal(score);
+
+  push(history, score);
+  push(inflowH, inflow);  push(outflowH, outflow);
+  push(scoreH, score);    push(fundingH, funding);
+  push(volH, vol);        push(domH, dom);
+  push(signalH, signal);
+
+  const trend   = getTrend(history);
+  const regime  = classifyRegime(signal, vol, dom, trend);
+  const conf    = confidence();
+  const stddev  = scoreStddev();
+
+  // divergences
+  const divs = detectDivergences(score, inflow, outflow, funding, vol, dom);
+  renderDivergences(divs);
+
+  // watchdog
+  const alerts = runWatchdog(regime, conf, stddev);
+  if (alerts.length) addAlerts(alerts);
+
+  // regime transition
+  if (regime !== currentRegime) {
+    if (currentRegime !== null) {
+      regimeCount++;
+      transitionLog.unshift({ tick: tickCount, from: currentRegime, to: regime });
+      if (transitionLog.length > 20) transitionLog.pop();
+      renderTransitionLog();
+    }
+    currentRegime = regime;
+    flashRegimeCard(regime);
+  }
+
+  // top bar alert for CRITICAL
+  const critical = alerts.find(a => a.level === 'CRITICAL');
+  if (critical) showTopAlert('error', `✖ ${critical.code}: ${critical.msg}`);
+  else {
+    const warn = alerts.find(a => a.level === 'WARN');
+    if (warn) showTopAlert('warn', `⚠ ${warn.code}: ${warn.msg}`);
+  }
+
+  const rc = REGIME_COLORS[regime];
+
+  // metrics
+  setText('cmi-val', signal > 0 ? '+1' : signal < 0 ? '-1' : '0');
+  setText('cmi-desc', signal > 0 ? 'bullish pressure' : signal < 0 ? 'bearish pressure' : 'neutral zone');
+  colorEl('cmi-val', signal > 0 ? '#00e5a0' : signal < 0 ? '#ff4444' : '#627585');
+
+  setText('score-val', score.toFixed(3));
+  setText('score-desc', score > 0 ? 'net positive' : score < 0 ? 'net negative' : 'flat');
+  colorEl('score-val', score > 0.2 ? '#00e5a0' : score < -0.2 ? '#ff4444' : '#627585');
+
+  setText('vol-val', vol.toFixed(2));
+  setText('vol-desc', vol > 0.66 ? 'elevated' : vol > 0.33 ? 'moderate' : 'compressed');
+
+  setText('dom-val', dom.toFixed(1) + '%');
+  setText('dom-desc', dom > 52 ? 'BTC leading' : dom > 48 ? 'parity zone' : 'alts gaining');
+
+  setText('trend-val', trend.replace(/_/g, ' ').toLowerCase());
+  setText('trend-desc', `w=${history.length} ticks`);
+
+  setText('conf-val', (conf * 100).toFixed(0) + '%');
+  setText('conf-desc', 'window agreement');
+  const gauge = document.getElementById('conf-gauge');
+  gauge.style.width = (conf * 100) + '%';
+  gauge.className = 'conf-gauge-fill' + (conf < 0.35 ? ' low' : conf < 0.6 ? ' mid' : '');
+
+  const rname = document.getElementById('regime-name');
+  rname.textContent = regime;
+  rname.style.color = rc.text;
+
+  const rbadge = document.getElementById('regime-badge');
+  rbadge.textContent = regime;
+  rbadge.style.background = rc.bg;
+  rbadge.style.color = rc.text;
+
+  setText('r-flow', signal > 0 ? '+1' : signal < 0 ? '-1' : '0');
+  colorEl('r-flow', signal > 0 ? '#00e5a0' : signal < 0 ? '#ff4444' : '#627585');
+  setText('r-vol',    vol.toFixed(3));
+  setText('r-dom',    dom.toFixed(2) + '%');
+  setText('r-fund',   funding.toFixed(3));
+  colorEl('r-fund', funding > 0.2 ? '#00e5a0' : funding < -0.2 ? '#ff4444' : '#627585');
+  setText('r-count',  regimeCount);
+  setText('r-stddev', stddev ? stddev.toFixed(4) : '—');
+  setText('tick-display', 'tick: ' + tickCount);
+
+  // chart
+  chart.data.datasets[0].data = pad(inflowH);
+  chart.data.datasets[1].data = pad(outflowH);
+  chart.data.datasets[2].data = pad(scoreH);
+  chart.data.datasets[3].data = pad(fundingH);
+  chart.update('none');
+
+  // bars + flow
+  renderBars(history);
+  updateFlowBar('f-in',   'fv-in',   inflow);
+  updateFlowBar('f-out',  'fv-out',  outflow);
+  updateFlowBar('f-fund', 'fv-fund', funding);
+
+  // sparklines
+  push(sparkData.cmi,   signal);
+  push(sparkData.score, score);
+  push(sparkData.vol,   vol);
+  push(sparkData.dom,   dom);
+  drawSparkline('spark-cmi',   sparkData.cmi,   -1, 1);
+  drawSparkline('spark-score', sparkData.score, -1, 1);
+  drawSparkline('spark-vol',   sparkData.vol,    0, 1);
+  drawSparkline('spark-dom',   sparkData.dom,   38, 62);
+
+  // heatmap
+  renderHeatmap(regime);
+
+  if (tickCount % 5 === 0) flashMetric('m-cmi');
+  if (tickCount % 7 === 0) flashMetric('m-score');
+  if (tickCount % 10 === 0) updateCorrMatrix();
+
+  // auto AI every 30 ticks
+  if (tickCount - lastAutoAI >= 30 && !aiLocked) {
+    lastAutoAI = tickCount;
+    triggerAI({ auto: true, regime, signal, vol, dom, trend, score, inflow, outflow, funding, conf, stddev });
+  }
+
+  // ── v5 HOOKS ────────────────────────────────────────────────────────────
+  if (multiEnabled) {
+    try { renderMultiAsset(computePortfolio()); } catch(e) {}
+  }
+  try {
+    const fc = FC.ingest(regime, tickCount);
+    if (fc) renderForecast(fc);
+  } catch(e) {}
+  try {
+    MEM.ingest(regime, tickCount, score, divs.length, alerts.length);
+    if (tickCount % 5 === 0) renderMemory();
+  } catch(e) {}
+}
+
+// ── SPARKLINES ────────────────────────────────────────────────────────────────
+function drawSparkline(canvasId, data, lo, hi) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas || data.length < 2) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  const range = hi - lo || 1;
+  const pts = data.slice(-20);
+
+  ctx.beginPath();
+  pts.forEach((v, i) => {
+    const x = (i / (pts.length - 1)) * w;
+    const y = h - ((v - lo) / range) * h;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+
+  ctx.strokeStyle = 'rgba(0,229,160,0.7)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+}
+
+// ── HEATMAP ───────────────────────────────────────────────────────────────────
+let heatmapHistory = [];
+
+function renderHeatmap(regime) {
+  heatmapHistory.push(regime);
+  if (heatmapHistory.length > 80) heatmapHistory.shift();
+
+  const container = document.getElementById('heatmap-row');
+  container.innerHTML = '';
+  heatmapHistory.forEach((r, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'hm-cell';
+    cell.style.background = REGIME_COLORS[r]?.hm || '#354d60';
+    cell.style.opacity = 0.3 + (i / heatmapHistory.length) * 0.7;
+    cell.title = `t:${tickCount - heatmapHistory.length + i + 1} ${r}`;
+    container.appendChild(cell);
+  });
+}
+
+// ── DIVERGENCE RENDER ─────────────────────────────────────────────────────────
+function renderDivergences(divs) {
+  const panel = document.getElementById('div-panel');
+  const countEl = document.getElementById('div-count');
+  countEl.textContent = divs.length + ' active';
+  countEl.style.color = divs.length > 0 ? 'var(--amber)' : 'var(--text3)';
+
+  if (!divs.length) {
+    panel.innerHTML = '<div class="div-empty">no divergences detected</div>';
+    return;
+  }
+
+  panel.innerHTML = divs.map(d => `
+    <div class="div-item">
+      <div class="div-kind">${d.kind.replace(/_/g, ' ')}</div>
+      <div class="div-bar-track">
+        <div class="div-bar-fill ${d.severity > 0.7 ? 'high' : ''}" style="width:${d.severity * 100}%"></div>
+      </div>
+      <div class="div-desc">${d.desc}</div>
+    </div>
+  `).join('');
+}
+
+// ── ALERT LOG ─────────────────────────────────────────────────────────────────
+function addAlerts(alerts) {
+  alerts.forEach(a => alertLog.unshift({ ...a, tick: tickCount }));
+  if (alertLog.length > 50) alertLog = alertLog.slice(0, 50);
+  renderAlertLog();
+}
+
+function renderAlertLog() {
+  const list = document.getElementById('alert-log-list');
+  if (!alertLog.length) {
+    list.innerHTML = '<div class="alert-log-empty">no alerts</div>';
+    return;
+  }
+  list.innerHTML = alertLog.slice(0, 10).map(a => `
+    <div class="alert-log-entry">
+      <span class="alert-log-level ${a.level}">${a.level}</span>
+      <span class="alert-log-msg">${a.msg}</span>
+      <span class="alert-log-tick">t:${a.tick}</span>
+    </div>
+  `).join('');
+}
+
+// ── TOP ALERT BAR ─────────────────────────────────────────────────────────────
+let alertTimeout;
+function showTopAlert(type, text) {
+  const bar = document.getElementById('alert-bar');
+  const textEl = document.getElementById('alert-text');
+  bar.className = 'alert-bar show ' + (type === 'error' ? '' : type);
+  textEl.textContent = text;
+  clearTimeout(alertTimeout);
+  alertTimeout = setTimeout(dismissAlert, 4000);
+}
+
+function dismissAlert() {
+  document.getElementById('alert-bar').classList.remove('show');
+}
+
+// ── FLOW BARS ─────────────────────────────────────────────────────────────────
+function renderBars(arr) {
+  const container = document.getElementById('history-bars');
+  container.innerHTML = '';
+  arr.forEach(v => {
+    const bar = document.createElement('div');
+    bar.className = 'h-bar';
+    bar.style.height = Math.max(3, Math.abs(v) * 48) + 'px';
+    bar.style.background = v > 0.2 ? '#00c97a' : v < -0.2 ? '#ff4444' : '#354d60';
+    container.appendChild(bar);
+  });
+}
+
+function updateFlowBar(fillId, numId, val) {
+  const pct = ((val + 1) / 2 * 100).toFixed(0);
+  const fill = document.getElementById(fillId);
+  const num  = document.getElementById(numId);
+  if (fill) fill.style.width = pct + '%';
+  if (num)  num.textContent  = val.toFixed(3);
+}
+
+function renderTransitionLog() {
+  const list = document.getElementById('log-list');
+  if (!transitionLog.length) { list.innerHTML = '<div class="log-empty">no transitions yet</div>'; return; }
+  list.innerHTML = transitionLog.slice(0, 14).map(e => {
+    const rc = REGIME_COLORS[e.to];
+    return `<div class="log-entry">
+      <span class="log-tick">t:${e.tick}</span>
+      <span class="log-from">${e.from}</span>
+      <span class="log-arrow">→</span>
+      <span class="log-to" style="color:${rc.text}">${e.to}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── FLASH ─────────────────────────────────────────────────────────────────────
+function flashMetric(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('flash');
+  void el.offsetWidth;
+  el.classList.add('flash');
+}
+
+function flashRegimeCard(regime) {
+  const rc = REGIME_COLORS[regime];
+  const card = document.getElementById('regime-card');
+  card.style.borderColor = rc.border;
+  card.style.boxShadow   = `0 0 18px ${rc.bg}`;
+  setTimeout(() => { card.style.borderColor = ''; card.style.boxShadow = ''; }, 1800);
+}
+
+// ── CONTROLS ──────────────────────────────────────────────────────────────────
+function togglePause() {
+  paused = !paused;
+  document.getElementById('pause-btn').textContent = paused ? '▶ resume' : '⏸ pause';
+}
+
+function resetSim() {
+  history = []; inflowH = []; outflowH = []; scoreH = [];
+  fundingH = []; volH = []; domH = []; signalH = [];
+  heatmapHistory = [];
+  tickCount = 0; regimeCount = 0; currentRegime = null;
+  transitionLog = []; alertLog = []; lastAutoAI = 0;
+  prevDom = null; prevScore = null;
+  transitionStreak = 0; prevWatchdogRegime = null;
+  Object.keys(sparkData).forEach(k => sparkData[k] = []);
+
+  // Reset OU hidden state so simulation is truly fresh
+  OU.risk = 0; OU.domAxis = 0; OU.volLevel = 0.5; OU.funding = 0;
+
+  chart.data.datasets.forEach(d => d.data = Array(WINDOW).fill(null));
+  chart.update('none');
+  document.getElementById('history-bars').innerHTML = '';
+  document.getElementById('heatmap-row').innerHTML = '';
+  renderTransitionLog();
+  renderAlertLog();
+  renderDivergences([]);
+  dismissAlert();
+
+  ['cmi-val','cmi-desc','vol-val','vol-desc','dom-val','dom-desc',
+   'trend-val','regime-name','regime-badge','r-flow','r-vol','r-dom',
+   'score-val','conf-val','r-fund','r-stddev'].forEach(id => setText(id, '—'));
+  setText('r-count', '0');
+  setText('tick-display', 'tick: 0');
+  document.getElementById('conf-gauge').style.width = '0%';
+  setAIOutput('Simulation reset. Run ticks to generate data for analysis.', 'idle');
+  setAIStatus('idle · auto-analysis every 30 ticks');
+}
+
+function updateSpeed(v) {
+  speed = parseInt(v);
+  document.getElementById('speed-label').textContent = speed + '×';
+  startInterval();
+}
+
+function startInterval() {
+  if (intervalId) clearInterval(intervalId);
+  const ms = [2000, 1200, 700, 400, 150][speed - 1];
+  intervalId = setInterval(tick, ms);
+}
+
+// ── THEME ─────────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const root = document.documentElement;
+  root.dataset.theme = root.dataset.theme === 'light' ? '' : 'light';
+}
+
+// ── AI ANALYSIS ───────────────────────────────────────────────────────────────
+function setAIOutput(text, mode = '') {
+  const el = document.getElementById('ai-output');
+  el.className = 'ai-output' + (mode ? ' ' + mode : '');
+  el.textContent = text;
+}
+
+function setAIStatus(text, thinking = false) {
+  const el = document.getElementById('ai-status');
+  el.className = 'ai-status' + (thinking ? ' thinking' : '');
+  el.innerHTML = thinking
+    ? `<span class="ai-spinner"></span>${text}`
+    : text;
+}
+
+function renderAiHistory() {
+  const list = document.getElementById('ai-history-list');
+  if (!aiAnalyses.length) { list.innerHTML = '<div class="log-empty">no analyses yet</div>'; return; }
+  list.innerHTML = aiAnalyses.slice(0, 8).map((a, i) => `
+    <div class="ai-hist-entry" onclick="restoreAiEntry(${i})">
+      <div class="ai-hist-meta">
+        <span class="ai-hist-regime">${a.regime}</span>
+        <span class="ai-hist-tick">t:${a.tick}</span>
+      </div>
+      <div class="ai-hist-preview">${a.text.slice(0, 60)}…</div>
+    </div>
+  `).join('');
+}
+
+function restoreAiEntry(i) {
+  const a = aiAnalyses[i];
+  if (!a) return;
+  setAIOutput(a.text);
+  setAIStatus(`restored · tick ${a.tick} · ${a.regime}`);
+}
+
+function clearAiHistory() {
+  aiAnalyses = [];
+  renderAiHistory();
+  setAIOutput('History cleared.', 'idle');
+  setAIStatus('idle · auto-analysis every 30 ticks');
+}
+
+async function triggerAI(ctx) {
+  if (aiLocked) return;
+  aiLocked = true;
+  document.getElementById('ai-btn').disabled = true;
+
+  const regime   = ctx?.regime  || currentRegime || 'TRANSITION';
+  const signal   = ctx?.signal  ?? computeSignal(scoreH[scoreH.length-1] ?? 0);
+  const vol      = ctx?.vol     ?? rand(0,1);
+  const dom      = ctx?.dom     ?? rand(40,60);
+  const trend    = ctx?.trend   ?? getTrend(history);
+  const score    = ctx?.score   ?? (scoreH[scoreH.length-1] ?? 0);
+  const inflow   = ctx?.inflow  ?? (inflowH[inflowH.length-1] ?? 0);
+  const outflow  = ctx?.outflow ?? (outflowH[outflowH.length-1] ?? 0);
+  const funding  = ctx?.funding ?? rand(-1,1);
+  const conf     = ctx?.conf    ?? confidence();
+  const stddev   = ctx?.stddev  ?? scoreStddev();
+  const divCount = document.getElementById('div-count')?.textContent ?? '0';
+  const label    = ctx?.auto ? 'auto-analysis' : 'manual';
+
+  setAIStatus(`calling claude (${label}) · tick ${tickCount}`, true);
+  document.getElementById('ai-output').className = 'ai-output';
+  document.getElementById('ai-output').innerHTML = '<span class="cursor"></span>';
+
+  // Build history context for richer AI prompt
+  const recentScores = scoreH.slice(-8).map(s => (s >= 0 ? '+' : '') + s.toFixed(3)).join(', ');
+  const recentRegimes = transitionLog.slice(-5).map(e => e.to || e.regime || '').filter(Boolean).join(' → ');
+  const prevAnalysisSummary = aiAnalyses.length > 0
+    ? `\n- Previous analysis (tick ${aiAnalyses[0].tick}): "${aiAnalyses[0].text.slice(0, 120)}…"`
+    : '';
+
+  // Get active divergence details for richer prompt
+  const netFlow = (inflowH[inflowH.length-1] ?? 0) - (outflowH[outflowH.length-1] ?? 0);
+  const activeDivDetails = [];
+  if (Math.abs(funding - netFlow) > 0.5) activeDivDetails.push(`FUNDING_FLIP (funding=${funding.toFixed(2)} vs net_flow=${netFlow.toFixed(2)})`);
+  if (prevDom !== null && Math.abs(dom - prevDom) >= 5) activeDivDetails.push(`DOM_SPIKE (Δ${(dom-prevDom).toFixed(1)}%)`);
+  if (score > 0.2 && vol < 0.25) activeDivDetails.push(`VOL_COMPRESSION (score=${score.toFixed(3)} but vol=${vol.toFixed(3)})`);
+  const divDetailStr = activeDivDetails.length > 0 ? activeDivDetails.join(', ') : 'none';
+  const fcCounts = FC.transitions[regime] || {};
+  const fcTotal = Object.values(fcCounts).reduce((a,b)=>a+b,0);
+  const fcBest  = fcTotal>0 ? Object.entries(fcCounts).sort((a,b)=>b[1]-a[1])[0] : null;
+  const fcStr   = fcBest ? `most likely next: ${fcBest[0]} (${(fcBest[1]/fcTotal*100).toFixed(0)}%), ${FC.spellCount} spells observed` : 'forecast warming up (<1 regime change seen)';
+  const memStats = MEM.stats();
+  const memStr = Object.entries(memStats).map(([r,s])=>`${r}: μ=${s.mean}tk`).join(', ') || 'no spell data yet';
+
+  const prompt = `You are a capital flow analyst embedded in Capital Suite v5, a crypto market regime observational system using an multi-asset OU + forecast engine.
+
+Current state at tick ${tickCount}:
+- Regime: ${regime}
+- CMI Signal: ${signal > 0 ? '+1 (inflow)' : signal < 0 ? '-1 (outflow)' : '0 (neutral)'}
+- Flow Score: ${score.toFixed(3)}
+- Stablecoin Inflow: ${inflow.toFixed(3)}
+- Stablecoin Outflow: ${outflow.toFixed(3)}
+- Net Flow: ${netFlow.toFixed(3)}
+- Funding Bias: ${funding.toFixed(3)}
+- Volatility: ${vol.toFixed(3)} (${vol > 0.66 ? 'elevated' : vol > 0.33 ? 'moderate' : 'compressed'})
+- BTC Dominance: ${dom.toFixed(1)}%
+- Flow Trend: ${trend}
+- Confidence: ${(conf*100).toFixed(0)}% (${conf < 0.35 ? 'LOW CONVICTION' : conf < 0.6 ? 'moderate' : 'strong'})
+- Score StdDev: ${stddev ? stddev.toFixed(4) : 'insufficient data'}
+- Regime transitions total: ${regimeCount}
+- Active divergences (${divCount}): ${divDetailStr}
+- Recent score trajectory (last 8 ticks): [${recentScores}]
+- Recent regime sequence: ${recentRegimes || 'none yet'}${prevAnalysisSummary}
+
+Provide a sharp 2–3 sentence analysis. Be specific about what this regime combination means, whether the recent score trajectory is reinforcing or contradicting the current regime, flag any internal contradictions (like low confidence or active divergences), and name what condition would push regime into the next state. No fluff — think like a systematic desk analyst.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data?.content?.[0]?.text ?? 'No response received.';
+
+    // save to history
+    aiAnalyses.unshift({ text, regime, tick: tickCount });
+    if (aiAnalyses.length > 20) aiAnalyses.pop();
+    renderAiHistory();
+
+    // typewriter
+    const el = document.getElementById('ai-output');
+    el.className = 'ai-output';
+    el.innerHTML = '';
+    let i = 0;
+    function typeNext() {
+      if (i < text.length) {
+        el.textContent += text[i++];
+        setTimeout(typeNext, 10);
+      } else {
+        setAIStatus(`last: tick ${tickCount} · ${regime} · auto every 30 ticks`);
+        aiLocked = false;
+        document.getElementById('ai-btn').disabled = false;
+      }
+    }
+    typeNext();
+
+  } catch (err) {
+    setAIOutput('Analysis unavailable — API connection required.', 'idle');
+    setAIStatus(`error at tick ${tickCount}`);
+    aiLocked = false;
+    document.getElementById('ai-btn').disabled = false;
+  }
+}
+
+// ── BACKTEST ENGINE (JS port of backtest.py) ──────────────────────────────────
+function runBacktest() {
+  const btn = document.getElementById('bt-btn');
+  btn.disabled = true;
+  const N = parseInt(document.getElementById('bt-tick-select')?.value || '100');
+  document.getElementById('bt-tick-label').textContent = N;
+  btn.textContent = '⚡ running…';
+
+  setTimeout(() => {
+    const BOU = {
+      risk: 0, domAxis: 0, volLevel: 0.5, funding: 0,
+      gauss() {
+        const u = 1 - Math.random(), v = Math.random();
+        return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+      },
+      ou(x, t, s, m = 0) { return x + t * (m - x) + s * this.gauss(); },
+      advance() {
+        this.risk     = Math.max(-1, Math.min(1, this.ou(this.risk,     0.12, 0.30)));
+        this.domAxis  = Math.max(-1, Math.min(1, this.ou(this.domAxis,  0.08, 0.20)));
+        this.volLevel = Math.max( 0, Math.min(1, this.ou(this.volLevel, 0.10, 0.18, 0.5 + 0.3 * Math.abs(this.risk))));
+        this.funding  = Math.max(-1, Math.min(1, this.ou(this.funding,  0.15, 0.25, 0.4 * this.risk)));
+      },
+    };
+
+    const hist = { scores: [], regimes: [], confidences: [], divCounts: [], alertCounts: [] };
+    const regimeCounts = { EXPANSION: 0, CONTRACTION: 0, ROTATION: 0, TRANSITION: 0 };
+    const divBreakdown = {};
+    const alertBreakdown = {};
+    let prevBRegime = null, prevBScore = null, prevBDom = null;
+    const bHistory = [];
+    let bTransitionStreak = 0;
+    const bAlerts = [];
+
+    for (let i = 0; i < N; i++) {
+      BOU.advance();
+      const inflow  = Math.max(-1, Math.min(1, 0.5 * BOU.risk + 0.5 + 0.20 * BOU.gauss()));
+      const outflow = Math.max(-1, Math.min(1, -0.4 * BOU.risk + 0.5 + 0.20 * BOU.gauss()));
+      const funding = Math.max(-1, Math.min(1, BOU.funding + 0.08 * BOU.gauss()));
+      const vol     = Math.max( 0, Math.min(1, BOU.volLevel + 0.05 * BOU.gauss()));
+      const dom     = Math.max(30, Math.min(70, 50 + 10 * BOU.domAxis + BOU.gauss()));
+      const score   = (inflow - outflow) * 0.5 + funding * 0.5;
+      const signal  = score > 0.2 ? 1 : score < -0.2 ? -1 : 0;
+
+      bHistory.push(score);
+      if (bHistory.length > 24) bHistory.shift();
+
+      let regime;
+      if (signal === 1 && vol > 0.6) regime = 'EXPANSION';
+      else if (signal === 0 && dom > 50) regime = 'ROTATION';
+      else if (signal === -1) regime = 'CONTRACTION';
+      else regime = 'TRANSITION';
+
+      const agreements = bHistory.filter(s => (s > 0.2 ? 1 : s < -0.2 ? -1 : 0) === signal).length;
+      const conf = bHistory.length >= 3 ? agreements / bHistory.length : 0;
+
+      regimeCounts[regime]++;
+      hist.scores.push(score);
+      hist.regimes.push(regime);
+      hist.confidences.push(conf);
+
+      // Divergences
+      let divCount = 0;
+      const netFlow = inflow - outflow;
+      if (Math.abs(funding - netFlow) > 0.5) { divCount++; divBreakdown['FUNDING_FLIP'] = (divBreakdown['FUNDING_FLIP']||0)+1; }
+      if (prevBDom !== null && Math.abs(dom - prevBDom) >= 5) { divCount++; divBreakdown['DOM_SPIKE'] = (divBreakdown['DOM_SPIKE']||0)+1; }
+      if (score > 0.2 && vol < 0.25) { divCount++; divBreakdown['VOL_COMPRESSION'] = (divBreakdown['VOL_COMPRESSION']||0)+1; }
+      if (prevBScore !== null && prevBScore > 0.2 && score < -0.2) { divCount++; divBreakdown['SCORE_INVERSION'] = (divBreakdown['SCORE_INVERSION']||0)+1; }
+      if (prevBScore !== null && prevBScore < -0.2 && score > 0.2) { divCount++; divBreakdown['SCORE_INVERSION'] = (divBreakdown['SCORE_INVERSION']||0)+1; }
+      hist.divCounts.push(divCount);
+
+      // Watchdog alerts
+      let alertCount = 0;
+      bTransitionStreak = regime === 'TRANSITION' ? bTransitionStreak + 1 : 0;
+      if (bTransitionStreak >= 3) { alertCount++; alertBreakdown['PROLONGED_TRANSITION'] = (alertBreakdown['PROLONGED_TRANSITION']||0)+1; }
+      if (conf < 0.35) { alertCount++; alertBreakdown['LOW_CONVICTION'] = (alertBreakdown['LOW_CONVICTION']||0)+1; }
+      if (regime !== prevBRegime) {
+        const code = regime + '_ENTRY';
+        alertCount++; alertBreakdown[code] = (alertBreakdown[code]||0)+1;
+      }
+      hist.alertCounts.push(alertCount);
+
+      prevBRegime = regime; prevBScore = score; prevBDom = dom;
+    }
+
+    // Spell analysis
+    const spells = [];
+    let cur = hist.regimes[0], start = 0;
+    for (let i = 1; i < hist.regimes.length; i++) {
+      if (hist.regimes[i] !== cur) { spells.push({ regime: cur, len: i - start }); cur = hist.regimes[i]; start = i; }
+    }
+    spells.push({ regime: cur, len: N - start });
+    const avgSpell = spells.reduce((a, s) => a + s.len, 0) / spells.length;
+    const longestSpell = spells.reduce((a, s) => s.len > a.len ? s : a, spells[0]);
+
+    const scoreMean = hist.scores.reduce((a, b) => a + b, 0) / N;
+    const scoreStd  = Math.sqrt(hist.scores.reduce((a, s) => a + (s - scoreMean)**2, 0) / N);
+    const scoreMin  = Math.min(...hist.scores), scoreMax = Math.max(...hist.scores);
+    const avgConf   = hist.confidences.reduce((a, b) => a + b, 0) / N;
+    const totalDivs = hist.divCounts.reduce((a, b) => a + b, 0);
+    const totalAlerts = hist.alertCounts.reduce((a, b) => a + b, 0);
+
+    // Render
+    const panel = document.getElementById('backtest-panel');
+    panel.style.display = 'block';
+    document.getElementById('bt-meta').textContent = `${N} ticks · OU simulation`;
+
+    const c = (v, clr) => `<span style="color:${clr||'var(--accent)'}">${v}</span>`;
+    const COLORS = { EXPANSION: '#00e5a0', CONTRACTION: '#ff4444', ROTATION: '#0094ff', TRANSITION: '#f5a623' };
+
+    document.getElementById('bt-regime-dist').innerHTML =
+      `<div style="color:var(--text3);font-size:9px;letter-spacing:0.1em;margin-bottom:4px;">REGIME DISTRIBUTION</div>` +
+      Object.entries(regimeCounts).map(([r, cnt]) => {
+        const pct = (cnt / N * 100).toFixed(1);
+        const bar = '█'.repeat(Math.round(cnt / N * 12));
+        return `<div>${c(r.slice(0,4).toLowerCase(), COLORS[r])} ${c(pct+'%', 'var(--text)')} ${c(bar, COLORS[r])}</div>`;
+      }).join('');
+
+    document.getElementById('bt-score-stats').innerHTML =
+      `<div style="color:var(--text3);font-size:9px;letter-spacing:0.1em;margin-bottom:4px;">FLOW SCORE</div>` +
+      `<div>mean   ${c((scoreMean>=0?'+':'')+scoreMean.toFixed(4))}</div>` +
+      `<div>stddev ${c(scoreStd.toFixed(4))}</div>` +
+      `<div>min    ${c(scoreMin.toFixed(4),'#ff4444')}</div>` +
+      `<div>max    ${c(scoreMax.toFixed(4),'#00c97a')}</div>` +
+      `<div style="margin-top:4px;">avg conf ${c((avgConf*100).toFixed(1)+'%')}</div>` +
+      `<div>min/max conf ${c((Math.min(...hist.confidences)*100).toFixed(0)+'%')} / ${c((Math.max(...hist.confidences)*100).toFixed(0)+'%')}</div>`;
+
+    document.getElementById('bt-alert-stats').innerHTML =
+      `<div style="color:var(--text3);font-size:9px;letter-spacing:0.1em;margin-bottom:4px;">ALERTS / DIVERGENCES</div>` +
+      `<div>total alerts ${c(totalAlerts)}</div>` +
+      `<div>total divs   ${c(totalDivs)}</div>` +
+      Object.entries(alertBreakdown).slice(0,4).map(([k,v]) =>
+        `<div style="color:var(--text2);font-size:9px;">${k.replace(/_/g,' ').toLowerCase()} ${c(v)}</div>`
+      ).join('');
+
+    document.getElementById('bt-spell-stats').innerHTML =
+      `<div style="color:var(--text3);font-size:9px;letter-spacing:0.1em;margin-bottom:4px;">REGIME SPELLS</div>` +
+      `<div>total spells  ${c(spells.length)}</div>` +
+      `<div>avg length    ${c(avgSpell.toFixed(1))} ticks</div>` +
+      `<div>longest       ${c(longestSpell.len, COLORS[longestSpell.regime])} ticks</div>` +
+      `<div style="color:var(--text2);font-size:9px;">(${longestSpell.regime.toLowerCase()})</div>`;
+
+    btn.disabled = false;
+    btn.textContent = '⚡ run backtest (' + N + ' ticks)';
+
+    // Draw mini score trajectory chart
+    const btCanvas = document.getElementById('bt-score-chart');
+    if (btCanvas) {
+      btCanvas.width = btCanvas.offsetWidth || 600;
+      const bctx = btCanvas.getContext('2d');
+      const w = btCanvas.width, h = 48;
+      bctx.clearRect(0, 0, w, h);
+      const scores = hist.scores;
+      const mn = Math.min(...scores), mx = Math.max(...scores);
+      const range = mx - mn || 1;
+      const zero = h - ((0 - mn) / range * h);
+      // zero line
+      bctx.strokeStyle = 'rgba(98,117,133,0.4)';
+      bctx.lineWidth = 1;
+      bctx.beginPath(); bctx.moveTo(0, zero); bctx.lineTo(w, zero); bctx.stroke();
+      // signal thresholds ±0.2
+      [0.2, -0.2].forEach(thr => {
+        const y = h - ((thr - mn) / range * h);
+        bctx.strokeStyle = 'rgba(98,117,133,0.2)';
+        bctx.setLineDash([3,3]);
+        bctx.beginPath(); bctx.moveTo(0,y); bctx.lineTo(w,y); bctx.stroke();
+        bctx.setLineDash([]);
+      });
+      // regime color bands
+      hist.regimes.forEach((r, i) => {
+        const x1 = i / N * w, x2 = (i+1) / N * w;
+        const col = { EXPANSION:'rgba(0,229,160,0.07)', CONTRACTION:'rgba(255,68,68,0.07)', ROTATION:'rgba(0,148,255,0.07)', TRANSITION:'rgba(245,166,35,0.04)' }[r] || 'transparent';
+        bctx.fillStyle = col;
+        bctx.fillRect(x1, 0, x2-x1, h);
+      });
+      // score line
+      bctx.beginPath();
+      scores.forEach((s, i) => {
+        const x = i / (N - 1) * w;
+        const y = h - ((s - mn) / range * h);
+        i === 0 ? bctx.moveTo(x, y) : bctx.lineTo(x, y);
+      });
+      bctx.strokeStyle = '#0094ff';
+      bctx.lineWidth = 1.5;
+      bctx.stroke();
+    }
+
+    // Store for potential export
+    window._lastBacktest = { N, regimeCounts, scoreMean, scoreStd, scoreMin, scoreMax, avgConf, confidenceMin: Math.min(...hist.confidences), confidenceMax: Math.max(...hist.confidences), totalDivs, totalAlerts, divBreakdown, alertBreakdown, avgSpell, longestSpell, scoreHistory: hist.scores, regimeHistory: hist.regimes, timestamp: new Date().toISOString() };
+  }, 10);
+}
+
+// ── CORRELATION MATRIX ────────────────────────────────────────────────────────
+function updateCorrMatrix() {
+  if (scoreH.length < 10) return;
+  const metrics = ['score', 'inflow', 'outflow', 'funding', 'vol', 'dom'];
+  const series  = [scoreH, inflowH, outflowH, fundingH, volH, domH];
+  const N = series[0].length;
+  if (series.some(s => s.length < N)) return;
+
+  function pearson(a, b) {
+    const n = Math.min(a.length, b.length);
+    const ma = a.slice(-n).reduce((s,x)=>s+x,0)/n;
+    const mb = b.slice(-n).reduce((s,x)=>s+x,0)/n;
+    let num = 0, da = 0, db = 0;
+    for (let i = 0; i < n; i++) {
+      const ai = a[a.length-n+i] - ma, bi = b[b.length-n+i] - mb;
+      num += ai * bi; da += ai*ai; db += bi*bi;
+    }
+    return (da === 0 || db === 0) ? 0 : num / Math.sqrt(da * db);
+  }
+
+  const canvas = document.getElementById('corrCanvas');
+  if (!canvas) return;
+  const ctx2 = canvas.getContext('2d');
+  const M = metrics.length;
+  const containerW = canvas.parentElement?.offsetWidth || 340;
+  const cellW = Math.max(44, Math.floor((containerW - 40) / M));
+  const cellH = 20;
+  canvas.width  = 40 + M * cellW;
+  canvas.height = (M + 1) * cellH;
+  ctx2.clearRect(0, 0, canvas.width, canvas.height);
+
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const labelColor = isDark ? '#627585' : '#4a6680';
+  ctx2.font = '9px IBM Plex Mono, monospace';
+
+  // Header row
+  metrics.forEach((m, j) => {
+    ctx2.fillStyle = labelColor;
+    ctx2.fillText(m.slice(0,4), 40 + j*cellW + 4, 13);
+  });
+
+  metrics.forEach((mi, i) => {
+    ctx2.fillStyle = labelColor;
+    ctx2.fillText(mi.slice(0,4), 4, (i+1)*cellH + 13);
+
+    metrics.forEach((mj, j) => {
+      const r = i === j ? 1 : pearson(series[i], series[j]);
+      const hue = r > 0 ? 160 : 0;  // green pos, red neg
+      const sat = Math.abs(r);
+      ctx2.fillStyle = `hsla(${hue},80%,${isDark?50:45}%,${0.15 + sat * 0.65})`;
+      ctx2.fillRect(40 + j*cellW + 1, i*cellH + cellH, cellW - 2, cellH - 2);
+      ctx2.fillStyle = isDark ? '#c2d0de' : '#1a2e40';
+      ctx2.fillText(r.toFixed(2), 40 + j*cellW + 4, i*cellH + cellH + 13);
+    });
+  });
+
+  document.getElementById('corr-meta').textContent =
+    `${N} samples · last updated tick ${tickCount}`;
+}
+
+// ── JSON EXPORT ────────────────────────────────────────────────────────────────
+function exportJSON() {
+  const payload = {
+    version: 'capital-suite-v4',
+    exportedAt: new Date().toISOString(),
+    tickCount,
+    simulation: 'ou-correlated',
+    session: {
+      scoreHistory:   scoreH,
+      inflowHistory:  inflowH,
+      outflowHistory: outflowH,
+      fundingHistory: fundingH,
+      volHistory:     volH,
+      domHistory:     domH,
+      signalHistory:  signalH,
+      transitionLog:  transitionLog,
+      alertLog:       alertLog,
+      aiAnalyses:     aiAnalyses,
+    },
+    backtest: window._lastBacktest || null,
+    forecast: { spellCount: FC.spellCount, reliable: FC.spellCount>=20, matrix: FC.transitions },
+    memory: { totalSpells: MEM.totalSpells, c2eLag: MEM.c2eLag, stats: MEM.stats() },
+    multiAsset: multiEnabled,
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `capital-suite-v4-session-t${tickCount}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// CAPITAL SUITE v5 — NEW SYSTEMS
+// ══════════════════════════════════════════════════════════════════════════════
+
+// ── v5 CONSTANTS ─────────────────────────────────────────────────────────────
+const ASSETS = ['BTC','ETH','SOL','BNB'];
+const ASSET_LOADING = { BTC:1.00, ETH:0.88, SOL:0.72, BNB:0.65 };
+const ASSET_IDIO    = { BTC:0.10, ETH:0.18, SOL:0.28, BNB:0.22 };
+const REGIME_COLORS_MAP = {
+  EXPANSION:'#00e5a0', CONTRACTION:'#ff4444',
+  ROTATION:'#0094ff',  TRANSITION:'#f5a623'
+};
+
+// ── v5 MULTI-ASSET OU STATE ───────────────────────────────────────────────────
+let multiEnabled = false;
+
+const SHARED_OU = {
+  risk:0.0, domAxis:0.0, volLevel:0.5, funding:0.0,
+  gauss() {
+    const u=1-Math.random(), v=Math.random();
+    return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+  },
+  ou(x, theta, sigma, mean=0) {
+    return x + theta*(mean-x) + sigma*this.gauss();
+  },
+  advance() {
+    this.risk     = Math.max(-1,Math.min(1, this.ou(this.risk,    0.12, 0.30)));
+    this.domAxis  = Math.max(-1,Math.min(1, this.ou(this.domAxis, 0.08, 0.20)));
+    this.volLevel = Math.max(0, Math.min(1, this.ou(this.volLevel,0.10, 0.18, 0.5+0.3*Math.abs(this.risk))));
+    this.funding  = Math.max(-1,Math.min(1, this.ou(this.funding, 0.15, 0.25, 0.4*this.risk)));
+  }
+};
+
+const ASSET_IDIO_STATE = {};
+ASSETS.forEach(sym => { ASSET_IDIO_STATE[sym] = 0.0; });
+
+function advanceAssets() {
+  SHARED_OU.advance();
+  ASSETS.forEach(sym => {
+    const idioSig = ASSET_IDIO[sym];
+    const g = SHARED_OU.gauss();
+    ASSET_IDIO_STATE[sym] = ASSET_IDIO_STATE[sym] + 0.20*(0 - ASSET_IDIO_STATE[sym]) + idioSig*g;
+    ASSET_IDIO_STATE[sym] = Math.max(-1, Math.min(1, ASSET_IDIO_STATE[sym]));
+  });
+}
+
+function getAssetObs(sym) {
+  const L  = ASSET_LOADING[sym];
+  const id = ASSET_IDIO_STATE[sym];
+  const r  = Math.max(-1, Math.min(1, L*SHARED_OU.risk + (1-L)*id));
+  const gauss = () => SHARED_OU.gauss();
+  return {
+    inflow:  Math.max(-1,Math.min(1, 0.5*r+0.5 + 0.20*gauss())),
+    outflow: Math.max(-1,Math.min(1,-0.4*r+0.5 + 0.20*gauss())),
+    funding: Math.max(-1,Math.min(1, L*SHARED_OU.funding+(1-L)*0.4*r + 0.08*gauss())),
+    vol:     Math.max(0, Math.min(1, SHARED_OU.volLevel + 0.15*(1-L) + 0.05*gauss())),
+    dom:     Math.max(30,Math.min(70, 50+10*SHARED_OU.domAxis+gauss())),
+  };
+}
+
+function classifyAssetRegime(obs, histScores) {
+  const score  = (obs.inflow-obs.outflow)*0.5 + obs.funding*0.5;
+  const signal = score>0.2?1:score<-0.2?-1:0;
+  if (signal===1 && obs.vol>0.60) return {regime:'EXPANSION',  score};
+  if (signal===0 && obs.dom>50)   return {regime:'ROTATION',   score};
+  if (signal===-1)                return {regime:'CONTRACTION',score};
+  return {regime:'TRANSITION', score};
+}
+
+// Per-asset history for signal confidence
+const assetSignalH = {};
+ASSETS.forEach(sym => { assetSignalH[sym] = []; });
+
+function computePortfolio() {
+  advanceAssets();
+  const results = {};
+  let wSum=0, wScore=0;
+  const regimes = [];
+
+  ASSETS.forEach(sym => {
+    const obs = getAssetObs(sym);
+    const { regime, score } = classifyAssetRegime(obs, assetSignalH[sym]);
+    const w = ASSET_LOADING[sym];
+
+    // confidence
+    const sig = score>0.2?1:score<-0.2?-1:0;
+    assetSignalH[sym].push(sig);
+    if (assetSignalH[sym].length > 24) assetSignalH[sym].shift();
+    const conf = assetSignalH[sym].length>=3
+      ? assetSignalH[sym].filter(s=>s===sig).length/assetSignalH[sym].length
+      : 0;
+
+    results[sym] = { regime, score, conf, vol:obs.vol, inflow:obs.inflow, outflow:obs.outflow };
+    wSum   += w;
+    wScore += score * w;
+    regimes.push(regime);
+  });
+
+  const composite = wScore/wSum;
+  const scores    = ASSETS.map(s=>results[s].score);
+  const mean      = scores.reduce((a,b)=>a+b,0)/scores.length;
+  const dispersion= Math.sqrt(scores.reduce((a,b)=>a+(b-mean)**2,0)/scores.length);
+
+  const counts = {};
+  regimes.forEach(r=>{ counts[r]=(counts[r]||0)+1; });
+  const dominant = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+
+  const cr = composite>0.20 ? (SHARED_OU.volLevel>0.60?'EXPANSION':'TRANSITION')
+           : composite<-0.20 ? 'CONTRACTION'
+           : SHARED_OU.domAxis>0 ? 'ROTATION' : 'TRANSITION';
+
+  return { results, composite, compositeRegime:cr, dispersion,
+           dominantRegime:dominant[0], consensus:dominant[1]/ASSETS.length };
+}
+
+function renderMultiAsset(port) {
+  const cards = document.getElementById('asset-cards');
+  if (!cards) return;
+  cards.innerHTML = '';
+  ASSETS.forEach(sym => {
+    const a = port.results[sym];
+    const rc = REGIME_COLORS_MAP[a.regime] || 'var(--text)';
+    const bar = Math.abs(a.score);
+    const sign = a.score>=0?'+':'-';
+    cards.innerHTML += `
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px;">
+        <div style="font-size:10px;font-weight:600;color:var(--text);margin-bottom:4px;">${sym}</div>
+        <div style="font-size:9px;color:${rc};margin-bottom:6px;">${a.regime}</div>
+        <div style="height:3px;background:var(--border);border-radius:2px;margin-bottom:4px;">
+          <div style="height:100%;width:${Math.round(bar*100)}%;background:${rc};border-radius:2px;transition:width .3s;"></div>
+        </div>
+        <div style="font-size:9px;color:var(--text2);">score ${sign}${Math.abs(a.score).toFixed(3)}</div>
+        <div style="font-size:9px;color:var(--text3);">conf ${(a.conf*100).toFixed(0)}%</div>
+      </div>`;
+  });
+
+  const rc = REGIME_COLORS_MAP[port.compositeRegime]||'var(--text)';
+  const el = id => document.getElementById(id);
+  const setText = (id,v) => { const e=el(id); if(e)e.textContent=v; };
+  const setColor= (id,c) => { const e=el(id); if(e)e.style.color=c; };
+
+  setText('composite-score', (port.composite>=0?'+':'')+port.composite.toFixed(4));
+  setColor('composite-score', rc);
+  setText('composite-regime', port.compositeRegime);
+  setColor('composite-regime', rc);
+  setText('composite-consensus', (port.consensus*100).toFixed(0)+'% consensus');
+  setText('composite-dispersion', 'σ='+port.dispersion.toFixed(4));
+}
+
+// ── v5 FORECAST ENGINE ────────────────────────────────────────────────────────
+const FC = {
+  transitions: {},  // from → to → count
+  spellLengths: {}, // regime → [lengths]
+  prevRegime: null,
+  spellStart: 1,
+  spellLen: 0,
+  spellCount: 0,
+  REGIMES: ['EXPANSION','ROTATION','CONTRACTION','TRANSITION'],
+
+  ingest(regime, tick) {
+    if (this.prevRegime === null) {
+      this.prevRegime=regime; this.spellStart=tick; this.spellLen=1; return null;
+    }
+    if (regime === this.prevRegime) { this.spellLen++; }
+    else {
+      if (!this.spellLengths[this.prevRegime]) this.spellLengths[this.prevRegime]=[];
+      this.spellLengths[this.prevRegime].push(this.spellLen);
+      if (!this.transitions[this.prevRegime]) this.transitions[this.prevRegime]={};
+      this.transitions[this.prevRegime][regime] = (this.transitions[this.prevRegime][regime]||0)+1;
+      this.spellCount++;
+      this.prevRegime=regime; this.spellStart=tick; this.spellLen=1;
+    }
+    if (this.spellCount<1) return null;
+    return this._build(regime, tick);
+  },
+
+  _build(regime, tick) {
+    const counts = this.transitions[regime] || {};
+    const total  = Object.values(counts).reduce((a,b)=>a+b,0);
+    const probs  = {};
+    const others = this.REGIMES.filter(r=>r!==regime);
+    this.REGIMES.forEach(r => {
+      probs[r] = total>0 ? (counts[r]||0)/total : (r!==regime?1/others.length:0);
+    });
+    const lengths = this.spellLengths[regime] || [];
+    const meanLen = lengths.length>0 ? lengths.reduce((a,b)=>a+b,0)/lengths.length : 5;
+    const remaining = Math.max(0, meanLen - this.spellLen);
+    const best = this.REGIMES.reduce((a,b)=>probs[b]>probs[a]?b:a, this.REGIMES[0]);
+    return { regime, probs, bestNext:best, bestProb:probs[best], remaining, spellCount:this.spellCount, reliable:this.spellCount>=20 };
+  }
+};
+
+function renderForecast(fc) {
+  if (!fc) return;
+  const setText = (id,v) => { const e=document.getElementById(id); if(e)e.textContent=v; };
+  const setColor= (id,c) => { const e=document.getElementById(id); if(e)e.style.color=c; };
+  const rc = REGIME_COLORS_MAP[fc.bestNext]||'var(--text)';
+
+  setText('fc-next-regime', fc.bestNext);
+  setColor('fc-next-regime', rc);
+  setText('fc-next-prob', (fc.bestProb*100).toFixed(1)+'%');
+  setText('fc-remaining', '~'+fc.remaining.toFixed(1)+' ticks');
+  setText('fc-spells', fc.spellCount + ' spells');
+  setText('forecast-reliability', fc.reliable ? '✓ reliable matrix' : `⚠ warming up (${fc.spellCount}/20 spells)`);
+
+  const bars = document.getElementById('fc-bars');
+  if (!bars) return;
+  bars.innerHTML = '';
+  ['EXPANSION','ROTATION','CONTRACTION','TRANSITION'].forEach(r => {
+    const p = fc.probs[r] || 0;
+    const c = REGIME_COLORS_MAP[r];
+    bars.innerHTML += `
+      <div style="display:flex;align-items:center;gap:8px;font-size:9px;">
+        <div style="width:80px;color:${c};flex-shrink:0;">→ ${r}</div>
+        <div style="flex:1;height:6px;background:var(--border);border-radius:3px;">
+          <div style="height:100%;width:${(p*100).toFixed(1)}%;background:${c};border-radius:3px;transition:width .4s;"></div>
+        </div>
+        <div style="width:36px;text-align:right;color:var(--text2);">${(p*100).toFixed(1)}%</div>
+      </div>`;
+  });
+}
+
+// ── v5 REGIME MEMORY ──────────────────────────────────────────────────────────
+const MEM = {
+  journal: [],
+  spellsByRegime: {},
+  openRegime: null,
+  openStart: 1,
+  openEntry: 0,
+  openPeakDiv: 0,
+  openAlerts: 0,
+  prevRegime: null,
+  totalSpells: 0,
+  c2eLag: null,
+  _prevEnd: null,
+
+  ingest(regime, tick, score, nDivs, nAlerts) {
+    if (this.openRegime !== regime) {
+      if (this.openRegime !== null) {
+        const rec = { regime:this.openRegime, start:this.openStart, end:tick-1,
+          length:tick-this.openStart, entryScore:this.openEntry, exitScore:score,
+          peakDivs:this.openPeakDiv, alerts:this.openAlerts, precededBy:this.prevRegime };
+        this.journal.push(rec);
+        if (!this.spellsByRegime[rec.regime]) this.spellsByRegime[rec.regime]=[];
+        this.spellsByRegime[rec.regime].push(rec.length);
+        this.totalSpells++;
+
+        // c2e lag
+        if (this.prevRegime==='CONTRACTION' && regime==='EXPANSION' && this._prevEnd!==null) {
+          const lag = tick - this._prevEnd;
+          this.c2eLag = this.c2eLag===null ? lag : (this.c2eLag + lag)/2;
+        }
+        this._prevEnd = tick;
+        this.prevRegime = this.openRegime;
+      }
+      this.openRegime=regime; this.openStart=tick; this.openEntry=score;
+      this.openPeakDiv=0; this.openAlerts=0;
+    }
+    if (nDivs>this.openPeakDiv) this.openPeakDiv=nDivs;
+    this.openAlerts+=nAlerts;
+  },
+
+  stats() {
+    const out = {};
+    Object.entries(this.spellsByRegime).forEach(([r,lens]) => {
+      const mean = lens.reduce((a,b)=>a+b,0)/lens.length;
+      const med  = [...lens].sort((a,b)=>a-b)[Math.floor(lens.length/2)];
+      out[r] = { count:lens.length, mean:mean.toFixed(1), median:med,
+                 min:Math.min(...lens), max:Math.max(...lens) };
+    });
+    return out;
+  },
+
+  divSpellLens() {
+    const high=[], low=[];
+    this.journal.forEach(r => {
+      r.peakDivs>=2 ? high.push(r.length) : low.push(r.length);
+    });
+    const avg = arr => arr.length>0 ? (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1) : '—';
+    return { high:avg(high), low:avg(low) };
+  }
+};
+
+function renderMemory() {
+  const stats = MEM.stats();
+  const div   = MEM.divSpellLens();
+  const setText = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
+
+  const grid = document.getElementById('memory-stats');
+  if (grid) {
+    grid.innerHTML = '';
+    ['EXPANSION','ROTATION','CONTRACTION','TRANSITION'].forEach(r => {
+      const s = stats[r];
+      const rc = REGIME_COLORS_MAP[r];
+      grid.innerHTML += `
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px;">
+          <div style="font-size:9px;color:${rc};margin-bottom:4px;">${r}</div>
+          <div style="font-size:10px;color:var(--text);margin-bottom:2px;">${s?s.count:0} spells</div>
+          <div style="font-size:9px;color:var(--text2);">μ=${s?s.mean:'—'} ticks</div>
+          <div style="font-size:9px;color:var(--text3);">range ${s?s.min+'–'+s.max:'—'}</div>
+        </div>`;
+    });
+  }
+
+  setText('mem-c2e', MEM.c2eLag!==null ? '~'+MEM.c2eLag.toFixed(1)+' ticks' : '—');
+  setText('mem-hdiv', div.high + ' ticks');
+  setText('mem-ldiv', div.low  + ' ticks');
+  setText('mem-spells', MEM.totalSpells + ' complete');
+}
+
+// ── v5 MULTI-ASSET TOGGLE ─────────────────────────────────────────────────────
+function toggleMulti() {
+  multiEnabled = !multiEnabled;
+  const panel = document.getElementById('multi-panel');
+  const status= document.getElementById('multi-status');
+  if (panel) panel.style.display = multiEnabled ? '' : 'none';
+  if (status) status.textContent = multiEnabled ? 'enabled · updates each tick' : 'off — press M to enable';
+}
+
+// ── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  if (e.key === ' ')           { e.preventDefault(); togglePause(); }
+  else if (e.key === 'r' || e.key === 'R') resetSim();
+  else if (e.key === 'a' || e.key === 'A') triggerAI();
+  else if (e.key === 't' || e.key === 'T') toggleTheme();
+  else if (e.key === 'b' || e.key === 'B') runBacktest();
+  else if (e.key === 'e' || e.key === 'E') exportJSON();
+  else if (e.key === 'm' || e.key === 'M') toggleMulti();
+});
+
+// ── BOOT ──────────────────────────────────────────────────────────────────────
+startInterval();
+tick();
+</script>
+</body>
+</html>
+

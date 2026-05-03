@@ -1,0 +1,103 @@
+repo:
+  name: akasha-capital
+  ecosystem: akasha
+  version: 1.0.0
+  status: canonical
+  source: capital-suite-v5
+  lineage: capital-suite → akasha-capital (canonicalization)
+
+engine:
+  family: observation
+  class: regime_analysis_engine
+  role: capital_flow_and_regime_detection
+
+identity:
+  role: engine
+  layer: analysis
+  description: >
+    Observational capital-flow and market-regime analysis engine for the Akasha
+    constellation. Tracks stablecoin flow, BTC dominance, funding bias, and
+    volatility signals to classify market regimes (EXPANSION, ROTATION,
+    CONTRACTION, TRANSITION). Provides multi-asset portfolio analysis, Markov
+    regime forecasting, and persistent regime memory. Not a trading bot — a
+    structured observation and reasoning instrument aligned with Akasha's
+    principle of expanding human capacity to observe and reason.
+
+ownership:
+  steward: human
+  approval_required: true
+
+interfaces:
+  consumes:
+    - stablecoin_inflow_signals
+    - stablecoin_outflow_signals
+    - funding_bias_readings
+    - btc_dominance_readings
+    - volatility_readings
+    - multi_asset_market_data
+  produces:
+    - regime_state_snapshots
+    - capital_flow_indicators
+    - divergence_reports
+    - watchdog_alerts
+    - backtest_reports
+    - multi_asset_portfolio_scores
+    - markov_regime_forecasts
+    - regime_memory_summaries
+    - akasha_event_payloads
+
+capabilities:
+  - capital_market_indicator_computation
+  - regime_classification
+  - divergence_detection
+  - regime_watchdog_alerting
+  - backtest_engine
+  - multi_asset_portfolio_analysis
+  - markov_regime_forecasting
+  - regime_spell_memory
+  - akasha_event_emission
+
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+  alignment_statement: >
+    This system is part of the Akasha ecosystem and aligns with
+    akasha-axioms, akasha-world, and akasha-constellation.
+    It expands human capacity to observe and reason about capital markets
+    (Axiom 4 — Augmentation), maintains traceable outputs (Axiom 5 —
+    Traceability), is modular and replaceable (Axiom 6 — Modularity),
+    and remains under human stewardship (Axiom 9 — Stewardship).
+
+canonical_status: canonical
+maturity: stable
+
+depends_on:
+  - akasha-suite
+  - akasha-events
+  - akasha-axioms
+  - akasha-world
+
+adapters:
+  - name: api_client
+    path: adapters/api_client.py
+    description: Multi-asset OU-correlated market data simulator. Replace with real data adapter for production.
+
+inputs:
+  - stablecoin_inflow_signals
+  - stablecoin_outflow_signals
+  - funding_bias
+  - btc_dominance
+  - volatility
+
+outputs:
+  - regime_state_snapshots
+  - divergence_reports
+  - watchdog_alerts
+  - regime_forecasts
+  - akasha_events
+
+type: organ
+family: analysis
+role: engine
+generated_by: human-assisted-canonicalization
