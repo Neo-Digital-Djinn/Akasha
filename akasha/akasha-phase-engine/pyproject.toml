@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=72", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "akasha-phase-engine"
+version = "0.1.0"
+description = "Phase Behavior Ontology Engine — Akasha constellation member"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+dependencies = [
+    "flask>=3.1",
+    "flask-cors>=5.0",
+    "python-dotenv>=1.0",
+    "numpy>=2.0",
+    "networkx>=3.4",
+    "gunicorn>=23.0",
+]
+
+[project.optional-dependencies]
+materials = [
+    "mp-api>=0.41",
+    "pymatgen>=2024.11",
+]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+]
+
+[project.scripts]
+akasha-phase-engine = "akasha_phase_engine.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["akasha_phase_engine*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,9 @@
+{
+  "burst_count": 1,
+  "bursts": [
+    {
+      "categories": ["observation"],
+      "sources": ["human"]
+    }
+  ]
+}

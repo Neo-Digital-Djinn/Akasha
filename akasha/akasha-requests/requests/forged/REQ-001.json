@@ -1,0 +1,21 @@
+{
+  "request_id": "REQ-001",
+  "title": "Idea Mutation Engine",
+  "request_type": "new_organ",
+  "source": "human",
+  "status": "open",
+  "priority": "high",
+  "summary": "Rotate captured ideas through multiple analytical lenses to generate variations and new directions.",
+  "why": "Ideas often contain hidden potential that appears when examined from multiple conceptual angles.",
+  "proposed_repo": "akasha-idea-mutation",
+  "suggested_family": "creativity",
+  "suggested_class": "concept_exploration_engine",
+  "suggested_role": "idea_expansion",
+  "notes": [
+    "Treat each idea as a gem that can be viewed from multiple angles.",
+    "Generate mutations such as extensions, inversions, cross-domain applications.",
+    "Feed resulting ideas back into akasha-requests."
+  ],
+  "captured_from": "conversation",
+  "created_at": "2026-04-03"
+}

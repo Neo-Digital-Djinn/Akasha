@@ -1,0 +1,60 @@
+repo: akasha-requests
+role: intake_queue
+system: akasha
+purpose: 'Capture structured capability requests before they enter Forge.
+
+  '
+request_format: json
+status_flow:
+- open
+- exploring
+- approved
+- forged
+- archived
+source_types:
+- human
+- akasha
+- discovery_engine
+- conversation
+forge_integration: true
+engine:
+  family: intake
+  class: intake_queue
+  role: request_lifecycle_management
+identity:
+  role: engine
+  layer: intake
+  description: 'Intake queue and lifecycle manager for structured Akasha requests.
+    Responsible for preserving, staging, and promoting request objects before forge.
+
+    '
+ownership:
+  steward: human
+  approval_required: true
+interfaces:
+  consumes:
+  - request_json
+  - translated_requests
+  - discovery_proposals
+  - repair_requests
+  produces:
+  - staged_requests
+  - approved_forge_candidates
+  - request_index_updates
+capabilities:
+- intake_capture
+- lifecycle_staging
+- request_registry_management
+- forge_readiness_tracking
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+depends_on:
+- akasha-suite
+- akasha-request-translator
+type: organ
+family: discovery
+name: akasha-requests
+version: 1.0.0
+generated_by: akasha-canon

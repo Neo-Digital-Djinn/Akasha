@@ -1,0 +1,29 @@
+    #!/data/data/com.termux/files/usr/bin/bash
+    set -euo pipefail
+
+    DEST_DIR="${HOME}/akasha-requests/requests/open"
+    mkdir -p "$DEST_DIR"
+    cat > "$DEST_DIR/REQ-007-analogy-engine.json" <<'JSON'
+    {
+  "request_id": "REQ-007",
+  "title": "Analogy Engine",
+  "request_type": "engine",
+  "source": "conversation",
+  "status": "open",
+  "priority": "high",
+  "summary": "Generate structurally grounded analogies across domains, such as phase transitions in physics, tonal modulation in music, and regime shifts in economics.",
+  "why": "The uploaded Akasha snapshot already contains graph, phase, discovery, and domain-pack primitives. What is missing is the bridge that turns those structures into cross-domain correspondences instead of isolated observations.",
+  "proposed_repo": "akasha-analogy-engine",
+  "suggested_family": "discovery_engine",
+  "suggested_class": "engine",
+  "suggested_role": "cross_domain_analogy_generation",
+  "notes": [
+    "Derived from the Phase_Behavior_Ontology_Engine pattern and the Akasha Requests intake model.",
+    "Should consume grounded domain packs and emit scored analogy candidates with traceable edges.",
+    "Should stay structural, not mystical: analogies must be explainable and inspectable."
+  ],
+  "captured_from": "Akasha.zip deep dive",
+  "created_at": "2026-04-06T16:00:00Z"
+}
+    JSON
+    echo "Wrote $DEST_DIR/REQ-007-analogy-engine.json"

@@ -1,0 +1,12 @@
+README.md
+pyproject.toml
+akasha_prospector/__init__.py
+akasha_prospector.egg-info/PKG-INFO
+akasha_prospector.egg-info/SOURCES.txt
+akasha_prospector.egg-info/dependency_links.txt
+akasha_prospector.egg-info/entry_points.txt
+akasha_prospector.egg-info/top_level.txt
+akasha_prospector/analysis/__init__.py
+akasha_prospector/analysis/directives.py
+akasha_prospector/cli/main.py
+tests/test_directives_smoke.py

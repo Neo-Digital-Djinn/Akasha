@@ -1,0 +1,21 @@
+{
+  "request_id": "REQ-012",
+  "title": "Atlas Engine",
+  "request_type": "engine",
+  "source": "conversation",
+  "status": "open",
+  "priority": "medium",
+  "summary": "Map the Akasha knowledge space, showing domains, engines, gaps, bridges, and growth fronts as navigable terrain rather than a pile of repos.",
+  "why": "The uploaded tree already behaves like a small civilization. Akasha needs a cartographer before the roads vanish into the fog.",
+  "proposed_repo": "akasha-atlas-engine",
+  "suggested_family": "discovery_infrastructure",
+  "suggested_class": "engine",
+  "suggested_role": "knowledge_space_mapping",
+  "notes": [
+    "Should ingest repo manifests, request objects, and domain packs.",
+    "Outputs may include graph views, frontier lists, and dependency maps.",
+    "Pairs naturally with akasha-world and akasha-constellation."
+  ],
+  "captured_from": "Akasha.zip deep dive",
+  "created_at": "2026-04-06T16:00:00Z"
+}

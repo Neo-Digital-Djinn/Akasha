@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Akasha Request",
+  "description": "Schema for idea intake requests entering the Akasha Forge pipeline.",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "type",
+    "status",
+    "summary",
+    "created_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique request identifier",
+      "pattern": "^REQ-[0-9]{3,}$"
+    },
+    "title": {
+      "type": "string",
+      "description": "Short descriptive name of the request"
+    },
+    "type": {
+      "type": "string",
+      "description": "Category of request",
+      "enum": [
+        "engine",
+        "tool",
+        "research",
+        "simulation",
+        "dataset",
+        "experiment",
+        "system",
+        "unknown"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "description": "Where the idea originated",
+      "enum": [
+        "conversation",
+        "mutation_engine",
+        "manual",
+        "external",
+        "unknown"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "description": "Lifecycle stage",
+      "enum": [
+        "open",
+        "exploring",
+        "approved",
+        "forged",
+        "archived"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "description": "Short explanation of the idea"
+    },
+    "why": {
+      "type": "string",
+      "description": "Reason this idea matters"
+    },
+    "proposed_repo": {
+      "type": "string",
+      "description": "Suggested repository name if the idea is forged"
+    },
+    "role": {
+      "type": "string",
+      "description": "Functional role within the Akasha ecosystem"
+    },
+    "family": {
+      "type": "string",
+      "description": "System family or constellation this request belongs to"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Freeform notes or design thoughts"
+    },
+    "captured_from": {
+      "type": "string",
+      "description": "Conversation or source reference"
+    },
+    "created_at": {
+      "type": "string",
+      "description": "ISO 8601 timestamp",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,52 @@
+schema_version: 1
+
+name: akasha-phase-engine
+class: domain-graph
+status: experimental
+
+description: >
+  A computational ontology of phases of matter — a "periodic table of behaviors"
+  encoding 21 phases across symmetry, topology, quantum, dynamics, field theory,
+  experiment, and materials realization. Includes a phase-space gap-finder,
+  material suggestion engine, and NetworkX transition graph.
+
+axiom_alignment:
+  coherence: >
+    Every phase is internally self-consistent. Invalid state combinations
+    (e.g. attractor + transform) are encoded as forbidden and will not appear
+    in query results or the discovery coordinate space.
+  discoverability: >
+    The gap-finder scans ~5700 discrete phase-space coordinates, labels known/
+    forbidden/predicted/candidate regions, and scores candidates by physical
+    interest. Gaps are signals, not voids.
+  traceability: >
+    All phases carry discovery_year, discovered_by, key_theoretical_papers,
+    key_experimental_papers, and review_papers. No opaque authority.
+  modularity: >
+    Core modules are independently importable: phase (schema), database
+    (registry), graph_engine (NetworkX graph), discovery (gap scanner),
+    materials (suggestion engine), app (Flask API), cli (entry point).
+  augmentation: >
+    Exposes a REST API and CLI. Designed to be called by other Akasha engines
+    as a domain-graph provider.
+
+world_layer:
+  domain: physics / condensed matter
+  lattice_role: domain-graph
+  knowledge_state: canonical
+
+inputs:
+  - none required (registry is self-contained)
+  - optional: MP_API_KEY env var for Materials Project live queries
+  - optional: TOPO_DB_PATH for local topological materials DB
+
+outputs:
+  - phase registry (Python objects, JSON export)
+  - transition graph (NetworkX DiGraph)
+  - gap report (scored candidate phases)
+  - material suggestions (ranked compound candidates)
+  - REST API at /api/phases, /api/transitions, /api/gaps, /api/materials
+
+constellation_dependencies: []
+
+repo_url: https://github.com/akasha/akasha-phase-engine

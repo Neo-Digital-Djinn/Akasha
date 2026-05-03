@@ -1,0 +1,2 @@
+[console_scripts]
+akasha-prospector = akasha_prospector.cli.main:main

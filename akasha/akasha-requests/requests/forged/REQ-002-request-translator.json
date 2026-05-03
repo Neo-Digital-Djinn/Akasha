@@ -1,0 +1,22 @@
+{
+  "request_id": "REQ-002",
+  "title": "Akasha Request Translator",
+  "request_type": "new_organ",
+  "source": "mutation_engine",
+  "status": "open",
+  "priority": "high",
+  "summary": "Translate plain-English ideas into valid Akasha request JSON files.",
+  "why": "Reduces friction when capturing ideas. Humans can describe ideas naturally and the translator converts them into properly structured requests for the Akasha pipeline.",
+  "proposed_repo": "akasha-request-translator",
+  "suggested_family": "infrastructure",
+  "suggested_class": "request_intake_tool",
+  "suggested_role": "idea_to_request_conversion",
+  "notes": [
+    "Accept natural language description of an idea.",
+    "Generate a valid request JSON matching the akasha-requests schema.",
+    "Suggest title, summary, repo name, and family automatically.",
+    "Optionally save directly into akasha-requests/requests/open."
+  ],
+  "captured_from": "idea_mutation_engine",
+  "created_at": "2026-04-04"
+}

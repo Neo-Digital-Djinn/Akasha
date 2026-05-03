@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Ontology Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c10;
+    --bg2: #0d1318;
+    --bg3: #111820;
+    --border: #1e2d3d;
+    --border2: #243547;
+    --accent: #00d4ff;
+    --accent2: #00ff88;
+    --accent3: #ff6b35;
+    --accent4: #b388ff;
+    --text: #c8d8e8;
+    --text2: #7a9ab5;
+    --text3: #3d5a73;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+    --card-glow: 0 0 0 1px var(--border), 0 4px 24px rgba(0,0,0,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    z-index: 10;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,12,16,0.95);
+    backdrop-filter: blur(12px);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+  }
+
+  .logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 2rem;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  .header-stats span { color: var(--accent2); }
+
+  /* ── LAYOUT ── */
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 1.5rem;
+    min-height: calc(100vh - 56px);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .nav-section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .nav-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg3);
+  }
+
+  .nav-item {
+    display: block;
+    padding: 10px 14px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--text2);
+    width: 100%;
+    text-align: left;
+    font-family: var(--sans);
+    font-size: 13px;
+    transition: all 0.15s;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-item:last-child { border-bottom: none; }
+
+  .nav-item:hover {
+    background: rgba(0,212,255,0.05);
+    color: var(--accent);
+    padding-left: 18px;
+  }
+
+  .nav-item.active {
+    background: rgba(0,212,255,0.08);
+    color: var(--accent);
+    border-left: 2px solid var(--accent);
+  }
+
+  /* ── FILTERS ── */
+  .filter-group {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .filter-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .filter-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .pill {
+    padding: 3px 10px;
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--text3);
+    cursor: pointer;
+    background: none;
+    transition: all 0.15s;
+  }
+
+  .pill:hover, .pill.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,212,255,0.08);
+  }
+
+  .pill.topo.active    { border-color: var(--accent4); color: var(--accent4); background: rgba(179,136,255,0.08); }
+  .pill.neq.active     { border-color: var(--accent3); color: var(--accent3); background: rgba(255,107,53,0.08); }
+  .pill.sym.active     { border-color: var(--accent2); color: var(--accent2); background: rgba(0,255,136,0.08); }
+
+  /* ── MAIN ── */
+  .main { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab {
+    padding: 10px 20px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s;
+  }
+
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── PHASE GRID ── */
+  .phase-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .phase-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .phase-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--card-accent, var(--border));
+    transition: background 0.2s;
+  }
+
+  .phase-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .phase-card:hover::before { background: var(--card-accent, var(--accent)); }
+
+  .phase-card[data-cat="Topological"] { --card-accent: var(--accent4); }
+  .phase-card[data-cat="Symmetry-Broken"] { --card-accent: var(--accent2); }
+  .phase-card[data-cat="Non-Equilibrium"] { --card-accent: var(--accent3); }
+  .phase-card[data-cat="Strongly-Correlated"] { --card-accent: var(--accent); }
+
+  .card-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .card-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    margin-bottom: 10px;
+    letter-spacing: 0.05em;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+
+  .tag {
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 10px;
+    background: var(--bg3);
+    color: var(--text3);
+    border: 1px solid var(--border);
+  }
+
+  .tag.topo { color: var(--accent4); border-color: rgba(179,136,255,0.3); }
+  .tag.eq   { color: var(--accent2); border-color: rgba(0,255,136,0.3); }
+  .tag.gap  { color: var(--accent);  border-color: rgba(0,212,255,0.3); }
+  .tag.anyon { color: var(--accent3); border-color: rgba(255,107,53,0.3); }
+
+  .card-year {
+    position: absolute;
+    top: 14px; right: 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  /* ── DETAIL PANEL ── */
+  .detail-panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: none;
+  }
+
+  .detail-panel.open { display: block; }
+
+  .detail-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .detail-name {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .detail-category {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+  }
+
+  .close-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text3);
+    width: 28px; height: 28px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .close-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+
+  .detail-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .detail-section {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+
+  .detail-section:nth-child(even) { border-right: none; }
+  .detail-section:last-child, .detail-section:nth-last-child(2):nth-child(odd) {
+    border-bottom: none;
+  }
+
+  .detail-section.full {
+    grid-column: 1 / -1;
+    border-right: none;
+  }
+
+  .section-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+
+  .kv { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .kv-key { color: var(--text3); font-size: 12px; }
+  .kv-val { color: var(--text); font-family: var(--mono); font-size: 12px; }
+  .kv-val.highlight { color: var(--accent); }
+  .kv-val.green { color: var(--accent2); }
+  .kv-val.orange { color: var(--accent3); }
+  .kv-val.purple { color: var(--accent4); }
+
+  .list-item {
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text2);
+  }
+
+  .list-item:last-child { border-bottom: none; }
+
+  .list-item::before {
+    content: '→ ';
+    font-family: var(--mono);
+    color: var(--text3);
+  }
+
+  /* ── GAPS TAB ── */
+  .gaps-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .gaps-section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .gaps-section-header {
+    padding: 12px 16px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .gaps-section-header .count {
+    color: var(--accent);
+  }
+
+  .prediction-item {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .prediction-item:hover { background: rgba(0,212,255,0.03); }
+  .prediction-item:last-child { border-bottom: none; }
+
+  .pred-name { font-size: 13px; color: var(--text); margin-bottom: 4px; font-weight: 500; }
+  .pred-by { font-size: 11px; color: var(--text3); font-family: var(--mono); margin-bottom: 6px; }
+  .pred-status { font-size: 11px; color: var(--text2); margin-bottom: 8px; }
+
+  .confidence-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .confidence-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent4), var(--accent));
+    transition: width 0.6s ease;
+  }
+
+  .conf-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    margin-top: 4px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ── COORDINATE BUILDER ── */
+  .builder {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .builder-header {
+    padding: 14px 20px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .builder-body {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .builder-field { display: flex; flex-direction: column; gap: 6px; }
+  .builder-field label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .builder-field select, .builder-field input[type="checkbox"] {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    padding: 7px 10px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    appearance: none;
+  }
+
+  .builder-field select:focus { border-color: var(--accent); }
+
+  .checkbox-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+
+  .checkbox-item input {
+    width: 14px; height: 14px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  .checkbox-item span {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text2);
+  }
+
+  .builder-actions {
+    padding: 0 20px 20px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn {
+    padding: 9px 20px;
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    background: none;
+    color: var(--text2);
+    transition: all 0.15s;
+  }
+
+  .btn:hover { border-color: var(--text2); color: var(--text); }
+
+  .btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+    font-weight: 700;
+  }
+
+  .btn.primary:hover { background: #33ddff; }
+
+  /* ── MATERIAL RESULTS ── */
+  .material-results {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    display: none;
+  }
+
+  .material-results.visible { display: block; }
+
+  .mat-result {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: start;
+    transition: background 0.15s;
+  }
+
+  .mat-result:hover { background: rgba(0,212,255,0.03); }
+  .mat-result:last-child { border-bottom: none; }
+
+  .mat-name { font-size: 13px; color: var(--text); font-weight: 500; margin-bottom: 3px; }
+  .mat-examples { font-family: var(--mono); font-size: 11px; color: var(--accent); margin-bottom: 5px; }
+  .mat-rationale { font-size: 12px; color: var(--text2); margin-bottom: 5px; }
+  .mat-satisfied { font-size: 11px; color: var(--accent2); }
+  .mat-missing { font-size: 11px; color: var(--accent3); }
+  .mat-warning { font-size: 11px; color: var(--accent3); margin-top: 5px; }
+
+  .score-circle {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .timeline-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text3);
+    margin-top: 4px;
+  }
+
+  /* ── LOADING ── */
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    gap: 10px;
+    color: var(--text3);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── TRANSITIONS TAB ── */
+  .transition-item {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 32px 1fr auto;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .transition-item:last-child { border-bottom: none; }
+
+  .t-phase {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .t-arrow {
+    text-align: center;
+    color: var(--accent);
+    font-family: var(--mono);
+  }
+
+  .t-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  .t-type {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-family: var(--mono);
+    font-size: 10px;
+    border: 1px solid;
+  }
+
+  .t-type.continuous { color: var(--accent2); border-color: rgba(0,255,136,0.3); }
+  .t-type.firstorder { color: var(--accent3); border-color: rgba(255,107,53,0.3); }
+
+  /* ── PHASE GRAPH ── */
+  #graph-container {
+    position: relative;
+    width: 100%;
+    height: 520px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 2px;
+    overflow: hidden;
+  }
+  #graph-container svg { width: 100%; height: 100%; }
+  #graph-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: rgba(8,12,16,0.95);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 12px;
+    line-height: 1.6;
+    max-width: 260px;
+    z-index: 100;
+    display: none;
+  }
+  #graph-tooltip .tt-title { font-family: var(--mono); font-size: 11px; color: var(--accent); margin-bottom: 4px; }
+  #graph-tooltip .tt-body { color: var(--text2); }
+  #graph-legend {
+    position: absolute;
+    bottom: 12px;
+    left: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; font-family: var(--mono); color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .graph-hint { position: absolute; top: 12px; right: 14px; font-size: 10px; font-family: var(--mono); color: var(--text3); }
+
+  /* ── FORBIDDEN ── */
+  .forbidden-item {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .forbidden-count {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent3);
+    line-height: 1;
+    min-width: 48px;
+    text-align: center;
+    padding-top: 2px;
+  }
+
+  .forbidden-name { font-size: 13px; color: var(--text); font-weight: 500; margin-bottom: 3px; }
+  .forbidden-statement { font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+  .forbidden-ref { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text3);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .empty-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.5; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .container { grid-template-columns: 1fr; }
+    .gaps-grid { grid-template-columns: 1fr; }
+    .builder-body { grid-template-columns: repeat(2, 1fr); }
+    .detail-body { grid-template-columns: 1fr; }
+    .detail-section { border-right: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    Phase Ontology Engine
+  </div>
+  <div class="header-stats" id="header-stats">
+    <div>Phases: <span id="stat-phases">—</span></div>
+    <div>Materials: <span id="stat-materials">—</span></div>
+    <div>Transitions: <span id="stat-transitions">—</span></div>
+    <div>Year range: <span id="stat-years">—</span></div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">Views</div>
+      <button class="nav-item active" onclick="showTab('phases')">Phase Browser</button>
+      <button class="nav-item" onclick="showTab('gaps')">Discovery Engine</button>
+      <button class="nav-item" onclick="showTab('materials')">Material Finder</button>
+      <button class="nav-item" onclick="showTab('transitions')">Transitions</button>
+    </div>
+
+    <div class="nav-section" id="filter-panel">
+      <div class="nav-label">Filters</div>
+
+      <div class="filter-group">
+        <span class="filter-label">Category</span>
+        <div class="filter-pills">
+          <button class="pill" onclick="toggleFilter('category','Topological')">Topological</button>
+          <button class="pill" onclick="toggleFilter('category','Symmetry-Broken')">Sym-Broken</button>
+          <button class="pill" onclick="toggleFilter('category','Non-Equilibrium')">Non-Equil</button>
+          <button class="pill" onclick="toggleFilter('category','Strongly-Correlated')">Correlated</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Dimension</span>
+        <div class="filter-pills">
+          <button class="pill" onclick="toggleFilter('dimensionality','1')">1D</button>
+          <button class="pill" onclick="toggleFilter('dimensionality','2')">2D</button>
+          <button class="pill" onclick="toggleFilter('dimensionality','3')">3D</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Properties</span>
+        <div class="filter-pills">
+          <button class="pill topo" onclick="toggleFilter('topological','true')">Topological</button>
+          <button class="pill sym" onclick="toggleFilter('breaks_symmetry','true')">Sym Breaking</button>
+          <button class="pill neq" onclick="toggleFilter('equilibrium','false')">Driven</button>
+          <button class="pill" onclick="toggleFilter('has_anyons','true')">Anyons</button>
+          <button class="pill" onclick="toggleFilter('has_edge_states','true')">Edge States</button>
+          <button class="pill" onclick="toggleFilter('berry_phase_pi','true')">Berry π</button>
+        </div>
+      </div>
+
+      <div class="filter-group" style="border-bottom: none;">
+        <button class="btn" onclick="clearFilters()" style="width:100%; text-align:center;">
+          Clear Filters
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" id="tab-phases" onclick="showTab('phases')">Phases</button>
+      <button class="tab" id="tab-gaps" onclick="showTab('gaps')">Discovery</button>
+      <button class="tab" id="tab-materials" onclick="showTab('materials')">Materials</button>
+      <button class="tab" id="tab-transitions" onclick="showTab('transitions')">Transitions</button>
+    </div>
+
+    <!-- PHASE BROWSER -->
+    <div id="view-phases">
+      <div class="phase-grid" id="phase-grid">
+        <div class="loading"><div class="spinner"></div> Loading phases...</div>
+      </div>
+      <div class="detail-panel" id="detail-panel"></div>
+    </div>
+
+    <!-- DISCOVERY ENGINE -->
+    <div id="view-gaps" style="display:none">
+      <div class="gaps-grid" id="gaps-content">
+        <div class="loading" style="grid-column:1/-1"><div class="spinner"></div> Running discovery engine...</div>
+      </div>
+    </div>
+
+    <!-- MATERIAL FINDER -->
+    <div id="view-materials" style="display:none">
+      <div class="builder">
+        <div class="builder-header">Coordinate Builder — define a target phase</div>
+        <div class="builder-body">
+          <div class="builder-field">
+            <label>Dimensionality</label>
+            <select id="b-dim">
+              <option value="3">3D</option>
+              <option value="2">2D</option>
+              <option value="1">1D</option>
+            </select>
+          </div>
+          <div class="builder-field">
+            <label>Symmetry Breaking</label>
+            <select id="b-sym">
+              <option value="none">None</option>
+              <option value="discrete">Discrete</option>
+              <option value="continuous">Continuous</option>
+              <option value="gauge">Gauge (SC)</option>
+            </select>
+          </div>
+          <div class="builder-field">
+            <label>Topology</label>
+            <select id="b-topo">
+              <option value="none">None</option>
+              <option value="Z2">Z₂</option>
+              <option value="Chern (integer)">Chern</option>
+              <option value="Abelian (FQH)">Abelian (FQH)</option>
+              <option value="Non-Abelian">Non-Abelian</option>
+            </select>
+          </div>
+          <div class="builder-field">
+            <label>Dynamics</label>
+            <select id="b-dyn">
+              <option value="equilibrium">Equilibrium</option>
+              <option value="driven-Floquet">Driven (Floquet)</option>
+              <option value="dissipative">Dissipative</option>
+              <option value="active">Active Matter</option>
+            </select>
+          </div>
+          <div class="builder-field">
+            <label>Anyons</label>
+            <select id="b-anyons">
+              <option value="none">None</option>
+              <option value="Abelian">Abelian</option>
+              <option value="Non-Abelian">Non-Abelian</option>
+            </select>
+          </div>
+          <div class="builder-field" style="grid-column: span 3;">
+            <label>Boolean Properties</label>
+            <div class="checkbox-row">
+              <label class="checkbox-item">
+                <input type="checkbox" id="b-edge"> <span>Edge States</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" id="b-gap"> <span>Bulk Gap</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" id="b-lre"> <span>Long-Range Entanglement</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="builder-actions">
+          <button class="btn primary" onclick="findMaterials()">Find Materials</button>
+          <button class="btn" onclick="loadKnownCoord()">Load Known Phase</button>
+          <select id="known-coord-select" style="background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:7px 10px;border-radius:3px;font-family:var(--mono);font-size:11px;">
+            <option value="">— select —</option>
+          </select>
+        </div>
+      </div>
+      <div class="material-results" id="material-results"></div>
+    </div>
+
+    <!-- TRANSITIONS -->
+    <div id="view-transitions" style="display:none">
+      <div id="graph-container">
+        <div class="loading" id="graph-loading"><div class="spinner"></div> Building graph…</div>
+        <div id="graph-tooltip"><div class="tt-title" id="tt-title"></div><div class="tt-body" id="tt-body"></div></div>
+        <div id="graph-legend"></div>
+        <div class="graph-hint">drag · scroll to zoom · hover nodes</div>
+      </div>
+      <div class="builder" id="transitions-content">
+        <div class="loading"><div class="spinner"></div> Loading transitions...</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let allPhases = [];
+let activeFilters = {};
+let activeTab = 'phases';
+let gapsLoaded = false;
+let transitionsLoaded = false;
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+async function init() {
+  await Promise.all([loadStats(), loadPhases()]);
+  populateKnownCoords();
+}
+
+async function loadStats() {
+  const r = await fetch('/api/stats');
+  const d = await r.json();
+  document.getElementById('stat-phases').textContent = d.total_phases;
+  document.getElementById('stat-materials').textContent = d.total_materials;
+  document.getElementById('stat-transitions').textContent = d.total_transitions;
+  document.getElementById('stat-years').textContent = `${d.year_range[0]}–${d.year_range[1]}`;
+}
+
+async function loadPhases() {
+  const params = new URLSearchParams(activeFilters);
+  const r = await fetch('/api/phases?' + params);
+  const d = await r.json();
+  allPhases = d.phases;
+  renderPhaseGrid(allPhases);
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function showTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('[id^="view-"]').forEach(v => v.style.display = 'none');
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('view-' + tab).style.display = 'block';
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.textContent.toLowerCase().includes(tab === 'gaps' ? 'discovery' : tab === 'materials' ? 'material' : tab === 'transitions' ? 'transition' : 'phase'));
+  });
+
+  // Lazy load
+  if (tab === 'gaps' && !gapsLoaded) { loadGaps(); gapsLoaded = true; }
+  if (tab === 'transitions' && !transitionsLoaded) { loadTransitions(); transitionsLoaded = true; }
+  if (tab === 'phases') {
+    document.getElementById('filter-panel').style.display = 'block';
+  } else {
+    document.getElementById('filter-panel').style.display = 'none';
+  }
+}
+
+// ─── FILTERS ──────────────────────────────────────────────────────────────────
+function toggleFilter(key, val) {
+  const pills = document.querySelectorAll('.pill');
+  pills.forEach(p => {
+    if (p.getAttribute('onclick') === `toggleFilter('${key}','${val}')`) {
+      if (activeFilters[key] === val) {
+        delete activeFilters[key];
+        p.classList.remove('active');
+      } else {
+        activeFilters[key] = val;
+        p.classList.add('active');
+        // Clear conflicting filters
+        pills.forEach(other => {
+          const oc = other.getAttribute('onclick') || '';
+          if (oc.includes(`'${key}'`) && other !== p) other.classList.remove('active');
+        });
+      }
+    }
+  });
+  loadPhases();
+}
+
+function clearFilters() {
+  activeFilters = {};
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  loadPhases();
+}
+
+// ─── PHASE GRID ───────────────────────────────────────────────────────────────
+function renderPhaseGrid(phases) {
+  const grid = document.getElementById('phase-grid');
+  if (!phases.length) {
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">∅</div>No phases match current filters</div>';
+    return;
+  }
+
+  grid.innerHTML = phases.map(p => {
+    const tags = [];
+    if (p.topology.has_topological_order) tags.push(`<span class="tag topo">Topological</span>`);
+    if (p.dynamics.equilibrium) tags.push(`<span class="tag eq">Equilibrium</span>`);
+    else tags.push(`<span class="tag" style="color:var(--accent3);border-color:rgba(255,107,53,0.3)">Driven</span>`);
+    if (p.topology.bulk_gap) tags.push(`<span class="tag gap">Bulk Gap</span>`);
+    if (p.topology.anyonic_excitations) tags.push(`<span class="tag anyon">Anyons</span>`);
+    if (p.topology.edge_states) tags.push(`<span class="tag">Edge States</span>`);
+
+    return `
+      <div class="phase-card" data-cat="${p.category}" onclick="showDetail('${p.name.replace(/'/g,"\\'")}')">
+        <div class="card-year">${p.discovery_year || '—'}</div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-meta">${p.category} · ${p.dimensionality}D</div>
+        <div class="card-tags">${tags.join('')}</div>
+        <div style="font-size:11px;color:var(--text3)">${(p.materials || []).length} material${p.materials.length !== 1 ? 's' : ''} · ${p.open_questions.length} open questions</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ─── DETAIL PANEL ─────────────────────────────────────────────────────────────
+function showDetail(name) {
+  const phase = allPhases.find(p => p.name === name);
+  if (!phase) return;
+
+  const panel = document.getElementById('detail-panel');
+  const sb = phase.symmetry_breaking;
+  const topo = phase.topology;
+  const q = phase.quantum;
+  const dyn = phase.dynamics;
+
+  panel.innerHTML = `
+    <div class="detail-header">
+      <div>
+        <div class="detail-name">${phase.name}</div>
+        <div class="detail-category">${phase.category} · ${phase.dimensionality}D · Discovered ${phase.discovery_year || 'unknown'}</div>
+      </div>
+      <button class="close-btn" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="detail-body">
+
+      <div class="detail-section">
+        <div class="section-title">Topology</div>
+        <div class="kv"><span class="kv-key">Order</span><span class="kv-val ${topo.has_topological_order ? 'purple' : ''}">${topo.topological_order_type || 'None'}</span></div>
+        <div class="kv"><span class="kv-key">Bulk gap</span><span class="kv-val ${topo.bulk_gap ? 'highlight' : ''}">${topo.bulk_gap ? 'Yes' : 'No'}</span></div>
+        <div class="kv"><span class="kv-key">Edge states</span><span class="kv-val ${topo.edge_states ? 'highlight' : ''}">${topo.edge_states ? 'Yes' : 'No'}</span></div>
+        <div class="kv"><span class="kv-key">Anyons</span><span class="kv-val ${topo.anyonic_excitations ? 'orange' : ''}">${topo.anyonic_excitations ? topo.anyon_types.join(', ') : 'None'}</span></div>
+        <div class="kv"><span class="kv-key">Long-range ent.</span><span class="kv-val">${topo.long_range_entanglement ? 'Yes (γ=' + topo.topological_entanglement_entropy + ')' : 'No'}</span></div>
+        ${topo.invariants.length ? `
+          <div style="margin-top:8px;">
+            ${topo.invariants.map(inv => `
+              <div style="padding:6px 0;border-top:1px solid var(--border)">
+                <div style="font-family:var(--mono);font-size:11px;color:var(--accent4)">${inv.symbol} = ${inv.value} (${inv.name})</div>
+                <div style="font-size:11px;color:var(--text2);margin-top:2px">${inv.meaning}</div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+      </div>
+
+      <div class="detail-section">
+        <div class="section-title">Symmetry</div>
+        ${sb ? `
+          <div class="kv"><span class="kv-key">Order parameter</span><span class="kv-val green">${sb.symbol} — ${sb.order_parameter}</span></div>
+          <div class="kv"><span class="kv-key">Universality</span><span class="kv-val">${sb.universality_class || '—'}</span></div>
+          <div class="kv"><span class="kv-key">T_critical</span><span class="kv-val">${sb.critical_temperature ? sb.critical_temperature + ' K' : '—'}</span></div>
+          <div class="kv"><span class="kv-key">Goldstone modes</span><span class="kv-val">${sb.num_goldstone_modes}</span></div>
+          <div class="kv"><span class="kv-key">Defects</span><span class="kv-val">${sb.topological_defects.join(', ') || 'None'}</span></div>
+        ` : '<div style="color:var(--text3);font-size:12px">No symmetry breaking — purely topological phase</div>'}
+      </div>
+
+      <div class="detail-section">
+        <div class="section-title">Quantum</div>
+        <div class="kv"><span class="kv-key">Berry phase</span><span class="kv-val highlight">${q.berry_phase_over_pi !== null ? q.berry_phase_over_pi + 'π' : '—'}</span></div>
+        ${q.coherence ? `<div class="kv"><span class="kv-key">Decoherence time</span><span class="kv-val">${q.coherence.decoherence_time ? (q.coherence.decoherence_time * 1e12).toFixed(1) + ' ps' : '—'}</span></div>` : ''}
+        ${q.entanglement ? `
+          <div class="kv"><span class="kv-key">Area law</span><span class="kv-val">${q.entanglement.area_law ? 'Yes' : 'No'}</span></div>
+          <div class="kv"><span class="kv-key">Tensor network</span><span class="kv-val">${q.entanglement.tensor_network || '—'}</span></div>
+          ${q.entanglement.formula ? `<div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:6px;padding:6px;background:var(--bg3);border-radius:3px">${q.entanglement.formula}</div>` : ''}
+        ` : ''}
+      </div>
+
+      <div class="detail-section">
+        <div class="section-title">Dynamics</div>
+        <div class="kv"><span class="kv-key">Equilibrium</span><span class="kv-val ${dyn.equilibrium ? 'green' : 'orange'}">${dyn.equilibrium ? 'Yes' : 'No'}</span></div>
+        <div class="kv"><span class="kv-key">Floquet</span><span class="kv-val">${dyn.floquet ? 'Yes' : 'No'}</span></div>
+        <div class="kv"><span class="kv-key">MBL</span><span class="kv-val">${dyn.mbl ? 'Yes' : 'No'}</span></div>
+        <div class="kv"><span class="kv-key">Ergodic</span><span class="kv-val">${dyn.ergodic ? 'Yes' : 'No'}</span></div>
+      </div>
+
+      <div class="detail-section full">
+        <div class="section-title">Experimental Signatures</div>
+        ${phase.experimental.primary_signatures.map(s => `<div class="list-item">${s}</div>`).join('')}
+      </div>
+
+      <div class="detail-section">
+        <div class="section-title">Materials (${phase.materials.length})</div>
+        ${phase.materials.map(m => `
+          <div style="padding:6px 0;border-bottom:1px solid var(--border)">
+            <div style="font-family:var(--mono);font-size:12px;color:var(--accent)">${m.formula}</div>
+            <div style="font-size:11px;color:var(--text3)">${m.crystal_structure} · ${m.temperature_range[0]}–${m.temperature_range[1] < 1 ? m.temperature_range[1].toExponential(1) : m.temperature_range[1]} K ${m.cost_per_gram_usd ? '· $' + m.cost_per_gram_usd + '/g' : ''}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="detail-section">
+        <div class="section-title">Applications</div>
+        ${phase.technological_applications.map(a => `<div class="list-item">${a}</div>`).join('') || '<div style="color:var(--text3);font-size:12px">None established yet</div>'}
+        ${phase.potential_applications.length ? `
+          <div style="margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em">Potential</div>
+          ${phase.potential_applications.map(a => `<div class="list-item" style="color:var(--text3)">${a}</div>`).join('')}
+        ` : ''}
+      </div>
+
+      <div class="detail-section full">
+        <div class="section-title">Open Questions (${phase.open_questions.length})</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+          ${phase.open_questions.map(q => `
+            <div style="padding:6px 8px;background:var(--bg3);border-radius:3px;font-size:12px;color:var(--text2);border-left:2px solid var(--accent3)">
+              ${q}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      ${phase.key_theoretical_papers.length ? `
+        <div class="detail-section full">
+          <div class="section-title">Key References</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+            ${[...phase.key_theoretical_papers, ...phase.key_experimental_papers].map(p => `
+              <div style="font-family:var(--mono);font-size:10px;color:var(--text3);padding:4px 0;border-bottom:1px solid var(--border)">${p}</div>
+            `).join('')}
+          </div>
+        </div>
+      ` : ''}
+    </div>
+  `;
+
+  panel.classList.add('open');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeDetail() {
+  document.getElementById('detail-panel').classList.remove('open');
+}
+
+// ─── GAPS ─────────────────────────────────────────────────────────────────────
+async function loadGaps() {
+  const r = await fetch('/api/gaps');
+  const d = await r.json();
+
+  const s = d.summary;
+  document.getElementById('gaps-content').innerHTML = `
+    <!-- Summary bar -->
+    <div style="grid-column:1/-1;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:16px 20px;">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:12px">Phase Space Summary</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;text-align:center">
+        ${[
+          ['Total Evaluated', s.total_evaluated, 'var(--text)'],
+          ['Known', s.known, 'var(--accent2)'],
+          ['Forbidden', s.forbidden, 'var(--accent3)'],
+          ['Predicted', s.predicted, 'var(--accent4)'],
+          ['Candidate Gaps', s.candidate_gaps, 'var(--accent)'],
+        ].map(([label, val, color]) => `
+          <div>
+            <div style="font-size:28px;font-family:var(--mono);font-weight:700;color:${color}">${val.toLocaleString()}</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:4px">${label}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- Predictions -->
+    <div class="gaps-section">
+      <div class="gaps-section-header">
+        Theoretically Predicted
+        <span class="count">${d.predictions.length}</span>
+      </div>
+      ${d.predictions.map(p => `
+        <div class="prediction-item">
+          <div class="pred-name">${p.name}</div>
+          <div class="pred-by">${p.predicted_by} · ${p.year}</div>
+          <div class="pred-status">${p.status}</div>
+          <div class="confidence-bar">
+            <div class="confidence-fill" style="width:${p.confidence * 100}%"></div>
+          </div>
+          <div class="conf-label">
+            <span>Confidence</span>
+            <span>${Math.round(p.confidence * 100)}%</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Top Candidates -->
+    <div class="gaps-section">
+      <div class="gaps-section-header">
+        Top Candidate Gaps
+        <span class="count">showing 10 of ${s.candidate_gaps.toLocaleString()}</span>
+      </div>
+      ${d.top_candidates.slice(0,10).map((c, i) => `
+        <div class="prediction-item">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <div class="pred-name">#${i+1} Candidate Gap</div>
+            <div style="font-family:var(--mono);font-size:11px;color:var(--accent)">★ ${c.interest.toFixed(2)}</div>
+          </div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px;word-break:break-all">${c.coordinate}</div>
+          <div style="font-size:11px;color:var(--text2);margin-bottom:6px">${c.reasoning}</div>
+          <div style="display:flex;gap:16px">
+            <div style="font-family:var(--mono);font-size:10px;color:var(--text3)">Novelty: <span style="color:var(--accent4)">${c.novelty.toFixed(2)}</span></div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--text3)">Feasibility: <span style="color:var(--accent2)">${c.feasibility.toFixed(2)}</span></div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Forbidden Zones -->
+    <div class="gaps-section" style="grid-column:1/-1">
+      <div class="gaps-section-header">
+        Forbidden Zones
+        <span class="count">${d.forbidden_zones.reduce((a,b)=>a+b.count,0).toLocaleString()} coordinates ruled out</span>
+      </div>
+      ${d.forbidden_zones.map(f => `
+        <div class="forbidden-item">
+          <div class="forbidden-count">${f.count.toLocaleString()}</div>
+          <div>
+            <div class="forbidden-name">${f.theorem}</div>
+            <div class="forbidden-statement">${f.statement}</div>
+            <div class="forbidden-ref">${f.reference}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ─── MATERIALS ────────────────────────────────────────────────────────────────
+function populateKnownCoords() {
+  const sel = document.getElementById('known-coord-select');
+  // Will be populated from /api/phases
+  fetch('/api/phases').then(r => r.json()).then(d => {
+    d.phases.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.name;
+      opt.textContent = p.name;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+function loadKnownCoord() {
+  const name = document.getElementById('known-coord-select').value;
+  if (!name) return;
+
+  // Map known phase names to coordinates
+  const coordMap = {
+    'Crystal':                     { dim:3, sym:'discrete',   topo:'none',          dyn:'equilibrium',    anyons:'none',        edge:false, gap:false, lre:false },
+    'Ferromagnet':                  { dim:3, sym:'continuous', topo:'none',          dyn:'equilibrium',    anyons:'none',        edge:false, gap:false, lre:false },
+    'BCS Superconductor':           { dim:3, sym:'gauge',      topo:'none',          dyn:'equilibrium',    anyons:'none',        edge:false, gap:true,  lre:false },
+    'Topological Insulator':        { dim:3, sym:'none',       topo:'Z2',            dyn:'equilibrium',    anyons:'none',        edge:true,  gap:true,  lre:false },
+    'Weyl Semimetal':               { dim:3, sym:'none',       topo:'Chern (integer)',dyn:'equilibrium',   anyons:'none',        edge:true,  gap:false, lre:false },
+    'Fractional Quantum Hall State':{ dim:2, sym:'none',       topo:'Abelian (FQH)', dyn:'equilibrium',   anyons:'Abelian',     edge:true,  gap:true,  lre:true  },
+    'Quantum Spin Liquid':          { dim:2, sym:'none',       topo:'Z2',            dyn:'equilibrium',    anyons:'Abelian',     edge:false, gap:false, lre:true  },
+    'Mott Insulator':               { dim:3, sym:'continuous', topo:'none',          dyn:'equilibrium',    anyons:'none',        edge:false, gap:true,  lre:false },
+    'Bose-Einstein Condensate':     { dim:3, sym:'continuous', topo:'none',          dyn:'equilibrium',    anyons:'none',        edge:false, gap:false, lre:false },
+    'Time Crystal':                 { dim:1, sym:'discrete',   topo:'none',          dyn:'driven-Floquet', anyons:'none',        edge:false, gap:false, lre:false },
+  };
+
+  const c = coordMap[name];
+  if (!c) return;
+
+  document.getElementById('b-dim').value = c.dim;
+  document.getElementById('b-sym').value = c.sym;
+  document.getElementById('b-topo').value = c.topo;
+  document.getElementById('b-dyn').value = c.dyn;
+  document.getElementById('b-anyons').value = c.anyons;
+  document.getElementById('b-edge').checked = c.edge;
+  document.getElementById('b-gap').checked = c.gap;
+  document.getElementById('b-lre').checked = c.lre;
+}
+
+async function findMaterials() {
+  const coord = {
+    dimensionality: parseInt(document.getElementById('b-dim').value),
+    symmetry_breaking: document.getElementById('b-sym').value,
+    topological: document.getElementById('b-topo').value,
+    dynamics: document.getElementById('b-dyn').value,
+    anyons: document.getElementById('b-anyons').value,
+    edge_states: document.getElementById('b-edge').checked,
+    bulk_gap: document.getElementById('b-gap').checked,
+    long_range_entanglement: document.getElementById('b-lre').checked,
+  };
+
+  const resultsDiv = document.getElementById('material-results');
+  resultsDiv.classList.add('visible');
+  resultsDiv.innerHTML = `
+    <div class="builder-header">Material Candidates</div>
+    <div class="loading"><div class="spinner"></div> Analyzing requirements...</div>
+  `;
+
+  const r = await fetch('/api/materials', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(coord)
+  });
+  const d = await r.json();
+
+  const reqHtml = d.requirements.map(req => `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+      <div style="width:80px;height:4px;background:var(--border);border-radius:2px;flex-shrink:0">
+        <div style="width:${req.difficulty*100}%;height:100%;background:${req.difficulty > 0.6 ? 'var(--accent3)' : req.difficulty > 0.3 ? 'var(--accent)' : 'var(--accent2)'};border-radius:2px"></div>
+      </div>
+      <div>
+        <span style="font-size:12px;color:var(--text)">${req.name}</span>
+        <span style="font-size:11px;color:var(--text3);margin-left:8px">${req.description}</span>
+      </div>
+    </div>
+  `).join('');
+
+  const matHtml = d.candidates.map(c => {
+    const score = c.overall_score;
+    const scoreColor = score > 0.5 ? 'var(--accent2)' : score > 0.25 ? 'var(--accent)' : 'var(--text3)';
+    return `
+      <div class="mat-result">
+        <div>
+          <div class="mat-name">${c.name}</div>
+          <div class="mat-examples">${c.examples}</div>
+          <div class="mat-rationale">${c.rationale}</div>
+          ${c.requirements_satisfied.length ? `<div class="mat-satisfied">✓ ${c.requirements_satisfied.join(', ')}</div>` : ''}
+          ${c.requirements_missing.length ? `<div class="mat-missing">✗ ${c.requirements_missing.join(', ')}</div>` : ''}
+          <div style="font-size:11px;color:var(--text3);margin-top:6px">${c.experiment}</div>
+          <div class="timeline-badge">⏱ ${c.timeline}</div>
+          ${c.warning ? `<div class="mat-warning">⚠ ${c.warning}</div>` : ''}
+        </div>
+        <div class="score-circle" style="border-color:${scoreColor};color:${scoreColor}">
+          ${Math.round(score * 100)}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  resultsDiv.innerHTML = `
+    <div class="builder-header" style="display:flex;justify-content:space-between">
+      <span>Requirements (${d.requirements.length})</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">${d.coordinate}</span>
+    </div>
+    <div style="padding:12px 16px;border-bottom:1px solid var(--border)">${reqHtml}</div>
+    <div class="builder-header">Material Candidates (${d.candidates.length})</div>
+    ${matHtml}
+  `;
+}
+
+// ─── TRANSITIONS ──────────────────────────────────────────────────────────────
+const CATEGORY_COLOR = {
+  'Topological':        '#00d4ff',
+  'Symmetry-Broken':    '#00ff88',
+  'Strongly-Correlated':'#ff6b35',
+  'Non-Equilibrium':    '#b388ff',
+};
+function categoryColor(cat) { return CATEGORY_COLOR[cat] || '#7a9ab5'; }
+
+async function loadTransitions() {
+  // Fetch both transitions and phases (for category info)
+  const [tr, ph] = await Promise.all([
+    fetch('/api/transitions').then(r => r.json()),
+    fetch('/api/phases').then(r => r.json()),
+  ]);
+
+  // ── Build legend ──────────────────────────────────────────────────────────
+  const legendEl = document.getElementById('graph-legend');
+  Object.entries(CATEGORY_COLOR).forEach(([cat, col]) => {
+    legendEl.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:${col}"></div>${cat}</div>`;
+  });
+
+  // ── Build node / edge data ────────────────────────────────────────────────
+  const phaseMap = {};
+  ph.phases.forEach(p => { phaseMap[p.name] = p; });
+
+  const nodeSet = new Set();
+  tr.transitions.forEach(t => { nodeSet.add(t.from); nodeSet.add(t.to); });
+
+  const nodes = [...nodeSet].map(name => ({
+    id: name,
+    category: phaseMap[name]?.category || 'Unknown',
+    dimensionality: phaseMap[name]?.dimensionality,
+  }));
+
+  const links = tr.transitions.map(t => ({
+    source: t.from,
+    target: t.to,
+    continuous: t.continuous,
+    control: t.control_parameter,
+    value: t.critical_value,
+    mechanism: t.mechanism,
+    universality: t.universality_class,
+  }));
+
+  // ── D3 force simulation ───────────────────────────────────────────────────
+  const container = document.getElementById('graph-container');
+  document.getElementById('graph-loading').remove();
+
+  const W = container.clientWidth;
+  const H = container.clientHeight;
+
+  const svg = d3.select(container).append('svg')
+    .attr('viewBox', `0 0 ${W} ${H}`)
+    .call(d3.zoom().scaleExtent([0.3, 3]).on('zoom', e => g.attr('transform', e.transform)));
+
+  // Arrow markers for directed edges
+  const defs = svg.append('defs');
+  ['continuous', 'firstorder'].forEach(type => {
+    defs.append('marker')
+      .attr('id', `arrow-${type}`)
+      .attr('viewBox', '0 -4 8 8')
+      .attr('refX', 20)
+      .attr('refY', 0)
+      .attr('markerWidth', 6)
+      .attr('markerHeight', 6)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M0,-4L8,0L0,4')
+      .attr('fill', type === 'continuous' ? 'rgba(0,255,136,0.6)' : 'rgba(255,107,53,0.6)');
+  });
+
+  const g = svg.append('g');
+
+  const sim = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links).id(d => d.id).distance(110).strength(0.5))
+    .force('charge', d3.forceManyBody().strength(-320))
+    .force('center', d3.forceCenter(W / 2, H / 2))
+    .force('collision', d3.forceCollide(38));
+
+  // Edges
+  const link = g.append('g').selectAll('line')
+    .data(links).join('line')
+    .attr('stroke', d => d.continuous ? 'rgba(0,255,136,0.35)' : 'rgba(255,107,53,0.35)')
+    .attr('stroke-width', 1.5)
+    .attr('marker-end', d => `url(#arrow-${d.continuous ? 'continuous' : 'firstorder'})`);
+
+  // Nodes
+  const node = g.append('g').selectAll('g')
+    .data(nodes).join('g')
+    .attr('cursor', 'grab')
+    .call(d3.drag()
+      .on('start', (e, d) => { if (!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+      .on('drag',  (e, d) => { d.fx = e.x; d.fy = e.y; })
+      .on('end',   (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; }));
+
+  node.append('circle')
+    .attr('r', 14)
+    .attr('fill', d => categoryColor(d.category) + '22')
+    .attr('stroke', d => categoryColor(d.category))
+    .attr('stroke-width', 1.5);
+
+  node.append('text')
+    .attr('text-anchor', 'middle')
+    .attr('dy', '0.35em')
+    .attr('font-size', '7px')
+    .attr('font-family', "var(--mono, monospace)")
+    .attr('fill', d => categoryColor(d.category))
+    .attr('pointer-events', 'none')
+    .text(d => d.id.replace('Quantum Hall State', 'QHS').replace(' Semimetal', ' SM').replace('Topological ', 'Topo. ').replace('Superconductor', 'SC').replace('Insulator', 'Ins.').replace('Condensate', 'BEC').replace('Fractional ', 'Frac. ').replace('Integer ', 'Int. ').replace('Bose-Einstein ', '').replace('Liquid Crystal', 'LC').replace('Normal ', 'Norm. '));
+
+  // Tooltip
+  const tooltip  = document.getElementById('graph-tooltip');
+  const ttTitle  = document.getElementById('tt-title');
+  const ttBody   = document.getElementById('tt-body');
+
+  node
+    .on('mouseover', (e, d) => {
+      const p = phaseMap[d.id];
+      ttTitle.textContent = d.id;
+      ttBody.innerHTML = [
+        p ? `<b>Category:</b> ${p.category}` : '',
+        p ? `<b>Dim:</b> ${p.dimensionality}D` : '',
+        p ? `<b>Discovered:</b> ${p.discovery_year}` : '',
+      ].filter(Boolean).join('<br>');
+      tooltip.style.display = 'block';
+    })
+    .on('mousemove', e => {
+      const rect = container.getBoundingClientRect();
+      let x = e.clientX - rect.left + 14;
+      let y = e.clientY - rect.top  - 10;
+      if (x + 270 > W) x -= 280;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top  = y + 'px';
+    })
+    .on('mouseout', () => { tooltip.style.display = 'none'; });
+
+  link
+    .on('mouseover', (e, d) => {
+      ttTitle.textContent = `${d.source.id || d.source} → ${d.target.id || d.target}`;
+      ttBody.innerHTML = [
+        `<b>Control:</b> ${d.control}`,
+        d.value != null ? `<b>Critical value:</b> ${typeof d.value === 'number' && d.value < 1e-3 ? d.value.toExponential(1) : d.value}` : '',
+        d.universality ? `<b>Universality:</b> ${d.universality}` : '',
+        d.mechanism ? `<b>Mechanism:</b> ${d.mechanism}` : '',
+      ].filter(Boolean).join('<br>');
+      tooltip.style.display = 'block';
+    })
+    .on('mousemove', e => {
+      const rect = container.getBoundingClientRect();
+      let x = e.clientX - rect.left + 14;
+      let y = e.clientY - rect.top  - 10;
+      if (x + 270 > W) x -= 280;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top  = y + 'px';
+    })
+    .on('mouseout', () => { tooltip.style.display = 'none'; });
+
+  sim.on('tick', () => {
+    link
+      .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+      .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+    node.attr('transform', d => `translate(${d.x},${d.y})`);
+  });
+
+  // ── Text list below graph ─────────────────────────────────────────────────
+  document.getElementById('transitions-content').innerHTML = `
+    <div class="builder-header" style="display:flex;justify-content:space-between">
+      <span>Phase Transition Graph</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">${tr.count} transitions</span>
+    </div>
+    ${tr.transitions.map(t => `
+      <div class="transition-item">
+        <div class="t-phase">${t.from}</div>
+        <div class="t-arrow">→</div>
+        <div>
+          <div class="t-phase">${t.to}</div>
+          <div class="t-meta">${t.control_parameter} = ${typeof t.critical_value === 'number' && t.critical_value < 1e-3 ? t.critical_value.toExponential(1) : t.critical_value} ${t.universality_class ? '· ' + t.universality_class : ''}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">${t.mechanism}</div>
+        </div>
+        <div class="t-type ${t.continuous ? 'continuous' : 'firstorder'}">${t.continuous ? '2nd order' : '1st order'}</div>
+      </div>
+    `).join('')}
+  `;
+}
+
+// ─── BOOT ─────────────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>

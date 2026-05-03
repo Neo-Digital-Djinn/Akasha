@@ -1,0 +1,20 @@
+{
+  "request_id": "REQ-ARC-001",
+  "title": "Feedback System Engine",
+  "request_type": "engine",
+  "source": "akasha-archetype-catalog",
+  "status": "open",
+  "priority": "high",
+  "summary": "Model positive and negative feedback dynamics across domains.",
+  "why": "Core reusable system archetype required for Akasha pattern discovery.",
+  "proposed_repo": "akasha-feedback-engine",
+  "suggested_family": "system_archetype",
+  "suggested_class": "engine",
+  "suggested_role": "feedback_engine",
+  "notes": [
+    "Generated as part of Akasha archetypal engine initialization set.",
+    "Represents one of the core reusable system dynamics observed across domains."
+  ],
+  "captured_from": "archetype_catalog",
+  "created_at": "2026-04-05"
+}
