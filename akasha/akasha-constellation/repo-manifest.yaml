@@ -1,0 +1,51 @@
+repo:
+  name: akasha-constellation
+  ecosystem: akasha
+  version: 0.1.0
+  status: active
+engine:
+  family: meta
+  class: coordination_engine
+  role: constellation_state_coordination
+identity:
+  role: engine
+  layer: coordination
+  description: 'Constellation coordination engine for the Akasha ecosystem. Responsible
+    for relating the major engines, tracking their place in the wider architecture,
+    and providing a structured view of how the constellation hangs together.
+
+    '
+ownership:
+  steward: human
+  approval_required: true
+interfaces:
+  consumes:
+  - repo_manifests
+  - engine_outputs
+  - topology_information
+  - coordination_inputs
+  produces:
+  - constellation_maps
+  - coordination_views
+  - engine_relationship_models
+  - ecosystem_state_outputs
+capabilities:
+- constellation_mapping
+- ecosystem_coordination
+- engine_relationship_tracking
+- topology_view_generation
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+depends_on:
+- akasha-grand-atlas
+- akasha-events
+- akasha-attractor
+- akasha-prospector
+type: organ
+family: discovery
+role: constellation
+name: akasha-constellation
+version: 1.0.0
+generated_by: akasha-canon

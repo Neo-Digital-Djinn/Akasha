@@ -1,0 +1,201 @@
+ecosystem: Akasha
+
+repos:
+
+  engine-discovery:
+    role: engine
+    layer: discovery
+    description: Legacy discovery engine preserved for compatibility.
+
+  engine-mythology:
+    role: engine
+    layer: interpretation
+    description: Mythology interpretation engine for narrative and symbolic analysis.
+
+  node-herald:
+    role: node
+    layer: distribution
+    description: Distribution node responsible for publishing outputs and artifacts.
+
+  forge-project:
+    role: forge
+    layer: creation
+    description: Legacy forge system preserved for compatibility.
+
+  akasha-axioms:
+    role: foundation
+    layer: constitutional
+    description: Governing principles, ontology, doctrine, and system requirements for the Akasha ecosystem.
+
+  akasha-world:
+    role: registry
+    layer: knowledge
+    description: Canonical knowledge registry, naming conventions, and repository manifest schema.
+
+  akasha-constellation:
+    role: registry
+    layer: ecosystem
+    description: Ecosystem map tracking repositories, relationships, and operational flows.
+
+  akasha-discovery:
+    role: engine
+    layer: discovery
+    description: Discovery engine that proposes candidates, explores gaps, and records experiments.
+
+  akasha-forge:
+    role: forge
+    layer: creation
+    description: Construction engine that builds tools, modules, and repositories from approved discoveries.
+
+  akasha-apis:
+    role: interface
+    layer: ingestion
+    description: Standardized connectors and API interfaces for external data sources.
+
+  akasha-collect:
+    role: engine
+    layer: ingestion
+    description: Executes collectors defined in akasha-apis and gathers external artifacts.
+
+  akasha-capital:
+    role: engine
+    layer: analysis
+    description: >
+      Capital flow and market-regime analysis engine. Classifies market regimes
+      (EXPANSION, ROTATION, CONTRACTION, TRANSITION) from stablecoin flow,
+      BTC dominance, funding bias, and volatility signals. Provides multi-asset
+      portfolio analysis, Markov regime forecasting, and persistent regime memory.
+      Emits Akasha-compatible event payloads for ingestion by akasha-events.
+      Not a trading system — a structured observation and reasoning instrument.
+    depends_on:
+      - akasha-events
+      - akasha-apis
+    inputs:
+      - stablecoin_inflow_signals
+      - stablecoin_outflow_signals
+      - funding_bias_readings
+      - btc_dominance_readings
+      - volatility_readings
+    outputs:
+      - regime_state_snapshots
+      - divergence_reports
+      - watchdog_alerts
+      - markov_regime_forecasts
+      - regime_memory_summaries
+      - akasha_event_payloads
+    canonical_status: canonical
+    maturity: stable
+    source_lineage: capital-suite-v5
+
+  akasha-automaton:
+    role: engine
+    layer: simulation
+    description: >
+      Emergent-systems simulation and observation engine. Eight cellular automaton
+      engines (Conway's Life, Reaction-Diffusion, Lenia, Brian's Brain, WireWorld,
+      Langton's Ant, Cyclic CA, SmoothLife), nine render modes, genetic rule
+      evolution, multi-universe forking, time-travel history, AI pattern analysis,
+      Pattern DNA metrics, and a living README grid. Produces grid snapshots,
+      Wolfram classifications, evolved rule sets, and Akasha-compatible emergence
+      event payloads for akasha-events ingestion.
+    depends_on:
+      - akasha-events
+      - akasha-axioms
+    inputs:
+      - rule_definitions
+      - initial_grid_states
+      - rle_pattern_strings
+      - simulation_parameters
+    outputs:
+      - grid_state_snapshots
+      - pattern_dna_metrics
+      - wolfram_class_classifications
+      - evolved_rule_sets
+      - emergence_event_payloads
+      - ai_pattern_analyses
+    canonical_status: canonical
+    maturity: stable
+    source_lineage: Cellular_Automation_Explorer (ULTRAVERSE v10 / v8)
+
+  akasha-cantus:
+    role: engine
+    layer: simulation
+    description: >
+      Acoustic Transition Virtual Machine (ATVM) and stack-based language engine.
+      Programs may be written in the Cantus DSL (.cantus text files) or encoded as
+      ordered acoustic pitch transitions in audio signals. A MIDI bridge maps musical
+      note sequences to opcodes. The self-modifying POKE instruction constitutes the
+      "dangerous" half of v2 (per COLLABORATION.md). Ported from Termux/Android to
+      Debian 13. Emits halt traces compatible with akasha-events.
+    depends_on:
+      - akasha-axioms
+      - akasha-events
+    inputs:
+      - cantus_source_files
+      - audio_files_wav_flac
+      - midi_note_sequences
+    outputs:
+      - vm_stack_results
+      - bytecode_sequences
+      - halt_reason_traces
+    canonical_status: canonical
+    maturity: stable
+    source_lineage: Cantus-v2.0 (Termux/Android)
+
+  akasha-esce:
+    role: engine
+    layer: transformation
+    description: >
+      Extensible Stream Cipher Engine (ESCE). A modular, deterministic,
+      plugin-driven byte-transformation pipeline with a C-backed XOR primitive
+      (compiled Python extension), streaming file support, and a clean CLI.
+      Built as an architectural framework and transformation research organ.
+      Plugins: XOR (C extension), SHA-256 hash, HMAC-SHA256.
+      Ported from Termux/Android to Debian 13 Linux.
+    depends_on:
+      - akasha-axioms
+    peers:
+      - akasha-cantus
+      - akasha-cipher-lab
+    feeds_into:
+      - akasha-events
+      - akasha-anomaly
+    inputs:
+      - raw_bytes
+      - binary_files
+      - plugin_order_config
+    outputs:
+      - transformed_bytes
+      - transformed_files
+    canonical_status: canonical
+    maturity: stable
+    source_lineage: ESCE-Stage10 (Termux/Android)
+
+  akasha-gatekeeper:
+    role: engine
+    layer: security-intelligence
+    description: >
+      Security intelligence organ. Observes system activity via osquery,
+      Falco, Suricata, and procfs. Analyzes threat patterns and emits
+      scoped, HMAC-signed, expiring ActionIR into akasha-bridge/executor.
+      Does NOT enforce — Bridge executes. Sentinel + Arbiter only.
+      Ported from Gatekeeper v2.0 (Termux/Android).
+    depends_on:
+      - akasha-axioms
+      - akasha-bridge
+      - akasha-observer
+    feeds_into:
+      - akasha-bridge
+      - akasha-events
+      - akasha-anomaly
+    inputs:
+      - procfs_snapshots
+      - osquery_alerts
+      - falco_runtime_alerts
+      - suricata_eve_alerts
+    outputs:
+      - observations_log
+      - action_ir_log
+    canonical_status: canonical
+    maturity: stable
+    source_lineage: Gatekeeper-v2.0 (Termux/Android)
