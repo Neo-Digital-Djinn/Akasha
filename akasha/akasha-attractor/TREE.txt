@@ -1,0 +1,20 @@
+akasha-attractor-v2
+├── akasha_attractor
+│   ├── analysis
+│   │   ├── __init__.py
+│   │   ├── bursts.py
+│   │   ├── ledger.py
+│   │   └── summary.py
+│   ├── cli
+│   │   └── main.py
+│   └── __init__.py
+├── docs
+│   ├── ARCHITECTURE.md
+│   └── NEXT_STEPS.md
+├── examples
+│   └── example_summary_output.json
+├── tests
+│   └── test_summary_smoke.py
+├── pyproject.toml
+├── README.md
+└── repo-manifest.yaml

@@ -1,0 +1,11 @@
+{
+  "event_count": 3,
+  "by_category": {
+    "observation": 2,
+    "astronomical": 1
+  },
+  "by_source": {
+    "human": 2,
+    "nasa_api": 1
+  }
+}

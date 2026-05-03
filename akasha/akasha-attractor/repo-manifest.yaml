@@ -1,0 +1,43 @@
+repo:
+  name: akasha-attractor
+  ecosystem: akasha
+  version: 0.2.0
+  status: active
+engine:
+  family: pattern
+  class: evaluation_engine
+  role: structure_detection
+identity:
+  role: engine
+  layer: analysis
+  description: 'First-order pattern and clustering engine for the Akasha ecosystem.
+    Reads the event ledger and surfaces grouped counts, bursts, and simple structure.
+
+    '
+ownership:
+  steward: human
+  approval_required: true
+interfaces:
+  consumes:
+  - akasha_event_ledger
+  produces:
+  - event_summaries
+  - burst_reports
+  - grouped_counts
+capabilities:
+- event_grouping
+- burst_detection
+- pattern_surfacing
+- summary_reports
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+depends_on:
+- akasha-events
+type: organ
+family: discovery
+role: attractor
+name: akasha-attractor
+version: 1.0.0
+generated_by: akasha-canon
