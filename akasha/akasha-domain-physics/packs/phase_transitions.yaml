@@ -1,0 +1,20 @@
+name: phase_transitions
+domain: physics
+
+description: >
+  Starter grounding pack for physical systems that exhibit transitions
+  between qualitatively different states under changing constraints.
+
+examples:
+  - water freezing
+  - water boiling
+  - ferromagnetic transition
+  - metastable supercooling
+
+akasha_mapping:
+  phase: macroscopic system state
+  transition: change between physical regimes
+  instability: sensitivity near a critical threshold
+  equilibrium: stable thermodynamic balance
+  constraint: temperature, pressure, field strength, boundary condition
+  attractor: final stable regime under given conditions

@@ -1,0 +1,47 @@
+repo:
+  name: akasha-domain-neuroscience
+  ecosystem: akasha
+  version: 0.1.0
+  status: active
+engine:
+  family: domain
+  class: domain_sidecar
+  role: domain_specific_knowledge
+identity:
+  role: engine
+  layer: domain
+  description: 'Neuroscience domain sidecar for the Akasha constellation. Responsible
+    for carrying neuroscience concepts, signals, processes, and domain-specific structures
+    for use in broader Akasha modeling and inquiry.
+
+    '
+ownership:
+  steward: human
+  approval_required: true
+interfaces:
+  consumes:
+  - neuroscience_inputs
+  - ontology_models
+  - signal_records
+  - domain_specific_relations
+  produces:
+  - neuroscience_domain_models
+  - signal_relation_maps
+  - domain_enrichment_outputs
+capabilities:
+- neuroscience_structure_modeling
+- signal_relation_mapping
+- domain_specific_enrichment
+- sidecar_knowledge_support
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+depends_on:
+- akasha-ontology
+type: organ
+family: discovery
+role: domain-neuroscience
+name: akasha-domain-neuroscience
+version: 1.0.0
+generated_by: akasha-canon

@@ -1,0 +1,33 @@
+name: ecosystem_transitions
+domain: ecology
+
+description: >
+  Ecosystems transitioning between different stable regimes.
+
+examples:
+  - coral reef collapse
+  - desertification
+  - lake eutrophication
+  - forest succession shift
+
+akasha_mapping:
+
+  phase:
+    ecosystem state
+
+  transition:
+    regime shift
+
+  instability:
+    ecological tipping point
+
+  equilibrium:
+    stable ecosystem balance
+
+  constraint:
+    resource availability
+    nutrient levels
+    climate pressure
+
+  attractor:
+    long-term ecosystem state

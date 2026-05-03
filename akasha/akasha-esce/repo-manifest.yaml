@@ -1,0 +1,87 @@
+repo_name: akasha-esce
+role: engine
+layer: transformation
+canonical_status: canonical
+maturity: stable
+source_lineage: ESCE-Stage10 (Termux/Android)
+
+description: >
+  Extensible Stream Cipher Engine (ESCE). A modular, deterministic,
+  plugin-driven byte-transformation pipeline with a C-backed XOR primitive,
+  streaming file support, and a clean CLI. Built as an architectural
+  framework and transformation research organ — not a hardened cipher.
+  Plugins: XOR (C extension), SHA-256 hash, HMAC-SHA256.
+  Ported from Termux/Android to Debian 13 Linux.
+
+inputs:
+  - raw_bytes (text, binary)
+  - input_files (any binary file, chunked 1 MiB)
+  - plugin_order_list (configuration)
+
+outputs:
+  - transformed_bytes (hex-encoded or binary)
+  - output_files (transformed binary files)
+
+dependencies:
+  - python >= 3.11
+  - gcc / build-essential (Debian 13)
+  - python3-dev (Debian 13)
+
+adapters:
+  - esce.cli          # command-line entry point
+  - esce.pipeline     # ordered plugin chain
+  - esce.plugin_loader # dynamic plugin discovery
+  - esce._core        # C extension: XOR primitive
+
+alignment_statement: >
+  akasha-esce is an official organ of the Akasha Constellation,
+  layer: transformation. It aligns with akasha-axioms, akasha-world,
+  and akasha-constellation. Ported from Termux to Debian 13.
+
+axiom_alignment:
+  axiom_1_coherence: >
+    Plugins execute in explicit, declared order — no implicit behavior.
+    Contradictions in plugin loading surface as named ImportError, never silent.
+  axiom_2_discoverability: >
+    Plugin system is dynamic: new plugins drop into esce/plugins/ and are
+    discovered automatically by plugin_loader — gaps in capability are
+    structurally visible as missing module errors.
+  axiom_3_alignment: >
+    Declared role (transformation), layer, inputs, outputs, and constellation
+    position are all explicit in this manifest.
+  axiom_4_augmentation: >
+    ESCE augments the Akasha ecosystem with a general-purpose byte-transform
+    pipeline. Its plugin interface is a tool for building more tools —
+    any new transform can be registered without touching the core engine.
+  axiom_5_traceability: >
+    All plugin loads are traceable (named ImportError on failure).
+    Pipeline order is explicit and inspectable at runtime via pipeline.plugin_order.
+    Source lineage from Termux origin preserved in CHANGELOG.md.
+  axiom_6_modularity: >
+    Core engine (encoder.py), pipeline orchestrator (pipeline.py),
+    plugin loader (plugin_loader.py), C primitive (_core), and CLI
+    are independently replaceable modules with clean interfaces.
+  axiom_7_transparency: >
+    All plugin interfaces are human-readable Python.
+    C primitive (esce_core.c) is minimal and annotated.
+    No hidden state or side effects in any transform.
+  axiom_8_iteration: >
+    Stage 10 → v1.1.0 evolution: Debian port, improved error handling,
+    expanded tests, Akasha alignment. Tracked in CHANGELOG.md.
+  axiom_9_stewardship: >
+    Human steward approval required for canonical promotion.
+    Security notice maintained: not a hardened cryptographic system.
+  axiom_10_continuity: >
+    Source lineage from ESCE Stage 10 (Termux/Android) preserved.
+    All porting decisions documented in CHANGELOG.md.
+
+constellation_position:
+  layer: transformation
+  peers:
+    - akasha-cantus       # also a transformation/execution engine
+    - akasha-cipher-lab   # sibling: symbolic/cryptanalytic transforms
+  feeds_into:
+    - akasha-events       # potential: emit transform traces as Akasha events
+    - akasha-anomaly      # potential: feed encoded streams as anomaly signals
+  receives_from:
+    - akasha-axioms       # governance and law

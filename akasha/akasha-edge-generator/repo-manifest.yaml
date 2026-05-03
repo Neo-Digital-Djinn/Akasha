@@ -1,0 +1,47 @@
+repo:
+  name: akasha-edge-generator
+  ecosystem: akasha
+  version: 0.1.0
+  status: active
+engine:
+  family: discovery_engine
+  class: engine
+  role: candidate_edge_generation
+identity:
+  role: engine
+  layer: discovery
+  description: >
+    Generates candidate structural edges between concepts across domain packs.
+    For each cross-domain pair, proposes a relation class from the Akasha Table
+    with confidence and rationale. Feeds downstream hypothesis and validation layers.
+ownership:
+  steward: human
+  approval_required: false
+interfaces:
+  consumes:
+    - domain_packs
+    - seed_concept
+  produces:
+    - candidate_edges
+    - relation_proposals
+    - confidence_scores
+capabilities:
+  - cross_domain_edge_generation
+  - relation_class_assignment
+  - confidence_scoring
+  - provenance_declaration
+alignment:
+  axioms_required: true
+  canonical_structure: true
+depends_on:
+  - akasha-domain-economics
+  - akasha-domain-physics
+  - akasha-domain-ecology
+  - akasha-domain-neuroscience
+  - akasha-domain-music
+type: organ
+family: discovery
+role: edge_generator
+name: akasha-edge-generator
+version: 0.1.0
+generated_by: akasha-session

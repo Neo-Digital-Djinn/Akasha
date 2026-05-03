@@ -1,0 +1,47 @@
+repo:
+  name: akasha-domain-physics
+  ecosystem: akasha
+  version: 0.1.0
+  status: active
+engine:
+  family: domain
+  class: domain_sidecar
+  role: domain_specific_knowledge
+identity:
+  role: engine
+  layer: domain
+  description: 'Physics domain sidecar for the Akasha constellation. Responsible for
+    carrying physical concepts, models, structures, and relations that can enrich
+    broader Akasha discovery and reasoning.
+
+    '
+ownership:
+  steward: human
+  approval_required: true
+interfaces:
+  consumes:
+  - physics_inputs
+  - ontology_models
+  - relation_structures
+  - domain_specific_records
+  produces:
+  - physics_domain_models
+  - physical_relation_maps
+  - domain_enrichment_outputs
+capabilities:
+- physics_structure_modeling
+- physical_relation_mapping
+- domain_specific_enrichment
+- sidecar_knowledge_support
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+depends_on:
+- akasha-ontology
+type: organ
+family: discovery
+role: domain-physics
+name: akasha-domain-physics
+version: 1.0.0
+generated_by: akasha-canon

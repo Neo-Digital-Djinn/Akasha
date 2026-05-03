@@ -1,0 +1,225 @@
+structures:
+  phase_transition:
+    description: transition between qualitatively distinct system states
+    domains:
+      physics:
+      - water_freezing
+      - water_boiling
+      - ferromagnetic_transition
+      ecology:
+      - coral_reef_collapse
+      - desertification
+      - lake_eutrophication
+      economics:
+      - market_crash
+      - speculative_bubble
+      - liquidity_crisis
+      music:
+      - deceptive_cadence
+      - dominant_to_tonic_resolution
+      - modal_shift
+      neuroscience:
+      - neural_synchronization
+      - seizure_onset
+      - sleep_stage_transition
+  instability:
+    description: regime where small perturbations can produce large effects
+    domains:
+      physics:
+      - metastable_supercooling
+      ecology:
+      - ecological_tipping_point
+      economics:
+      - speculative_bubble
+      music:
+      - harmonic_tension
+      neuroscience:
+      - neural_avalanche
+      - runaway_excitation
+  equilibrium:
+    description: stable or balanced system condition
+    domains:
+      physics:
+      - thermodynamic_equilibrium
+      ecology:
+      - stable_ecosystem_balance
+      economics:
+      - market_equilibrium
+      music:
+      - tonic_resolution
+      neuroscience:
+      - homeostatic_firing_balance
+  attractor:
+    description: state toward which a system evolves under current dynamics
+    domains:
+      physics:
+      - final_stable_regime
+      ecology:
+      - climax_ecosystem
+      economics:
+      - long_term_price_regime
+      music:
+      - tonal_center
+      neuroscience:
+      - memory_state
+      - neural_pattern_recall
+  constraint:
+    description: limiting or forcing condition shaping system behavior
+    domains:
+      physics:
+      - temperature
+      - pressure
+      - field_strength
+      ecology:
+      - nutrient_availability
+      - water_supply
+      - climate_pressure
+      economics:
+      - liquidity_constraint
+      - regulatory_pressure
+      - capital_availability
+      music:
+      - harmonic_rules
+      - instrument_range
+      - meter
+      neuroscience:
+      - metabolic_energy_limit
+      - synaptic_capacity
+  synchronization:
+    description: candidate structure promoted by akasha-evolve
+    domains:
+      ecology:
+      - insect_population_cycles
+      economics: []
+      music:
+      - dominant_to_tonic_resolution
+      neuroscience:
+      - neural_synchronization
+      physics: []
+  cascade:
+    description: candidate structure promoted by akasha-evolve
+    domains:
+      ecology:
+      - ecological_tipping_point
+      economics:
+      - market_crash
+      music: []
+      neuroscience:
+      - neural_avalanche
+      physics: []
+  resonance:
+    description: candidate structure promoted by akasha-evolve
+    domains:
+      ecology: []
+      economics: []
+      music:
+      - tonal_center
+      neuroscience:
+      - neural_pattern_recall
+      physics:
+      - orbital_resonance
+  feedback_loop:
+    description: candidate structure promoted by akasha-evolve
+    domains:
+      ecology:
+      - predator_prey_cycle
+      economics:
+      - supply_demand_adjustment
+      music: []
+      neuroscience:
+      - homeostatic_firing_balance
+      physics: []
+  oscillation:
+    description: candidate structure promoted by akasha-evolve
+    domains:
+      ecology:
+      - predator_prey_cycle
+      economics:
+      - boom_bust_cycle
+      music: []
+      neuroscience:
+      - brain_wave_rhythm
+      physics: []
+  cycle:
+    description: candidate structure promoted by akasha-evolve
+    domains:
+      ecology:
+      - predator_prey_cycle
+      economics:
+      - boom_bust_cycle
+      music: []
+      neuroscience:
+      - sleep_wake_cycle
+      physics: []
+  criticality:
+    description: candidate structure promoted by akasha-evolve
+    domains:
+      ecology:
+      - ecological_tipping_point
+      economics:
+      - speculative_bubble
+      music: []
+      neuroscience:
+      - neural_avalanche
+      physics:
+      - metastable_supercooling
+  propagation:
+    description: candidate structure promoted by akasha-evolve
+    domains:
+      ecology:
+      - invasive_species_spread
+      economics:
+      - financial_contagion
+      music: []
+      neuroscience:
+      - seizure_propagation
+      physics:
+      - phase_front_propagation
+  diffusion:
+    description: candidate structure promoted by akasha-evolve
+    domains:
+      ecology:
+      - nutrient_diffusion
+      economics:
+      - information_diffusion
+      music: []
+      neuroscience:
+      - neurotransmitter_diffusion
+      physics:
+      - heat_diffusion
+  self_organization:
+    description: candidate structure promoted by akasha-evolve
+    domains:
+      ecology:
+      - ant_colony_structure
+      economics:
+      - market_price_formation
+      music: []
+      neuroscience:
+      - neural_pattern_formation
+      physics:
+      - benard_convection
+  emergence:
+    description: candidate structure promoted by akasha-evolve
+    domains:
+      ecology:
+      - ecosystem_niche_structure
+      economics:
+      - market_behavior
+      music: []
+      neuroscience:
+      - consciousness_pattern
+      physics:
+      - superconductivity
+  network:
+    description: candidate structure promoted by akasha-evolve
+    domains:
+      ecology:
+      - food_web
+      economics:
+      - trade_network
+      music: []
+      neuroscience:
+      - neural_network
+      physics:
+      - lattice_network

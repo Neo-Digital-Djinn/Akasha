@@ -1,0 +1,32 @@
+repo: akasha-domain-combinator
+type: organ
+family: unspecified
+role: domain-combinator
+engine:
+  name: akasha-domain-combinator
+  class: organ
+  maturity: seed
+identity:
+  repo: akasha-domain-combinator
+  slug: akasha-domain-combinator
+  title: Domain Combinator
+ownership:
+  steward: JimmyDev
+  authority: local-first
+interfaces:
+  cli: []
+  files:
+  - README.md
+  - repo-manifest.yaml
+capabilities:
+- initialize
+- describe
+alignment:
+  constellation_role: engine
+  canon_status: provisional
+depends_on:
+- akasha-requests
+- akasha-suite
+name: akasha-domain-combinator
+version: 1.0.0
+generated_by: akasha-canon

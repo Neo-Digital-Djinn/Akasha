@@ -1,0 +1,34 @@
+name: tonal_dynamics
+domain: music
+
+description: >
+  Structural mapping of tonal music systems that exhibit tension, release,
+  modulation, and stable centers.
+
+examples:
+  - dominant_to_tonic_resolution
+  - modal_shift
+  - deceptive_cadence
+  - harmonic_tension_build
+
+akasha_mapping:
+
+  phase:
+    tonal_state
+
+  transition:
+    modulation_or_cadential_shift
+
+  instability:
+    harmonic_tension
+
+  equilibrium:
+    tonic_resolution
+
+  constraint:
+    meter
+    harmonic_rules
+    instrument_range
+
+  attractor:
+    tonal_center

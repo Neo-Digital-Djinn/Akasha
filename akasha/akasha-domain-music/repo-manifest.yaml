@@ -1,0 +1,47 @@
+repo:
+  name: akasha-domain-music
+  ecosystem: akasha
+  version: 0.1.0
+  status: active
+engine:
+  family: domain
+  class: domain_sidecar
+  role: domain_specific_knowledge
+identity:
+  role: engine
+  layer: domain
+  description: 'Music domain sidecar for the Akasha constellation. Responsible for
+    carrying musical concepts, structures, tonal relations, rhythmic systems, and
+    domain-specific material that can enrich Akasha explorations.
+
+    '
+ownership:
+  steward: human
+  approval_required: true
+interfaces:
+  consumes:
+  - music_inputs
+  - ontology_models
+  - rhythmic_structures
+  - tonal_relations
+  produces:
+  - music_domain_models
+  - tonal_mappings
+  - rhythmic_enrichment_outputs
+capabilities:
+- musical_structure_modeling
+- tonal_relation_mapping
+- rhythmic_pattern_support
+- domain_enrichment
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+depends_on:
+- akasha-ontology
+type: organ
+family: discovery
+role: domain-music
+name: akasha-domain-music
+version: 1.0.0
+generated_by: akasha-canon

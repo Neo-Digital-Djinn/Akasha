@@ -1,0 +1,29 @@
+name: neural_dynamics
+domain: neuroscience
+
+description: >
+  Structural patterns observed in neural systems including
+  synchronization, attractor states, and critical transitions
+  in brain activity.
+
+examples:
+
+  phase_transition:
+    - seizure_onset
+    - neural_synchronization
+    - sleep_stage_transition
+
+  instability:
+    - neural_avalanche
+    - runaway_excitation
+
+  equilibrium:
+    - homeostatic_firing_balance
+
+  attractor:
+    - memory_state
+    - neural_pattern_recall
+
+  constraint:
+    - synaptic_capacity
+    - metabolic_energy_limit

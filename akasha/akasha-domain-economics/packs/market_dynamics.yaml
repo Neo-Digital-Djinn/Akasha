@@ -1,0 +1,34 @@
+name: market_dynamics
+domain: economics
+
+description: >
+  Structural mapping of market systems that exhibit regime shifts,
+  instabilities, and equilibrium dynamics.
+
+examples:
+  - speculative_bubble
+  - market_crash
+  - liquidity_crisis
+  - inflation_spiral
+
+akasha_mapping:
+
+  phase:
+    market regime
+
+  transition:
+    market shift or crash
+
+  instability:
+    speculative bubble
+
+  equilibrium:
+    market equilibrium price
+
+  constraint:
+    liquidity constraint
+    regulatory pressure
+    capital availability
+
+  attractor:
+    long_term_price_regime

@@ -1,0 +1,17 @@
+structures:
+
+  phase_transition:
+    domains:
+      physics:
+        - water_freezing
+        - ferromagnetism
+
+  instability:
+    domains:
+      physics:
+        - supercooling
+
+  attractor:
+    domains:
+      physics:
+        - equilibrium_state
