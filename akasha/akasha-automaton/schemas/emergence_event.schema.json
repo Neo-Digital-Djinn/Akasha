@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AkashaAutomatonEmergenceEvent",
+  "description": "Emergence event snapshot emitted by akasha-automaton for ingestion by akasha-events.",
+  "type": "object",
+  "required": ["source", "engine", "generation", "population", "wolfram_class"],
+  "properties": {
+    "source": {
+      "type": "string",
+      "const": "akasha-automaton",
+      "description": "Emitting organ identifier."
+    },
+    "engine": {
+      "type": "string",
+      "enum": [
+        "conway_life",
+        "reaction_diffusion",
+        "lenia",
+        "brians_brain",
+        "wireworld",
+        "langtons_ant",
+        "cyclic_ca",
+        "elementary_ca",
+        "forest_fire",
+        "smoothlife"
+      ],
+      "description": "Active simulation engine."
+    },
+    "generation": {
+      "type": "integer",
+      "description": "Current generation (tick) counter."
+    },
+    "population": {
+      "type": "integer",
+      "description": "Count of living cells this generation."
+    },
+    "rule": {
+      "type": "string",
+      "description": "Active rule string (e.g. 'B3/S23' for GoL, or engine-specific parameter summary)."
+    },
+    "wolfram_class": {
+      "type": "string",
+      "enum": ["Still Life", "Oscillator", "Spaceship", "Chaotic", "Unknown"],
+      "description": "Wolfram behavioral classification."
+    },
+    "pattern_dna": {
+      "type": "object",
+      "description": "Full Pattern DNA metric snapshot.",
+      "properties": {
+        "symmetry_h": { "type": "number", "minimum": 0, "maximum": 1 },
+        "symmetry_v": { "type": "number", "minimum": 0, "maximum": 1 },
+        "stability": { "type": "number", "minimum": 0, "maximum": 1 },
+        "entropy": { "type": "number", "minimum": 0 },
+        "complexity": { "type": "number", "minimum": 0 },
+        "period": { "type": ["integer", "null"], "description": "Detected oscillation period. Null if not detected." },
+        "bounding_box": {
+          "type": "object",
+          "properties": {
+            "min_x": { "type": "integer" },
+            "max_x": { "type": "integer" },
+            "min_y": { "type": "integer" },
+            "max_y": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "births": {
+      "type": "integer",
+      "description": "Cells born this generation."
+    },
+    "deaths": {
+      "type": "integer",
+      "description": "Cells that died this generation."
+    },
+    "density": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Population / total grid cells."
+    },
+    "alerts": {
+      "type": "array",
+      "description": "System alerts active this generation.",
+      "items": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" }
+        }
+      }
+    },
+    "render_mode": {
+      "type": "string",
+      "enum": [
+        "Classic", "Heat", "Age", "Velocity",
+        "Nebula", "Plasma", "Aurora", "Quantum", "3D ISO"
+      ],
+      "description": "Active render mode at time of emission."
+    },
+    "ai_analysis": {
+      "type": ["object", "null"],
+      "description": "Last AI analysis result, if available.",
+      "properties": {
+        "mode": { "type": "string" },
+        "response": { "type": "string" },
+        "generation_at_analysis": { "type": "integer" }
+      }
+    },
+    "evolved_rule": {
+      "type": ["object", "null"],
+      "description": "Champion evolved rule, if genetic engine produced one.",
+      "properties": {
+        "rule_string": { "type": "string" },
+        "fitness": { "type": "number" },
+        "fitness_goal": { "type": "string" },
+        "generations_tested": { "type": "integer" }
+      }
+    }
+  }
+}

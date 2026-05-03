@@ -1,0 +1,4 @@
+
+executor:
+  audit_log: akasha-audit.log
+  mode: enforced

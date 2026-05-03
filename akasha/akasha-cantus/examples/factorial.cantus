@@ -1,0 +1,22 @@
+# factorial.cantus — Factorial of 5
+# Expected output: 120
+#
+# Stack layout: [accumulator, counter]  (counter on top)
+# Note: original Cantus v2.0 had loop body reversed; fixed in v2.1.0.
+
+PUSH 1
+PUSH 5
+LABEL loop
+DUP
+JZ end
+SWAP
+OVER
+MUL
+SWAP
+PUSH 1
+SUB
+JMP loop
+LABEL end
+POP
+PRINT
+HALT

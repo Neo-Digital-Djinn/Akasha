@@ -1,0 +1,50 @@
+# CONSTELLATION PATCH
+# akasha-cantus — canonical admission
+#
+# Instructions:
+#   Add the following entry to akasha-constellation/registry.yaml
+#   under the repos: key.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+
+  akasha-cantus:
+    role: engine
+    layer: creation
+    description: >
+      Stack-based virtual machine and DSL for executable music and structural
+      computation. Programs are written in the Cantus DSL (text opcodes),
+      generated from MIDI note sequences, or derived from acoustic state
+      transitions via the ATVM frontend specification. Features a
+      self-modifying POKE instruction, bytecode compiler, label-based control
+      flow (JMP/JZ/JNZ), integer arithmetic (ADD/SUB/MUL/DIV/MOD), and an
+      interactive REPL. Both a working technical artifact and a documented
+      record of human/AI collaborative authorship.
+    canonical_status: canonical
+    maturity: stable
+    source_lineage: Cantus v2.0 (written in Termux on Android)
+    depends_on:
+      - akasha-axioms
+      - akasha-world
+      - akasha-constellation
+    optional_depends_on:
+      - akasha-domain-music
+      - akasha-events
+    inputs:
+      - cantus_source (.cantus DSL text)
+      - midi_note_sequence
+      - audio_file (WAV/FLAC — requires librosa)
+    outputs:
+      - final_stack
+      - bytecode
+      - print_output
+    opcodes:
+      - PUSH, POP, DUP, SWAP, OVER
+      - ADD, SUB, MUL, DIV, MOD
+      - STORE, LOAD
+      - LABEL, JMP, JZ, JNZ, HALT
+      - POKE (self-modifying)
+      - PRINT
+    input_modes:
+      - DSL text
+      - MIDI bridge
+      - ATVM acoustic frontend

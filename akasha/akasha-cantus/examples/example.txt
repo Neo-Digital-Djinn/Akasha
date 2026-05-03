@@ -1,0 +1,6 @@
+
+# Example CANTUS Program (conceptual)
+
+C4  -> PUSH 4
+E4  -> ADD
+G4  -> MUL

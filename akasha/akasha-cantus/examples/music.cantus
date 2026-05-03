@@ -1,0 +1,7 @@
+# music.cantus — musical aesthetic demo
+# Maps to: 3 * 4 = 12
+PUSH 3
+PUSH 4
+MUL
+PRINT
+HALT

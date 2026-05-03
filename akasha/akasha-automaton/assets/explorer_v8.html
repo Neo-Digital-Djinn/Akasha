@@ -1,0 +1,3298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cellular Automaton Explorer — ULTRAVERSE v8</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#000;--panel:#080808;--border:#181818;--accent:#667eea;--accent2:#a78bfa;
+  --green:#4ade80;--amber:#f59e0b;--red:#f87171;--cyan:#06b6d4;--rose:#f43f5e;
+  --text:#d0d0d0;--text2:#888;--text3:#444;
+  --panel-w:260px;--right-w:300px;--header-h:44px;--footer-h:150px;
+}
+body{font-family:'SF Mono','Consolas',monospace;background:var(--bg);color:var(--text);overflow:hidden;user-select:none;}
+#app{display:grid;grid-template-columns:var(--panel-w) 1fr var(--right-w);grid-template-rows:var(--header-h) 1fr var(--footer-h);height:100vh;gap:1px;background:var(--border);}
+
+/* HEADER */
+#header{grid-column:1/-1;background:linear-gradient(135deg,#07071a,#0d1033);display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:2px solid var(--accent);}
+#logo{font-size:0.95em;font-weight:900;background:linear-gradient(135deg,#667eea,#a78bfa 40%,#4ade80);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px;white-space:nowrap;}
+#hctrls{display:flex;gap:5px;align-items:center;flex:1;flex-wrap:wrap;justify-content:flex-end;}
+.render-tabs{display:flex;gap:2px;background:rgba(0,0,0,0.5);padding:3px;border-radius:6px;border:1px solid #222;}
+.rtab{padding:3px 7px;border-radius:3px;font-size:0.65em;cursor:pointer;color:#666;background:transparent;border:none;width:auto;margin:0;transition:all 0.2s;}
+.rtab.active{background:var(--accent);color:#fff;}
+.rtab:hover:not(.active){color:#ccc;}
+
+/* PANELS */
+#left{background:var(--panel);padding:8px;overflow-y:auto;border-right:1px solid var(--border);}
+#right{background:var(--panel);padding:8px;overflow-y:auto;border-left:1px solid var(--border);}
+#footer{grid-column:1/-1;background:#040404;border-top:1px solid var(--border);display:flex;flex-direction:column;}
+
+/* MAIN VIEW */
+#mainview{position:relative;overflow:hidden;background:#000;}
+#glCanvas{position:absolute;top:0;left:0;image-rendering:pixelated;}
+#trailCanvas{position:absolute;top:0;left:0;pointer-events:none;}
+#overlayCanvas{position:absolute;top:0;left:0;pointer-events:none;}
+#uiCanvas{position:absolute;top:0;left:0;cursor:crosshair;}
+
+/* MINIMAP */
+#minimap{position:absolute;bottom:50px;right:10px;width:120px;height:90px;background:rgba(0,0,0,0.85);border:1px solid #333;border-radius:4px;overflow:hidden;}
+#minimapCanvas{width:100%;height:100%;}
+#minimapViewport{position:absolute;border:1px solid var(--accent);pointer-events:none;border-radius:1px;}
+
+/* OVERLAYS */
+#simBadge{position:absolute;top:10px;left:10px;background:rgba(102,126,234,0.12);border:1px solid var(--accent);border-radius:4px;padding:3px 8px;font-size:0.66em;color:var(--accent);pointer-events:none;}
+#fpsCounter{position:absolute;top:10px;right:145px;background:rgba(0,0,0,0.6);border:1px solid #222;border-radius:4px;padding:2px 6px;font-size:0.64em;color:var(--text3);}
+#zoomCtrl{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:3px;}
+.zbtn{width:26px;height:26px;background:rgba(0,0,0,0.75);border:1px solid #333;border-radius:4px;color:#777;cursor:pointer;font-size:0.9em;display:flex;align-items:center;justify-content:center;transition:all 0.15s;padding:0;margin:0;}
+.zbtn:hover{border-color:var(--accent);color:#fff;}
+
+/* PLAYBACK BAR */
+#playbar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.9);padding:5px 12px;border-radius:8px;display:flex;gap:5px;align-items:center;border:1px solid #222;backdrop-filter:blur(6px);}
+.pbtn{background:rgba(102,126,234,0.15);border:1px solid var(--accent);color:var(--accent);padding:4px 9px;border-radius:4px;font-size:0.7em;width:auto;margin:0;cursor:pointer;}
+.pbtn:hover{background:rgba(102,126,234,0.35);}
+
+/* SECTIONS */
+.sec{margin-bottom:12px;padding-bottom:11px;border-bottom:1px solid rgba(255,255,255,0.03);}
+.sec:last-child{border:none;}
+.stitle{font-size:0.65em;color:var(--accent);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;display:flex;align-items:center;justify-content:space-between;}
+.badge{display:inline-block;background:rgba(102,126,234,0.2);border:1px solid rgba(102,126,234,0.4);color:var(--accent);font-size:0.6em;padding:1px 5px;border-radius:10px;margin-left:3px;}
+
+/* BUTTONS */
+button{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;padding:6px 9px;border-radius:5px;cursor:pointer;font-size:0.73em;font-weight:600;transition:all 0.15s;width:100%;margin-bottom:3px;font-family:inherit;}
+button:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(102,126,234,0.3);}
+button:active{transform:translateY(0);}
+button.sec2{background:linear-gradient(135deg,#1a2030,#252e42);border:1px solid #2a3040;}
+button.danger{background:linear-gradient(135deg,#7f1d1d,#991b1b);}
+button.success{background:linear-gradient(135deg,#064e3b,#065f46);}
+button.sm{padding:3px 7px;font-size:0.68em;margin-bottom:2px;}
+button.xs{padding:2px 5px;font-size:0.62em;margin:1px;width:auto;}
+
+/* INPUTS */
+input[type=range]{width:100%;margin:3px 0;accent-color:var(--accent);}
+input[type=text],input[type=number],textarea,select{width:100%;padding:4px 7px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.07);border-radius:4px;color:var(--text);font-family:inherit;font-size:0.74em;margin-bottom:3px;}
+select{cursor:pointer;}
+textarea{resize:vertical;min-height:44px;}
+
+/* STATS */
+.sgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-bottom:7px;}
+.sbox{background:rgba(0,0,0,0.5);padding:5px;border-radius:4px;border:1px solid rgba(255,255,255,0.04);}
+.slabel{font-size:0.58em;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;}
+.sval{font-size:1em;color:var(--accent);font-weight:bold;margin-top:1px;}
+
+/* DNA */
+.dna{background:rgba(102,126,234,0.04);border:1px solid rgba(102,126,234,0.14);border-radius:5px;padding:7px;font-family:'Courier New',monospace;font-size:0.68em;}
+.drow{display:flex;justify-content:space-between;margin-bottom:2px;}
+.dlabel{color:var(--text3);}
+.dval{color:var(--green);}
+
+/* TOOLS */
+.toolrow{display:flex;flex-wrap:wrap;gap:2px;margin-bottom:5px;}
+.tbtn{display:inline-flex;align-items:center;gap:3px;padding:4px 7px;background:rgba(102,126,234,0.1);border:1px solid #2a3040;border-radius:4px;color:#777;font-size:0.7em;cursor:pointer;transition:all 0.15s;width:auto;margin:1px;}
+.tbtn:hover{border-color:var(--accent);color:#bbb;}
+.tbtn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* COLORS */
+.cgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:3px;}
+.cswatch{height:22px;border-radius:3px;cursor:pointer;border:2px solid transparent;transition:all 0.15s;position:relative;overflow:hidden;}
+.cswatch.active{border-color:#fff;}
+.cswatch:hover{transform:scale(1.06);}
+.cswatch span{position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:0.45em;color:rgba(255,255,255,0.7);}
+
+/* PRESETS */
+.pgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;}
+
+/* TABS */
+.tabs{display:flex;gap:2px;margin-bottom:7px;background:rgba(0,0,0,0.3);padding:2px;border-radius:5px;}
+.tab{flex:1;padding:3px;text-align:center;font-size:0.64em;cursor:pointer;border-radius:3px;color:#555;transition:all 0.15s;}
+.tab.active{background:var(--accent);color:#fff;}
+.tab:hover:not(.active){color:#999;}
+.tc{display:none;}
+.tc.active{display:block;}
+
+/* ALERTS */
+.alert{background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.2);border-radius:4px;padding:4px 7px;margin-bottom:4px;font-size:0.7em;}
+.alert.danger{background:rgba(255,50,50,0.07);border-color:rgba(255,50,50,0.25);}
+.alert.success{background:rgba(74,222,128,0.07);border-color:rgba(74,222,128,0.25);}
+.alert.info{background:rgba(6,182,212,0.07);border-color:rgba(6,182,212,0.25);}
+
+/* RULE GRIDS */
+.rgrid{display:grid;grid-template-columns:repeat(9,1fr);gap:2px;margin:4px 0;}
+.rcell{aspect-ratio:1;background:rgba(0,0,0,0.5);border:1px solid #2a3040;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.65em;cursor:pointer;transition:all 0.15s;}
+.rcell.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.rcell:hover{border-color:var(--accent);}
+
+/* MULTIVERSE */
+.mvgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-top:5px;}
+.ucard{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:5px;padding:4px;cursor:pointer;transition:all 0.15s;position:relative;}
+.ucard:hover{border-color:var(--accent);}
+.ucard.active{border-color:var(--accent);background:rgba(102,126,234,0.08);}
+.upreview{width:100%;height:60px;background:#000;border-radius:2px;margin-bottom:2px;display:block;}
+.uinfo{font-size:0.6em;color:#555;line-height:1.3;}
+.urule{color:var(--green);font-size:0.6em;}
+.udel{position:absolute;top:3px;right:3px;background:rgba(255,0,0,0.2);border:1px solid rgba(255,0,0,0.3);color:var(--red);font-size:0.55em;padding:1px 3px;border-radius:2px;cursor:pointer;width:auto;margin:0;}
+
+/* CATALOG */
+.catitem{display:flex;align-items:center;justify-content:space-between;padding:4px 6px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.04);border-radius:4px;margin-bottom:2px;font-size:0.7em;cursor:pointer;transition:all 0.15s;}
+.catitem:hover{border-color:var(--accent);background:rgba(102,126,234,0.07);}
+.cname{color:#ccc;}.crule{color:var(--green);font-family:'Courier New',monospace;font-size:0.88em;}.cgen{color:var(--text3);}
+
+/* EVOLUTION */
+.evobar{height:5px;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width 0.3s;margin-top:3px;}
+.evolog{max-height:80px;overflow-y:auto;font-size:0.65em;color:#444;font-family:'Courier New',monospace;line-height:1.5;}
+.evoe{color:var(--green);}
+.evoe.ext{color:var(--red);}
+
+/* SHARE */
+.sharebox{background:#000;border:1px solid #222;border-radius:4px;padding:4px 7px;font-family:'Courier New',monospace;font-size:0.65em;color:var(--green);word-break:break-all;max-height:50px;overflow-y:auto;margin-bottom:3px;}
+
+/* AI */
+.aibox{background:rgba(102,126,234,0.07);border:1px solid rgba(102,126,234,0.18);border-radius:5px;padding:7px;margin-top:5px;font-size:0.72em;line-height:1.5;max-height:150px;overflow-y:auto;}
+
+/* FOOTER */
+#ftimeline{display:flex;align-items:center;gap:6px;padding:4px 10px;border-bottom:1px solid var(--border);flex-shrink:0;}
+#fgraphs{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:1px;flex:1;background:var(--border);}
+.tgraph{background:#000;position:relative;min-height:0;}
+.tlabel{position:absolute;top:2px;left:4px;font-size:0.57em;color:var(--text3);z-index:1;text-transform:uppercase;letter-spacing:0.4px;}
+
+/* SCROLLBARS */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:rgba(0,0,0,0.2);}
+::-webkit-scrollbar-thumb{background:#2a3040;border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--accent);}
+
+/* TOOLTIP */
+#tooltip{position:fixed;background:rgba(0,0,0,0.92);border:1px solid var(--accent);border-radius:4px;padding:5px 9px;font-size:0.7em;pointer-events:none;z-index:999;max-width:200px;line-height:1.4;display:none;}
+
+/* KBD */
+.kbd{background:#1a1a2e;border:1px solid #2a3040;border-radius:3px;padding:1px 4px;font-size:0.7em;color:#666;}
+
+/* TOGGLES */
+.toggle{position:relative;display:inline-block;width:32px;height:17px;}
+.toggle input{opacity:0;width:0;height:0;}
+.tslider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#252f3f;transition:0.3s;border-radius:17px;}
+.tslider:before{position:absolute;content:"";height:11px;width:11px;left:3px;bottom:3px;background:#fff;transition:0.3s;border-radius:50%;}
+input:checked+.tslider{background:var(--accent);}
+input:checked+.tslider:before{transform:translateX(15px);}
+.lrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;font-size:0.73em;}
+
+/* SIM MODE BUTTONS */
+.smbtn{background:rgba(0,0,0,0.3);border:1px solid #2a3040;border-radius:4px;color:#666;padding:3px 7px;font-size:0.67em;cursor:pointer;margin:2px;width:auto;}
+.smbtn.active{background:#5b3fa2;border-color:#a78bfa;color:#fff;}
+
+/* LOADING */
+.spin{display:inline-block;width:10px;height:10px;border:2px solid rgba(255,255,255,0.15);border-radius:50%;border-top-color:var(--accent);animation:spin 0.6s linear infinite;margin-left:5px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* PARTICLE CANVAS */
+#particleCanvas{position:absolute;top:0;left:0;pointer-events:none;}
+
+/* FADE */
+@keyframes fadeIn{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:translateY(0);}}
+.fade{animation:fadeIn 0.2s ease;}
+
+/* SYM BUTTONS */
+.sym{padding:3px 5px;font-size:0.62em;width:auto;margin:2px;background:rgba(102,126,234,0.1);border:1px solid #2a3040;border-radius:3px;color:#666;cursor:pointer;}
+.sym.active{background:rgba(102,126,234,0.4);border-color:var(--accent);color:#fff;}
+
+/* RD/Lenia controls */
+.rdbox{background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.18);border-radius:5px;padding:7px;margin-top:5px;}
+.rdlabel{font-size:0.65em;color:var(--amber);margin-bottom:2px;}
+
+/* PATTERN DETECT PULSE */
+@keyframes pulse{0%{opacity:1;}50%{opacity:0.5;}100%{opacity:1;}}
+.pulse{animation:pulse 1.2s infinite;}
+
+/* ORBIT BADGE */
+.orbit-badge{display:inline-block;background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.3);color:var(--green);padding:2px 6px;border-radius:4px;font-size:0.65em;margin-left:5px;}
+
+/* SEPARATOR */
+.sep{height:1px;background:rgba(255,255,255,0.04);margin:6px 0;}
+
+/* SECTION COLLAPSE */
+.secbody.collapsed{display:none;}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- HEADER -->
+<div id="header">
+  <div id="logo">⚛ CELLULAR AUTOMATON EXPLORER — ULTRAVERSE v8</div>
+  <div id="hctrls">
+    <div class="render-tabs" title="Render mode">
+      <button class="rtab active" onclick="setRender('classic')">Classic</button>
+      <button class="rtab" onclick="setRender('heat')">Heat</button>
+      <button class="rtab" onclick="setRender('age')">Age</button>
+      <button class="rtab" onclick="setRender('velocity')">Velocity</button>
+      <button class="rtab" onclick="setRender('nebula')">Nebula</button>
+      <button class="rtab" onclick="setRender('plasma')">Plasma</button>
+      <button class="rtab" onclick="setRender('aurora')">Aurora</button>
+      <button class="rtab" onclick="setRender('quantum')">Quantum</button>
+      <button class="rtab" onclick="setRender('iso')">3D ISO</button>
+      <button class="rtab" onclick="setRender('starfield')">Starfield</button>
+      <button class="rtab" onclick="setRender('crystal')">Crystal</button>
+    </div>
+    <label class="toggle" title="Particle trails"><input type="checkbox" id="trailToggle"><span class="tslider"></span></label>
+    <span style="font-size:0.65em;color:#444">✨</span>
+    <label class="toggle" title="Sound"><input type="checkbox" id="soundToggle"><span class="tslider"></span></label>
+    <span style="font-size:0.65em;color:#444">🔊</span>
+    <label class="toggle" title="Grid lines"><input type="checkbox" id="gridToggle"><span class="tslider"></span></label>
+    <span style="font-size:0.65em;color:#444">⊞</span>
+    <label class="toggle" title="Heat trail"><input type="checkbox" id="heatToggle"><span class="tslider"></span></label>
+    <span style="font-size:0.65em;color:#444">🌡</span>
+    <button class="pbtn" id="aiDrivenToggle" title="Toggle AI-Driven Mode" style="background:rgba(167,139,250,0.15);border-color:#a78bfa;color:#a78bfa;">🤖 AI-Driven: OFF</button>
+    <button class="pbtn" id="screenshotBtn" title="Screenshot">📷</button>
+    <button class="pbtn" id="exportRLEBtn">💾 RLE</button>
+    <button class="pbtn" id="shareBtn">🔗 Share</button>
+  </div>
+</div>
+
+<!-- LEFT PANEL -->
+<div id="left">
+
+  <div class="sec">
+    <div class="stitle">⚡ SIMULATION</div>
+    <div style="display:flex;flex-wrap:wrap;gap:2px;margin-bottom:5px;">
+      <button class="smbtn active" id="modeGoL" onclick="setSimMode('gol')">Game of Life</button>
+      <button class="smbtn" id="modeRD" onclick="setSimMode('rd')">Reaction-Diff</button>
+      <button class="smbtn" id="modeLenia" onclick="setSimMode('lenia')">Lenia</button>
+      <button class="smbtn" id="modeBrian" onclick="setSimMode('brian')">Brian's Brain</button>
+      <button class="smbtn" id="modeWire" onclick="setSimMode('wire')">WireWorld</button>
+      <button class="smbtn" id="modeLangton" onclick="setSimMode('langton')">Langton's Ant</button>
+      <button class="smbtn" id="modeCyclic" onclick="setSimMode('cyclic')">Cyclic CA</button>
+      <button class="smbtn" id="modeSmooth" onclick="setSimMode('smooth')">SmoothLife</button>
+      <button class="smbtn" id="modeElem" onclick="setSimMode('elem')">Elementary 1D</button>
+      <button class="smbtn" id="modeForest" onclick="setSimMode('forest')">Forest Fire</button>
+    </div>
+    <button id="playPauseBtn">▶ Start</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;">
+      <button id="stepBtn" class="sec2 sm">⏭ Step</button>
+      <button id="resetBtn" class="sec2 sm">↺ Reset</button>
+      <button id="clearBtn" class="sec2 sm">🗑 Clear</button>
+      <button id="invertBtn" class="sec2 sm">⬡ Invert</button>
+      <button id="randomBtn" class="sec2 sm">🎲 Rand</button>
+      <button id="noiseBtn" class="sec2 sm">〰 Noise</button>
+    </div>
+    <div class="lrow" style="margin-top:6px;"><span>Speed: <span id="speedVal">10</span> fps</span><span class="kbd">Space</span></div>
+    <input type="range" id="speedSlider" min="1" max="240" value="10">
+    <div class="lrow"><span>Steps/frame: <span id="stepsVal">1</span></span></div>
+    <input type="range" id="stepsSlider" min="1" max="20" value="1">
+
+    <!-- RD controls -->
+    <div class="rdbox" id="rdControls" style="display:none;">
+      <div class="rdlabel">Gray-Scott Parameters</div>
+      <div class="lrow"><span>Feed: <span id="rdFeedVal">0.055</span></span></div>
+      <input type="range" id="rdFeed" min="1" max="100" value="55">
+      <div class="lrow"><span>Kill: <span id="rdKillVal">0.062</span></span></div>
+      <input type="range" id="rdKill" min="1" max="100" value="62">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:3px;">
+        <button class="sm sec2" onclick="rdPreset('spots')">Spots</button>
+        <button class="sm sec2" onclick="rdPreset('stripes')">Stripes</button>
+        <button class="sm sec2" onclick="rdPreset('coral')">Coral</button>
+        <button class="sm sec2" onclick="rdPreset('maze')">Maze</button>
+        <button class="sm sec2" onclick="rdPreset('cells')">Cells</button>
+        <button class="sm sec2" onclick="rdPreset('spiral')">Spiral</button>
+      </div>
+    </div>
+    <!-- Lenia controls -->
+    <div id="leniaControls" style="display:none;margin-top:5px;">
+      <div class="rdlabel" style="color:#a78bfa;">Lenia Parameters</div>
+      <div class="lrow"><span>Kernel R: <span id="leniaRVal">13</span></span></div>
+      <input type="range" id="leniaR" min="3" max="30" value="13">
+      <div class="lrow"><span>Growth μ: <span id="leniaMuVal">0.15</span></span></div>
+      <input type="range" id="leniaMu" min="1" max="50" value="15">
+      <div class="lrow"><span>Growth σ: <span id="leniaSignVal">0.015</span></span></div>
+      <input type="range" id="leniaSign" min="1" max="50" value="15">
+      <div class="lrow"><span>Δt: <span id="leniaDtVal">0.10</span></span></div>
+      <input type="range" id="leniaDt" min="1" max="30" value="10">
+    </div>
+    <!-- Cyclic controls -->
+    <div id="cyclicControls" style="display:none;margin-top:5px;">
+      <div class="rdlabel" style="color:var(--cyan);">Cyclic CA</div>
+      <div class="lrow"><span>States: <span id="cyclicStatesVal">5</span></span></div>
+      <input type="range" id="cyclicStates" min="2" max="16" value="5">
+      <div class="lrow"><span>Threshold: <span id="cyclicThreshVal">2</span></span></div>
+      <input type="range" id="cyclicThresh" min="1" max="8" value="2">
+    </div>
+    <!-- SmoothLife controls -->
+    <div id="smoothControls" style="display:none;margin-top:5px;">
+      <div class="rdlabel" style="color:var(--rose);">SmoothLife Parameters</div>
+      <div class="lrow"><span>Inner R: <span id="slInnerRVal">3</span></span></div>
+      <input type="range" id="slInnerR" min="1" max="10" value="3">
+      <div class="lrow"><span>Outer R: <span id="slOuterRVal">9</span></span></div>
+      <input type="range" id="slOuterR" min="5" max="25" value="9">
+    </div>
+    <!-- Elementary 1D CA controls -->
+    <div id="elemControls" style="display:none;margin-top:5px;">
+      <div class="rdlabel" style="color:#e879f9;">Elementary 1D CA (Wolfram)</div>
+      <div class="lrow"><span>Rule: <span id="elemRuleVal">110</span></span></div>
+      <input type="range" id="elemRuleSlider" min="0" max="255" value="110">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:3px;">
+        <button class="sm sec2" onclick="setElemRule(30)">Rule 30</button>
+        <button class="sm sec2" onclick="setElemRule(90)">Rule 90</button>
+        <button class="sm sec2" onclick="setElemRule(110)">Rule 110</button>
+        <button class="sm sec2" onclick="setElemRule(184)">Rule 184</button>
+        <button class="sm sec2" onclick="setElemRule(54)">Rule 54</button>
+        <button class="sm sec2" onclick="setElemRule(126)">Rule 126</button>
+      </div>
+    </div>
+    <!-- Forest Fire controls -->
+    <div id="forestControls" style="display:none;margin-top:5px;">
+      <div class="rdlabel" style="color:#fb923c;">Forest Fire</div>
+      <div class="lrow"><span>Ignition prob: <span id="ffIgniteVal">0.001</span></span></div>
+      <input type="range" id="ffIgniteSlider" min="1" max="50" value="1">
+      <div class="lrow"><span>Regrowth prob: <span id="ffGrowVal">0.010</span></span></div>
+      <input type="range" id="ffGrowSlider" min="1" max="100" value="10">
+    </div>
+    <!-- Langton controls -->
+    <div id="langtonControls" style="display:none;margin-top:5px;">
+      <div class="rdlabel" style="color:var(--amber);">Langton's Ant</div>
+      <div class="lrow"><span>Ants: <span id="langtonAntsVal">1</span></span></div>
+      <input type="range" id="langtonAnts" min="1" max="20" value="1">
+      <div class="lrow"><span>Rule:</span><select id="langtonRule" style="width:auto;display:inline-block;padding:2px 4px;">
+        <option value="RL">RL (Classic)</option>
+        <option value="RLL">RLL</option>
+        <option value="RLLR">RLLR</option>
+        <option value="RRLLLRLL">Fibonacci</option>
+      </select></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="stitle">🎨 DRAWING</div>
+    <div class="toolrow">
+      <span class="tbtn active" id="drawBtn" title="Draw (D)">✏️ Draw</span>
+      <span class="tbtn" id="eraseBtn" title="Erase (E)">🧹 Erase</span>
+      <span class="tbtn" id="lineBtn" title="Line (L)">╱ Line</span>
+      <span class="tbtn" id="fillBtn" title="Fill (F)">🪣 Fill</span>
+      <span class="tbtn" id="stampBtn" title="Stamp (S)">⬡ Stamp</span>
+      <span class="tbtn" id="circleBtn" title="Circle (O)">○ Circle</span>
+      <span class="tbtn" id="rectBtn" title="Rectangle (R)">▭ Rect</span>
+      <span class="tbtn" id="selectBtn" title="Select (X)">⬜ Select</span>
+    </div>
+    <div class="lrow"><span>Symmetry:</span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:2px;margin-bottom:5px;">
+      <button class="sym active" id="symNone" onclick="setSym('none')">None</button>
+      <button class="sym" id="symH" onclick="setSym('h')">H-Mirror</button>
+      <button class="sym" id="symV" onclick="setSym('v')">V-Mirror</button>
+      <button class="sym" id="sym4" onclick="setSym('4')">4-Way</button>
+      <button class="sym" id="sym8" onclick="setSym('8')">8-Way</button>
+      <button class="sym" id="symRot" onclick="setSym('rot')">180°</button>
+    </div>
+    <div class="lrow"><span>Brush: <span id="brushVal">1</span></span></div>
+    <input type="range" id="brushSlider" min="1" max="30" value="1">
+    <div class="cgrid">
+      <div class="cswatch active" style="background:linear-gradient(135deg,#667eea,#764ba2);" onclick="setCellColor('#667eea','#764ba2')"><span>Violet</span></div>
+      <div class="cswatch" style="background:linear-gradient(135deg,#4ade80,#16a34a);" onclick="setCellColor('#4ade80','#16a34a')"><span>Green</span></div>
+      <div class="cswatch" style="background:linear-gradient(135deg,#f59e0b,#d97706);" onclick="setCellColor('#f59e0b','#d97706')"><span>Amber</span></div>
+      <div class="cswatch" style="background:linear-gradient(135deg,#06b6d4,#0891b2);" onclick="setCellColor('#06b6d4','#0891b2')"><span>Cyan</span></div>
+      <div class="cswatch" style="background:linear-gradient(135deg,#f43f5e,#e11d48);" onclick="setCellColor('#f43f5e','#e11d48')"><span>Rose</span></div>
+      <div class="cswatch" style="background:linear-gradient(135deg,#fff,#aaa);" onclick="setCellColor('#ffffff','#aaaaaa')"><span>White</span></div>
+      <div class="cswatch" style="background:linear-gradient(135deg,#fb923c,#ea580c);" onclick="setCellColor('#fb923c','#ea580c')"><span>Orange</span></div>
+      <div class="cswatch" style="background:linear-gradient(135deg,#e879f9,#c026d3);" onclick="setCellColor('#e879f9','#c026d3')"><span>Fuchsia</span></div>
+    </div>
+    <div style="display:flex;gap:4px;align-items:center;margin-top:4px;">
+      <input type="color" id="customColor1" value="#667eea" style="width:28px;height:22px;padding:1px;border:1px solid #333;border-radius:3px;background:#000;cursor:pointer;" title="Cell color 1">
+      <input type="color" id="customColor2" value="#764ba2" style="width:28px;height:22px;padding:1px;border:1px solid #333;border-radius:3px;background:#000;cursor:pointer;" title="Cell color 2">
+      <button class="xs" onclick="applyCustomColors()" style="flex:1;margin:0;">Apply Custom</button>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="stitle">🎭 PRESETS</div>
+    <input type="text" id="presetSearch" placeholder="Filter presets…" oninput="filterPresets(this.value)" style="margin-bottom:5px;">
+    <div class="pgrid" id="presetGrid">
+      <button class="sec2 sm" onclick="loadPreset('glider')">Glider</button>
+      <button class="sec2 sm" onclick="loadPreset('gosperGun')">Gosper Gun</button>
+      <button class="sec2 sm" onclick="loadPreset('pulsar')">Pulsar</button>
+      <button class="sec2 sm" onclick="loadPreset('pentadecathlon')">Pentadeca</button>
+      <button class="sec2 sm" onclick="loadPreset('lwss')">LWSS</button>
+      <button class="sec2 sm" onclick="loadPreset('mwss')">MWSS</button>
+      <button class="sec2 sm" onclick="loadPreset('hwss')">HWSS</button>
+      <button class="sec2 sm" onclick="loadPreset('acorn')">Acorn</button>
+      <button class="sec2 sm" onclick="loadPreset('diehard')">Diehard</button>
+      <button class="sec2 sm" onclick="loadPreset('rPentomino')">R-Pento</button>
+      <button class="sec2 sm" onclick="loadPreset('simkinGun')">Simkin Gun</button>
+      <button class="sec2 sm" onclick="loadPreset('blockLayer')">Block Layer</button>
+      <button class="sec2 sm" onclick="loadPreset('beehive')">Beehive</button>
+      <button class="sec2 sm" onclick="loadPreset('loaf')">Loaf</button>
+      <button class="sec2 sm" onclick="loadPreset('boat')">Boat</button>
+      <button class="sec2 sm" onclick="loadPreset('blinker')">Blinker</button>
+      <button class="sec2 sm" onclick="loadPreset('toad')">Toad</button>
+      <button class="sec2 sm" onclick="loadPreset('beacon')">Beacon</button>
+      <button class="sec2 sm" onclick="loadPreset('gliderGalaxy')">Glider Galaxy</button>
+      <button class="sec2 sm" onclick="loadPreset('random15')">15% Random</button>
+      <button class="sec2 sm" onclick="loadPreset('random30')">30% Random</button>
+      <button class="sec2 sm" onclick="loadPreset('random50')">50% Random</button>
+    </div>
+  </div>
+
+  <div class="sec">
+    <!-- WireWorld draw state -->
+    <div id="wireControls" style="display:none;margin-top:0;margin-bottom:8px;padding:6px;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.15);border-radius:4px;">
+      <div class="rdlabel" style="color:var(--amber);">WireWorld Draw State</div>
+      <div style="display:flex;gap:2px;flex-wrap:wrap;margin-top:4px;">
+        <button class="xs" style="background:#4a3000;border:1px solid #e8b04e;color:#e8b04e;" onclick="wireDrawState=1;setWireBtn(this)">Conductor</button>
+        <button class="xs" style="background:#003050;border:1px solid #00bfff;color:#00bfff;" onclick="wireDrawState=2;setWireBtn(this)">e⁻ Head</button>
+        <button class="xs" style="background:#3d0000;border:1px solid #ff6b6b;color:#ff6b6b;" onclick="wireDrawState=3;setWireBtn(this)">e⁻ Tail</button>
+      </div>
+    </div>
+    <div class="stitle">🌍 MULTIVERSE <span class="badge" id="univCount">1</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">
+      <button id="forkBtn" class="sm">🔱 Fork</button>
+      <button id="forkMutateBtn" class="sec2 sm">🧬 Fork+Mutate</button>
+    </div>
+    <button id="compareBtn" class="sec2 sm">📊 Simulate All ×200</button>
+    <div class="mvgrid" id="multiverseContainer"></div>
+  </div>
+
+  <div class="sec">
+    <div class="stitle">📐 RLE IMPORT/EXPORT</div>
+    <textarea id="rleInput" placeholder="Paste RLE here&#10;x=5,y=3,rule=B3/S23&#10;bo$2bo$3o!" style="height:55px;font-family:'Courier New',monospace;font-size:0.68em;"></textarea>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">
+      <button class="sec2 sm" id="rleImportBtn">📥 Import RLE</button>
+      <button class="sec2 sm" id="rleExportBtn">📤 Export RLE</button>
+      <button class="sec2 sm" id="rlePasteBtn">📋 Paste RLE</button>
+      <button class="sec2 sm" id="rleCopyBtn">📤 Copy RLE</button>
+    </div>
+    <div style="margin-top:4px;font-size:0.65em;color:var(--text3);">Drag-drop .rle or .cells files here</div>
+  </div>
+
+</div>
+
+<!-- MAIN VIEW -->
+<div id="mainview">
+  <canvas id="glCanvas"></canvas>
+  <canvas id="trailCanvas"></canvas>
+  <canvas id="particleCanvas"></canvas>
+  <canvas id="overlayCanvas"></canvas>
+  <canvas id="uiCanvas"></canvas>
+  <div id="simBadge">GoL — B3/S23</div>
+  <div id="fpsCounter">-- fps</div>
+  <div id="zoomCtrl">
+    <button class="zbtn" onclick="adjustZoom(1.25)" title="+">+</button>
+    <button class="zbtn" onclick="resetView()" title="Fit" style="font-size:0.55em;">FIT</button>
+    <button class="zbtn" onclick="adjustZoom(0.8)" title="−">−</button>
+  </div>
+  <div id="minimap">
+    <canvas id="minimapCanvas" width="120" height="90"></canvas>
+    <div id="minimapViewport"></div>
+  </div>
+  <div id="playbar">
+    <button class="pbtn" id="tlFirst">⏮</button>
+    <button class="pbtn" id="tlBack">◀</button>
+    <button class="pbtn" id="tlFwd">▶</button>
+    <button class="pbtn" id="tlLast">⏭</button>
+    <input type="range" id="scrubber" min="0" max="0" value="0" style="width:180px;margin:0 4px;">
+    <span style="font-size:0.7em;color:var(--accent);min-width:70px;">Gen <span id="genDisp">0</span></span>
+    <span style="font-size:0.65em;color:var(--text3);">Hist:<span id="histDisp">0</span></span>
+    <span id="orbitBadge" class="orbit-badge" style="display:none;">↻ Period: <span id="orbitPeriod">?</span></span>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div id="right">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('stats')">Stats</div>
+    <div class="tab" onclick="switchTab('rules')">Rules</div>
+    <div class="tab" onclick="switchTab('ai')">Analysis</div>
+    <div class="tab" onclick="switchTab('driven')">AI-Drive</div>
+    <div class="tab" onclick="switchTab('catalog')">Catalog</div>
+    <div class="tab" onclick="switchTab('evolve')">Evolve</div>
+    <div class="tab" onclick="switchTab('info')">Info</div>
+  </div>
+
+  <!-- STATS -->
+  <div id="tc-stats" class="tc active">
+    <div class="sgrid">
+      <div class="sbox"><div class="slabel">Generation</div><div class="sval" id="s-gen">0</div></div>
+      <div class="sbox"><div class="slabel">Population</div><div class="sval" id="s-pop">0</div></div>
+      <div class="sbox"><div class="slabel">Density</div><div class="sval" id="s-dens">0%</div></div>
+      <div class="sbox"><div class="slabel">Δ Change</div><div class="sval" id="s-change">0%</div></div>
+      <div class="sbox"><div class="slabel">Births/Tick</div><div class="sval" id="s-births">0</div></div>
+      <div class="sbox"><div class="slabel">Deaths/Tick</div><div class="sval" id="s-deaths">0</div></div>
+      <div class="sbox"><div class="slabel">Actual FPS</div><div class="sval" id="s-fps">—</div></div>
+      <div class="sbox"><div class="slabel">Clusters</div><div class="sval" id="s-clusters">—</div></div>
+    </div>
+    <div id="alertsBox"></div>
+    <div class="stitle" style="margin-bottom:5px;">🧬 PATTERN DNA</div>
+    <div class="dna">
+      <div class="drow"><span class="dlabel">Sym-H:</span><span class="dval" id="d-symH">—</span></div>
+      <div class="drow"><span class="dlabel">Sym-V:</span><span class="dval" id="d-symV">—</span></div>
+      <div class="drow"><span class="dlabel">Stability:</span><span class="dval" id="d-stab">—</span></div>
+      <div class="drow"><span class="dlabel">Entropy:</span><span class="dval" id="d-ent">—</span></div>
+      <div class="drow"><span class="dlabel">Complexity:</span><span class="dval" id="d-complex">—</span></div>
+      <div class="drow"><span class="dlabel">Class:</span><span class="dval" id="d-class">—</span></div>
+      <div class="drow"><span class="dlabel">Period:</span><span class="dval" id="d-period">—</span></div>
+      <div class="drow"><span class="dlabel">Bounding:</span><span class="dval" id="d-bbox">—</span></div>
+      <div class="drow"><span class="dlabel">Zoom:</span><span class="dval" id="d-zoom">1.0x</span></div>
+    </div>
+    <button id="analyzeBtn" class="sec2" style="margin-top:4px;">🔬 AI Deep Analysis</button>
+    <div id="dnaResult"></div>
+  </div>
+
+  <!-- RULES -->
+  <div id="tc-rules" class="tc">
+    <div class="stitle">BIRTH RULES (B)</div>
+    <div style="font-size:0.67em;color:var(--text3);margin-bottom:2px;">Born if N live neighbors:</div>
+    <div class="rgrid" id="birthGrid"></div>
+    <div class="stitle" style="margin-top:6px;">SURVIVAL RULES (S)</div>
+    <div style="font-size:0.67em;color:var(--text3);margin-bottom:2px;">Survives if N live neighbors:</div>
+    <div class="rgrid" id="survGrid"></div>
+    <div style="margin-top:6px;font-family:'Courier New';font-size:0.85em;color:var(--green);text-align:center;padding:5px;background:rgba(0,0,0,0.3);border-radius:4px;"><span id="ruleDisp">B3/S23</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:5px;">
+      <button class="sec2 sm" onclick="loadRule('conway')">Conway B3/S23</button>
+      <button class="sec2 sm" onclick="loadRule('highlife')">HighLife B36/S23</button>
+      <button class="sec2 sm" onclick="loadRule('daynight')">Day&Night</button>
+      <button class="sec2 sm" onclick="loadRule('seeds')">Seeds B2/S</button>
+      <button class="sec2 sm" onclick="loadRule('morley')">Morley</button>
+      <button class="sec2 sm" onclick="loadRule('coral')">Coral</button>
+      <button class="sec2 sm" onclick="loadRule('2x2')">2x2</button>
+      <button class="sec2 sm" onclick="loadRule('maze')">Maze</button>
+      <button class="sec2 sm" onclick="loadRule('anneal')">Anneal</button>
+      <button class="sec2 sm" onclick="loadRule('stains')">Stains</button>
+      <button class="sec2 sm" onclick="loadRule('walled')">WalledCities</button>
+      <button class="sec2 sm" onclick="loadRule('vote')">Vote 5/6</button>
+      <button class="sec2 sm" onclick="loadRule('serviettes')">Serviettes</button>
+      <button class="sec2 sm" onclick="loadRule('gnarl')">Gnarl</button>
+      <button class="sec2 sm" onclick="loadRule('random_rule')">🎲 Random</button>
+      <button class="sec2 sm" onclick="loadRule('fredkin')">Fredkin</button>
+    </div>
+    <button id="mutateRuleBtn" class="sec2" style="margin-top:5px;">🧬 Mutate Rules</button>
+    <button id="copyRuleBtn" class="sec2">📋 Copy Rule String</button>
+    <input type="text" id="ruleInput" placeholder="e.g. B36/S23">
+    <button id="applyRuleBtn" class="sm">Apply Rule String</button>
+  </div>
+
+  <!-- AI -->
+  <div id="tc-ai" class="tc">
+    <textarea id="aiPrompt" placeholder="Describe behavior: 'chaotic sprawling growth', 'stable oscillators everywhere', 'gliders that collide and spawn guns'..." style="height:55px;"></textarea>
+    <button id="aiDiscoverBtn">✨ Design Rules from Description</button>
+    <button id="aiPredictBtn" class="sec2">🔮 Predict Next 100 Gens</button>
+    <button id="aiOptimizeBtn" class="sec2">⚡ Find Peak Moment (200 gens)</button>
+    <button id="aiNameBtn" class="sec2">🏷️ Name This Pattern</button>
+    <button id="aiStoryBtn" class="sec2">📖 Tell the Story</button>
+    <button id="aiMusicBtn" class="sec2">🎵 Describe as Music</button>
+    <button id="aiClassifyBtn" class="sec2">🔬 Classify Behavior</button>
+    <div id="aiResponse"></div>
+  </div>
+
+  <!-- AI-DRIVEN -->
+  <div id="tc-driven" class="tc">
+    <div class="alert info" style="margin-bottom:6px;font-size:0.68em;line-height:1.5;">
+      🤖 <strong>AI-Driven Mode</strong> — Claude autonomously steers the simulation: mutating rules, planting patterns, and narrating events in real time.
+    </div>
+    <div class="lrow"><span style="font-size:0.73em;">AI Pilot status:</span>
+      <span id="drivenStatus" style="font-size:0.68em;color:var(--text3);">Idle</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:5px;">
+      <button id="drivenStartBtn" class="success sm">🤖 Start Pilot</button>
+      <button id="drivenStopBtn" class="danger sm" style="display:none;">⏹ Stop Pilot</button>
+    </div>
+    <div class="lrow"><span style="font-size:0.73em;">Pilot goal:</span></div>
+    <select id="drivenGoal" style="margin-bottom:5px;">
+      <option value="explore">Explore & Discover</option>
+      <option value="beauty">Maximise Aesthetic Beauty</option>
+      <option value="stability">Hunt for Stability</option>
+      <option value="chaos">Embrace Chaos</option>
+      <option value="oscillators">Find Oscillators</option>
+      <option value="spaceships">Spawn Spaceships</option>
+      <option value="story">Tell an Evolving Story</option>
+    </select>
+    <div class="lrow"><span style="font-size:0.73em;">Intervention every:</span>
+      <span id="drivenIntervalVal" style="font-size:0.68em;color:var(--accent);">30s</span>
+    </div>
+    <input type="range" id="drivenInterval" min="10" max="120" value="30" style="margin-bottom:5px;">
+    <div class="lrow" style="margin-bottom:5px;">
+      <span style="font-size:0.73em;">Allow rule mutations</span>
+      <label class="toggle"><input type="checkbox" id="drivenAllowRules" checked><span class="tslider"></span></label>
+    </div>
+    <div class="lrow" style="margin-bottom:5px;">
+      <span style="font-size:0.73em;">Allow pattern stamps</span>
+      <label class="toggle"><input type="checkbox" id="drivenAllowStamps" checked><span class="tslider"></span></label>
+    </div>
+    <div class="lrow" style="margin-bottom:5px;">
+      <span style="font-size:0.73em;">Allow speed changes</span>
+      <label class="toggle"><input type="checkbox" id="drivenAllowSpeed" checked><span class="tslider"></span></label>
+    </div>
+    <div class="sep"></div>
+    <div class="stitle">🗒 AI PILOT LOG</div>
+    <div id="drivenLog" style="max-height:200px;overflow-y:auto;font-size:0.68em;line-height:1.6;color:#555;font-family:'Courier New',monospace;"></div>
+    <div id="drivenNarrative" class="aibox" style="margin-top:6px;display:none;"></div>
+  </div>
+
+  <!-- CATALOG -->
+  <div id="tc-catalog" class="tc">
+    <div class="stitle">SAVED PATTERNS <span class="badge" id="catCount">0</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:5px;">
+      <button class="success sm" id="savePatBtn">💾 Save State</button>
+      <button class="danger sm" id="clearCatBtn">🗑 Clear All</button>
+    </div>
+    <div id="patternCatalog" style="max-height:130px;overflow-y:auto;"></div>
+    <div class="sep"></div>
+    <div class="stitle">SHARE / LOAD</div>
+    <div class="sharebox" id="shareCodeDisp">—</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">
+      <button class="sec2 sm" id="genCodeBtn">🔗 Generate</button>
+      <button class="sec2 sm" id="loadCodeBtn">📥 Load Code</button>
+    </div>
+  </div>
+
+  <!-- EVOLVE -->
+  <div id="tc-evolve" class="tc">
+    <div class="stitle">🧫 EVOLUTIONARY ENGINE</div>
+    <p style="font-size:0.68em;color:#555;margin-bottom:6px;line-height:1.5;">Evolves rule variants via genetic algorithms toward a fitness goal.</p>
+    <div class="lrow"><span>Fitness goal:</span></div>
+    <select id="fitnessGoal">
+      <option value="stability">Stability (resist extinction)</option>
+      <option value="growth">Growth (max population)</option>
+      <option value="oscillation">Oscillation (cyclic patterns)</option>
+      <option value="complexity">Complexity (entropy × stability)</option>
+      <option value="longevity">Longevity (survive longest)</option>
+      <option value="gliders">Glider-like (moving clusters)</option>
+      <option value="diversity">Diversity (spatial entropy)</option>
+    </select>
+    <div class="lrow" style="margin-top:4px;"><span>Population: <span id="evoPop">8</span></span></div>
+    <input type="range" id="evoPopSlider" min="4" max="24" value="8">
+    <div class="lrow"><span>Test gens: <span id="evoGens">50</span></span></div>
+    <input type="range" id="evoGensSlider" min="10" max="300" value="50">
+    <div class="lrow"><span>Mutation: <span id="evoMut">1.0</span></span></div>
+    <input type="range" id="evoMutSlider" min="1" max="50" value="10">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:4px;">
+      <button class="success sm" id="startEvoBtn">▶ Evolve</button>
+      <button class="danger sm" id="stopEvoBtn" style="display:none;">⏹ Stop</button>
+    </div>
+    <div id="evoStatus" style="font-size:0.67em;color:#555;margin-top:3px;min-height:14px;"></div>
+    <div class="evobar" id="evoBar" style="width:0%;"></div>
+    <div class="evolog" id="evoLog"></div>
+    <div id="evoResult" style="display:none;margin-top:5px;">
+      <div class="dna" id="evoWinner"></div>
+      <button class="success sm" id="applyWinnerBtn" style="margin-top:3px;">✅ Apply Winner</button>
+    </div>
+  </div>
+
+  <!-- INFO -->
+  <div id="tc-info" class="tc">
+    <div class="stitle">📚 KEYBOARD SHORTCUTS</div>
+    <div style="font-size:0.68em;line-height:2;color:var(--text2);">
+      <div><span class="kbd">Space</span> Play/Pause</div>
+      <div><span class="kbd">→</span> Step forward</div>
+      <div><span class="kbd">D</span> Draw mode</div>
+      <div><span class="kbd">E</span> Erase mode</div>
+      <div><span class="kbd">L</span> Line mode</div>
+      <div><span class="kbd">F</span> Fill mode</div>
+      <div><span class="kbd">C</span> Clear</div>
+      <div><span class="kbd">I</span> Invert</div>
+      <div><span class="kbd">0</span> Reset view</div>
+      <div><span class="kbd">+/-</span> Zoom</div>
+      <div><span class="kbd">G</span> Toggle grid</div>
+      <div><span class="kbd">T</span> Toggle trails</div>
+      <div><span class="kbd">M</span> Cycle render mode</div>
+      <div><span class="kbd">Ctrl+Z</span> Undo</div>
+      <div><span class="kbd">Alt+drag</span> Pan</div>
+      <div><span class="kbd">Scroll</span> Zoom to cursor</div>
+    </div>
+    <div class="sep"></div>
+    <div class="stitle">🖱 MOUSE</div>
+    <div style="font-size:0.68em;line-height:1.8;color:var(--text2);">
+      <div>Left drag — Draw/Paint</div>
+      <div>Right click — Erase</div>
+      <div>Middle drag — Pan</div>
+      <div>Scroll — Zoom to cursor</div>
+      <div>Shift+drag — Constrain line</div>
+    </div>
+    <div class="sep"></div>
+    <div class="stitle">ℹ️ ABOUT</div>
+    <div style="font-size:0.67em;color:#555;line-height:1.6;">
+      ULTRAVERSE v8 — WebGL-accelerated rendering, 10 simulation engines (incl. Elementary 1D CA & Forest Fire), Crystal render mode, AI Analysis panel, and AI-Driven Pilot mode powered by Claude. Fork, evolve, or let the AI steer.
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER TIMELINE -->
+<div id="footer">
+  <div id="ftimeline">
+    <span style="font-size:0.6em;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;">Timeline</span>
+    <span style="font-size:0.6em;color:var(--text3);">Pop · Entropy · Birth/Death · Velocity · Complexity</span>
+  </div>
+  <div id="fgraphs">
+    <div class="tgraph"><canvas id="tlPop"></canvas><div class="tlabel">Population</div></div>
+    <div class="tgraph"><canvas id="tlEnt"></canvas><div class="tlabel">Entropy</div></div>
+    <div class="tgraph"><canvas id="tlBD"></canvas><div class="tlabel">Birth/Death</div></div>
+    <div class="tgraph"><canvas id="tlVel"></canvas><div class="tlabel">Velocity Δ</div></div>
+    <div class="tgraph"><canvas id="tlComp"></canvas><div class="tlabel">Complexity</div></div>
+  </div>
+</div>
+</div>
+<div id="tooltip"></div>
+
+<script>
+// ================================================================
+// CONSTANTS
+// ================================================================
+const GRID_W = 240;
+const GRID_H = 180;
+const CELL = 4;
+const HISTORY_MAX = 800;
+const TRAIL_DECAY = 0.88;
+
+// ================================================================
+// DOM REFS
+// ================================================================
+const glCanvas    = document.getElementById('glCanvas');
+const trailCanvas = document.getElementById('trailCanvas');
+const particleCanvas = document.getElementById('particleCanvas');
+const overlayCanvas  = document.getElementById('overlayCanvas');
+const uiCanvas    = document.getElementById('uiCanvas');
+const miniCanvas  = document.getElementById('minimapCanvas');
+
+const glCtx    = glCanvas.getContext('2d', {alpha:false});
+const trailCtx = trailCanvas.getContext('2d');
+const partCtx  = particleCanvas.getContext('2d');
+const overCtx  = overlayCanvas.getContext('2d');
+const uiCtx    = uiCanvas.getContext('2d');
+const miniCtx  = miniCanvas.getContext('2d');
+
+const tlPop  = document.getElementById('tlPop');
+const tlEnt  = document.getElementById('tlEnt');
+const tlBD   = document.getElementById('tlBD');
+const tlVel  = document.getElementById('tlVel');
+const tlComp = document.getElementById('tlComp');
+
+// ================================================================
+// STATE
+// ================================================================
+let viewX=0, viewY=0, viewScale=1;
+let isPanning=false, panStart=null;
+let isRunning=false, speed=10, stepsPerFrame=1;
+let lastFrameTime=0, fpsAccum=0, fpsFrames=0, displayFps=0;
+let drawMode='draw', brushSize=1, symmetryMode='none';
+let cellColor1='#667eea', cellColor2='#764ba2';
+let renderMode='classic';
+let showGrid=false, showTrails=false, showHeat=false;
+let soundEnabled=false, audioCtx=null;
+let simMode='gol';
+let activeTab='stats';
+let isEvolving=false, winnerRules=null;
+let undoStack=[];
+const UNDO_MAX = 30;
+
+function saveUndo(){
+  undoStack.push(U.grid.map(r=>r.slice()));
+  if(undoStack.length>UNDO_MAX) undoStack.shift();
+}
+function undo(){
+  if(!undoStack.length) return;
+  U.grid = undoStack.pop();
+  drawAll();
+}
+
+// GoL age grid
+let ageGrid = makeIntArr2D(0);
+
+// Heat map (phosphor persistence)
+let heatGrid = makeFloat2D(0);
+
+// Reaction-Diffusion
+let rdA=null,rdB=null,rdAnext=null,rdBnext=null;
+let rdFeed=0.055, rdKill=0.062;
+
+// Lenia
+let leniaGrid=null, leniaKernel=null;
+let leniaR=13, leniaMu=0.15, leniaSign=0.015, leniaDt=0.10;
+
+// Brian's Brain
+let brianGrid=null;
+
+let wireDrawState = 1; // 1=conductor, 2=head, 3=tail
+// WireWorld
+let wireGrid=null; // 0=empty,1=conductor,2=head,3=tail
+
+// Langton's Ant
+let antGrid=null, ants=[];
+let langtonRule='RL', numAnts=1;
+
+// Cyclic CA
+let cyclicGrid=null, cyclicStates=5, cyclicThresh=2;
+
+// SmoothLife
+let smoothGrid=null, slInnerR=3, slOuterR=9;
+
+// Elementary 1D CA
+let elemGrid=null, elemRuleNum=110, elemRow=0;
+
+// Forest Fire
+let forestGrid=null; // 0=empty,1=tree,2=fire
+let ffIgniteProb=0.001, ffGrowProb=0.010;
+
+// Particles
+let particles=[];
+
+// Universe / Multiverse
+function makeGrid() { return Array(GRID_H).fill(null).map(()=>new Uint8Array(GRID_W)); }
+function makeFloat2D(v=0) { return Array(GRID_H).fill(null).map(()=>new Float32Array(GRID_W).fill(v)); }
+function makeIntArr2D(v=0) { return Array(GRID_H).fill(null).map(()=>new Int32Array(GRID_W).fill(v)); }
+
+function makeUniverse(id) {
+  return { id, grid:makeGrid(), history:[], birthHistory:[], deathHistory:[], entropyHistory:[], velHistory:[], complexHistory:[],
+    birthRules:[3], survivalRules:[2,3], generation:0, metadata:{ created:Date.now(), name:`Universe ${id}` } };
+}
+
+let U = makeUniverse(0); // currentUniverse
+let universes = [U];
+let patternCatalog = [];
+let orbitPeriod = null;
+
+// ================================================================
+// INIT CANVAS SIZING
+// ================================================================
+function resizeCanvases() {
+  const view = document.getElementById('mainview');
+  const w = view.offsetWidth, h = view.offsetHeight;
+  [glCanvas,trailCanvas,particleCanvas,overlayCanvas,uiCanvas].forEach(c=>{
+    c.width=w; c.height=h;
+  });
+  uiCanvas.style.position='absolute';
+  overlayCanvas.style.pointerEvents='none';
+  trailCanvas.style.pointerEvents='none';
+  particleCanvas.style.pointerEvents='none';
+}
+
+// ================================================================
+// SIMULATION MODES
+// ================================================================
+const SIM_IDS = {gol:'modeGoL',rd:'modeRD',lenia:'modeLenia',brian:'modeBrian',wire:'modeWire',langton:'modeLangton',cyclic:'modeCyclic',smooth:'modeSmooth',elem:'modeElem',forest:'modeForest'};
+const SIM_CTRLS = {rd:'rdControls',lenia:'leniaControls',cyclic:'cyclicControls',smooth:'smoothControls',langton:'langtonControls',elem:'elemControls',forest:'forestControls'};
+
+function setSimMode(mode) {
+  simMode = mode;
+  document.querySelectorAll('.smbtn').forEach(b=>b.classList.remove('active'));
+  const el = document.getElementById(SIM_IDS[mode]);
+  if (el) el.classList.add('active');
+  Object.values(SIM_CTRLS).forEach(id=>{ const e=document.getElementById(id); if(e) e.style.display='none'; });
+  if (SIM_CTRLS[mode]) document.getElementById(SIM_CTRLS[mode]).style.display='';
+  document.getElementById('wireControls').style.display = mode==='wire' ? '' : 'none';
+  if (mode==='rd') initRD();
+  if (mode==='lenia') initLenia();
+  if (mode==='brian') initBrian();
+  if (mode==='wire') initWire();
+  if (mode==='langton') initLangton();
+  if (mode==='cyclic') initCyclic();
+  if (mode==='smooth') initSmooth();
+  if (mode==='elem') initElem();
+  if (mode==='forest') initForest();
+  updateBadge();
+  drawAll();
+}
+
+function updateBadge() {
+  const u = U;
+  const labels = {
+    gol:`GoL — B${u.birthRules.join('')}/S${u.survivalRules.join('')}`,
+    rd:`Gray-Scott RD f=${rdFeed.toFixed(3)} k=${rdKill.toFixed(3)}`,
+    lenia:`Lenia R=${leniaR} μ=${leniaMu.toFixed(2)} σ=${leniaSign.toFixed(3)}`,
+    brian:`Brian's Brain`,
+    wire:`WireWorld`,
+    langton:`Langton's Ant (${langtonRule}) × ${numAnts}`,
+    cyclic:`Cyclic CA ${cyclicStates} states`,
+    smooth:`SmoothLife ri=${slInnerR} ro=${slOuterR}`,
+    elem:`Elementary 1D Rule ${elemRuleNum}`,
+    forest:`Forest Fire f=${ffIgniteProb.toFixed(3)} g=${ffGrowProb.toFixed(3)}`
+  };
+  document.getElementById('simBadge').textContent = labels[simMode] || simMode;
+}
+
+// ================================================================
+// REACTION-DIFFUSION (Gray-Scott)
+// ================================================================
+function initRD() {
+  rdA=makeFloat2D(1); rdB=makeFloat2D(0); rdAnext=makeFloat2D(0); rdBnext=makeFloat2D(0);
+  const cx=GRID_W>>1, cy=GRID_H>>1;
+  for (let dy=-8;dy<=8;dy++) for (let dx=-8;dx<=8;dx++) {
+    if (cx+dx>=0&&cx+dx<GRID_W&&cy+dy>=0&&cy+dy<GRID_H) {
+      rdA[cy+dy][cx+dx]=0.5; rdB[cy+dy][cx+dx]=0.25+Math.random()*0.05;
+    }
+  }
+  // extra seeds
+  for (let s=0;s<5;s++) {
+    const rx=Math.floor(Math.random()*GRID_W), ry=Math.floor(Math.random()*GRID_H);
+    for (let dy=-4;dy<=4;dy++) for (let dx=-4;dx<=4;dx++) {
+      const nx=rx+dx,ny=ry+dy;
+      if(nx>=0&&nx<GRID_W&&ny>=0&&ny<GRID_H){rdA[ny][nx]=0.5;rdB[ny][nx]=0.25+Math.random()*0.05;}
+    }
+  }
+}
+
+function stepRD() {
+  const dA=1.0, dB=0.5;
+  for (let y=0;y<GRID_H;y++) for (let x=0;x<GRID_W;x++) {
+    const a=rdA[y][x], b=rdB[y][x];
+    const yn1=(y-1+GRID_H)%GRID_H, yp1=(y+1)%GRID_H;
+    const xn1=(x-1+GRID_W)%GRID_W, xp1=(x+1)%GRID_W;
+    const lA=-a*4+rdA[yn1][x]+rdA[yp1][x]+rdA[y][xn1]+rdA[y][xp1];
+    const lB=-b*4+rdB[yn1][x]+rdB[yp1][x]+rdB[y][xn1]+rdB[y][xp1];
+    const reaction=a*b*b;
+    rdAnext[y][x]=Math.max(0,Math.min(1,a+dA*lA*0.5-reaction+rdFeed*(1-a)));
+    rdBnext[y][x]=Math.max(0,Math.min(1,b+dB*lB*0.5+reaction-(rdKill+rdFeed)*b));
+  }
+  const tA=rdA,tB=rdB; rdA=rdAnext; rdB=rdBnext; rdAnext=tA; rdBnext=tB;
+}
+
+function rdPreset(name) {
+  const p={spots:{f:0.035,k:0.065},stripes:{f:0.060,k:0.062},coral:{f:0.055,k:0.062},
+    maze:{f:0.029,k:0.057},cells:{f:0.025,k:0.050},spiral:{f:0.018,k:0.051}};
+  if(p[name]){rdFeed=p[name].f;rdKill=p[name].k;
+    document.getElementById('rdFeed').value=Math.round(rdFeed*1000);
+    document.getElementById('rdKill').value=Math.round(rdKill*1000);
+    document.getElementById('rdFeedVal').textContent=rdFeed.toFixed(3);
+    document.getElementById('rdKillVal').textContent=rdKill.toFixed(3);
+    initRD();updateBadge();}
+}
+
+// ================================================================
+// LENIA
+// ================================================================
+function initLenia() {
+  leniaGrid=makeFloat2D(0);
+  const cx=GRID_W>>1,cy=GRID_H>>1;
+  for (let dy=-22;dy<=22;dy++) for (let dx=-22;dx<=22;dx++) {
+    const d=Math.sqrt(dx*dx+dy*dy);
+    if(d<20){const ny=cy+dy,nx=cx+dx;
+      if(ny>=0&&ny<GRID_H&&nx>=0&&nx<GRID_W)
+        leniaGrid[ny][nx]=Math.random()>0.35?Math.random():0;
+    }
+  }
+  buildLeniaKernel();
+}
+
+function buildLeniaKernel() {
+  const R=leniaR; leniaKernel=[];
+  let sum=0;
+  for (let dy=-R;dy<=R;dy++) for (let dx=-R;dx<=R;dx++) {
+    const r=Math.sqrt(dx*dx+dy*dy)/R;
+    if(r<=1){const k=Math.exp(4-4/(r*(1-r)+1e-8)); leniaKernel.push({dx,dy,k}); sum+=k;}
+  }
+  leniaKernel.forEach(e=>e.k/=sum);
+}
+
+function growthFn(u){return 2*Math.exp(-((u-leniaMu)**2)/(2*leniaSign*leniaSign))-1;}
+
+function stepLenia() {
+  const next=makeFloat2D(0);
+  for (let y=0;y<GRID_H;y++) for (let x=0;x<GRID_W;x++) {
+    let conv=0;
+    for(const{dx,dy,k}of leniaKernel){conv+=leniaGrid[(y+dy+GRID_H)%GRID_H][(x+dx+GRID_W)%GRID_W]*k;}
+    const g=growthFn(conv);
+    next[y][x]=Math.max(0,Math.min(1,leniaGrid[y][x]+leniaDt*g));
+  }
+  leniaGrid=next;
+}
+
+// ================================================================
+// BRIAN'S BRAIN
+// ================================================================
+function initBrian() {
+  brianGrid=makeGrid();
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++) brianGrid[y][x]=Math.random()<0.2?1:0;
+}
+function stepBrian() {
+  const next=makeGrid();
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const c=brianGrid[y][x];
+    if(c===1){next[y][x]=2;continue;}
+    if(c===2){next[y][x]=0;continue;}
+    let alive=0;
+    for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+      if(!dx&&!dy)continue;
+      if(brianGrid[(y+dy+GRID_H)%GRID_H][(x+dx+GRID_W)%GRID_W]===1)alive++;
+    }
+    if(alive===2)next[y][x]=1;
+  }
+  brianGrid=next;
+}
+
+// ================================================================
+// WIREWORLD
+// ================================================================
+function initWire() {
+  wireGrid=makeGrid();
+  // Build a small Xor gate / oscillator
+  const cx=GRID_W>>1,cy=GRID_H>>1;
+  // Horizontal wire
+  for(let x=cx-40;x<=cx+40;x++) wireGrid[cy][x]=1;
+  // Electron head seed
+  wireGrid[cy][cx-38]=2;
+  wireGrid[cy][cx-37]=3;
+  wireGrid[cy][cx+37]=2;
+  wireGrid[cy][cx+38]=3;
+  // Corner wires
+  for(let y=cy;y<=cy+15;y++){wireGrid[y][cx-40]=1;wireGrid[y][cx+40]=1;}
+  for(let x=cx-40;x<=cx+40;x++) wireGrid[cy+15][x]=1;
+}
+function stepWire() {
+  const next=makeGrid();
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const c=wireGrid[y][x];
+    if(c===0){next[y][x]=0;continue;}
+    if(c===2){next[y][x]=3;continue;}
+    if(c===3){next[y][x]=1;continue;}
+    // conductor: becomes head if exactly 1 or 2 neighboring heads
+    let heads=0;
+    for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+      if(!dx&&!dy)continue;
+      if(wireGrid[(y+dy+GRID_H)%GRID_H][(x+dx+GRID_W)%GRID_W]===2)heads++;
+    }
+    next[y][x]=(heads===1||heads===2)?2:1;
+  }
+  wireGrid=next;
+}
+
+// ================================================================
+// LANGTON'S ANT
+// ================================================================
+function initLangton() {
+  antGrid=makeGrid();
+  ants=[];
+  numAnts=parseInt(document.getElementById('langtonAnts').value);
+  langtonRule=document.getElementById('langtonRule').value;
+  for(let i=0;i<numAnts;i++){
+    ants.push({x:Math.floor(GRID_W/2)+(i%3-1)*10, y:Math.floor(GRID_H/2)+Math.floor(i/3)*10, dir:i%4});
+  }
+}
+function stepLangton(){
+  for(const ant of ants){
+    const state=antGrid[ant.y][ant.x]%langtonRule.length;
+    const turn=langtonRule[state];
+    if(turn==='R') ant.dir=(ant.dir+1)%4;
+    else ant.dir=(ant.dir+3)%4;
+    antGrid[ant.y][ant.x]=(antGrid[ant.y][ant.x]+1)%langtonRule.length;
+    const dirs=[[0,-1],[1,0],[0,1],[-1,0]];
+    ant.x=(ant.x+dirs[ant.dir][0]+GRID_W)%GRID_W;
+    ant.y=(ant.y+dirs[ant.dir][1]+GRID_H)%GRID_H;
+  }
+}
+
+// ================================================================
+// CYCLIC CA
+// ================================================================
+function initCyclic(){
+  cyclicGrid=makeGrid();
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++) cyclicGrid[y][x]=Math.floor(Math.random()*cyclicStates);
+}
+function stepCyclic(){
+  const next=makeGrid();
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const c=cyclicGrid[y][x];
+    const succ=(c+1)%cyclicStates;
+    let count=0;
+    for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+      if(!dx&&!dy)continue;
+      if(cyclicGrid[(y+dy+GRID_H)%GRID_H][(x+dx+GRID_W)%GRID_W]===succ)count++;
+    }
+    next[y][x]=(count>=cyclicThresh)?succ:c;
+  }
+  cyclicGrid=next;
+}
+
+// ================================================================
+// SMOOTHLIFE (continuous GoL-like)
+// ================================================================
+function initSmooth(){
+  smoothGrid=makeFloat2D(0);
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++) smoothGrid[y][x]=Math.random()<0.4?Math.random():0;
+}
+function smoothstep(a,b,x){const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);}
+function stepSmooth(){
+  const next=makeFloat2D(0);
+  const ri=slInnerR, ro=slOuterR;
+  const ri2=ri*ri, ro2=ro*ro;
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    let inner=0,innerCount=0,outer=0,outerCount=0;
+    for(let dy=-ro;dy<=ro;dy++) for(let dx=-ro;dx<=ro;dx++){
+      const d2=dx*dx+dy*dy;
+      const v=smoothGrid[(y+dy+GRID_H)%GRID_H][(x+dx+GRID_W)%GRID_W];
+      if(d2<=ri2){inner+=v;innerCount++;}
+      else if(d2<=ro2){outer+=v;outerCount++;}
+    }
+    const m=innerCount>0?inner/innerCount:0;
+    const n=outerCount>0?outer/outerCount:0;
+    // SmoothLife birth/survival transition
+    const b1=0.278,b2=0.365,s1=0.267,s2=0.445;
+    const aliveness=smoothstep(0,0.5,m);
+    const birthN=smoothstep(b1-0.03,b1+0.03,n)-smoothstep(b2-0.03,b2+0.03,n);
+    const survN=smoothstep(s1-0.03,s1+0.03,n)-smoothstep(s2-0.03,s2+0.03,n);
+    const nv=(1-aliveness)*birthN+aliveness*survN;
+    next[y][x]=Math.max(0,Math.min(1,smoothGrid[y][x]*0.9+nv*0.1));
+  }
+  smoothGrid=next;
+}
+
+// ================================================================
+// ELEMENTARY 1D CA
+// ================================================================
+function initElem(){
+  elemGrid=makeGrid();
+  elemRow=0;
+  // Seed: single cell in center of top row
+  elemGrid[0][Math.floor(GRID_W/2)]=1;
+}
+function setElemRule(n){
+  elemRuleNum=n;
+  document.getElementById('elemRuleSlider').value=n;
+  document.getElementById('elemRuleVal').textContent=n;
+  initElem(); updateBadge();
+}
+function stepElem(){
+  if(elemRow>=GRID_H-1){
+    // Scroll: shift all rows up one, clear last
+    const first=elemGrid[0];
+    for(let y=0;y<GRID_H-1;y++) elemGrid[y]=elemGrid[y+1];
+    elemGrid[GRID_H-1]=new Uint8Array(GRID_W);
+    // re-compute current draw row
+    elemRow=GRID_H-2;
+  }
+  const src=elemGrid[elemRow];
+  const dest=elemGrid[elemRow+1];
+  const rule=elemRuleNum;
+  for(let x=0;x<GRID_W;x++){
+    const l=src[(x-1+GRID_W)%GRID_W], c=src[x], r=src[(x+1)%GRID_W];
+    const idx=(l<<2)|(c<<1)|r;
+    dest[x]=(rule>>idx)&1;
+  }
+  elemRow++;
+}
+function drawElem(cs){
+  const ctx=glCtx; ctx.fillStyle='#000'; ctx.fillRect(0,0,glCanvas.width,glCanvas.height);
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    if(!elemGrid[y][x])continue;
+    const px=viewX+x*cs, py=viewY+y*cs;
+    if(px+cs<0||px>glCanvas.width||py+cs<0||py>glCanvas.height)continue;
+    // Color by row age: gradient from accent to white
+    const t=y/GRID_H;
+    const r=Math.round(102+153*t), g=Math.round(126+129*t), b=Math.round(234+21*t);
+    ctx.fillStyle=`rgb(${r},${g},${b})`;
+    ctx.fillRect(px,py,Math.max(1,cs),Math.max(1,cs));
+  }
+}
+
+// ================================================================
+// FOREST FIRE
+// ================================================================
+function initForest(){
+  forestGrid=makeGrid();
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++)
+    forestGrid[y][x]=Math.random()<0.6?1:0;
+}
+function stepForest(){
+  const next=makeGrid();
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const c=forestGrid[y][x];
+    if(c===2){next[y][x]=0;continue;} // burning -> empty
+    if(c===0){next[y][x]=Math.random()<ffGrowProb?1:0;continue;} // empty -> tree (regrowth)
+    // tree: catch fire if neighbor burning or random ignition
+    let burnNeighbor=false;
+    for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+      if(!dx&&!dy)continue;
+      if(forestGrid[(y+dy+GRID_H)%GRID_H][(x+dx+GRID_W)%GRID_W]===2){burnNeighbor=true;break;}
+    }
+    next[y][x]=(burnNeighbor||Math.random()<ffIgniteProb)?2:1;
+  }
+  forestGrid=next;
+}
+function drawForest(cs){
+  const ctx=glCtx; ctx.fillStyle='#000'; ctx.fillRect(0,0,glCanvas.width,glCanvas.height);
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const c=forestGrid[y][x]; if(!c)continue;
+    const px=viewX+x*cs, py=viewY+y*cs;
+    if(px+cs<0||px>glCanvas.width||py+cs<0||py>glCanvas.height)continue;
+    if(c===1){ctx.fillStyle='#16a34a';}
+    else{ctx.fillStyle='#f97316'; ctx.shadowBlur=cs*2; ctx.shadowColor='#fbbf24';}
+    ctx.fillRect(px,py,Math.max(1,cs-0.3),Math.max(1,cs-0.3));
+    if(c===2)ctx.shadowBlur=0;
+  }
+}
+
+// ================================================================
+// GAME OF LIFE (core)
+// ================================================================
+function countNeighbors(g,x,y){
+  let n=0;
+  for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+    if(!dx&&!dy)continue;
+    if(g[(y+dy+GRID_H)%GRID_H][(x+dx+GRID_W)%GRID_W])n++;
+  }
+  return n;
+}
+
+function stepGoL(u){
+  const next=makeGrid();
+  let births=0,deaths=0;
+  const g=u.grid;
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const n=countNeighbors(g,x,y);
+    if(g[y][x]){
+      next[y][x]=u.survivalRules.includes(n)?1:0;
+      if(!next[y][x])deaths++;
+    } else {
+      next[y][x]=u.birthRules.includes(n)?1:0;
+      if(next[y][x])births++;
+    }
+  }
+  u.history.push(g.map(r=>r.slice()));
+  if(u.history.length>HISTORY_MAX)u.history.shift();
+  const living=countInGrid(next);
+  const ent=computeEntropy(next);
+  const vel=births+deaths;
+  const complex=ent*(living/(GRID_W*GRID_H));
+  u.birthHistory.push(births); u.deathHistory.push(deaths);
+  u.entropyHistory.push(ent); u.velHistory.push(vel); u.complexHistory.push(complex);
+  const MAX_HIST=HISTORY_MAX;
+  if(u.birthHistory.length>MAX_HIST){u.birthHistory.shift();u.deathHistory.shift();u.entropyHistory.shift();u.velHistory.shift();u.complexHistory.shift();}
+  u.grid=next; u.generation++;
+  return{births,deaths,living};
+}
+
+function countInGrid(g){let c=0;for(let y=0;y<GRID_H;y++)for(let x=0;x<GRID_W;x++)if(g[y][x])c++;return c;}
+function computeEntropy(g){
+  let edges=0;
+  for(let y=0;y<GRID_H-1;y++) for(let x=0;x<GRID_W-1;x++)
+    if(g[y][x]!==g[y][x+1]||g[y][x]!==g[y+1][x])edges++;
+  return edges/(GRID_W*GRID_H);
+}
+
+function updateAgeGrid(grid){
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++)
+    ageGrid[y][x]=grid[y][x]?(ageGrid[y][x]+1):0;
+}
+
+// ================================================================
+// HEAT MAP
+// ================================================================
+function updateHeat(grid){
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    if(grid[y][x]) heatGrid[y][x]=1.0;
+    else heatGrid[y][x]*=0.97;
+  }
+}
+
+// ================================================================
+// ORBIT DETECTION
+// ================================================================
+let hashHistory=[];
+function gridHash(g){
+  let h=0;
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++) if(g[y][x]) h=(h*1000003+y*GRID_W+x)>>>0;
+  return h;
+}
+function checkOrbit(g){
+  const h=gridHash(g);
+  const idx=hashHistory.indexOf(h);
+  if(idx>=0&&hashHistory.length-idx>1){
+    orbitPeriod=hashHistory.length-idx;
+    document.getElementById('orbitBadge').style.display='';
+    document.getElementById('orbitPeriod').textContent=orbitPeriod;
+    document.getElementById('d-period').textContent=orbitPeriod;
+    return;
+  }
+  hashHistory.push(h);
+  if(hashHistory.length>200)hashHistory.shift();
+  orbitPeriod=null;
+  document.getElementById('orbitBadge').style.display='none';
+  document.getElementById('d-period').textContent='—';
+}
+
+// ================================================================
+// PARTICLES
+// ================================================================
+function spawnParticles(births, deaths, grid){
+  if(!showTrails||particles.length>2000)return;
+  const cs=CELL*viewScale;
+  // Births
+  if(births>0){
+    const count=Math.min(births,8);
+    for(let i=0;i<count;i++){
+      const rx=Math.floor(Math.random()*GRID_W), ry=Math.floor(Math.random()*GRID_H);
+      if(grid[ry][rx]){
+        const sx=viewX+rx*cs+cs/2, sy=viewY+ry*cs+cs/2;
+        particles.push({x:sx,y:sy,vx:(Math.random()-0.5)*2,vy:(Math.random()-0.5)*2-1,life:1,color:cellColor1,size:2+Math.random()*2});
+      }
+    }
+  }
+}
+
+function updateParticles(){
+  partCtx.clearRect(0,0,particleCanvas.width,particleCanvas.height);
+  for(let i=particles.length-1;i>=0;i--){
+    const p=particles[i];
+    p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; p.life-=0.03;
+    if(p.life<=0){particles.splice(i,1);continue;}
+    partCtx.globalAlpha=p.life*0.7;
+    partCtx.fillStyle=p.color;
+    partCtx.beginPath();
+    partCtx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);
+    partCtx.fill();
+  }
+  partCtx.globalAlpha=1;
+}
+
+// ================================================================
+// SOUND
+// ================================================================
+function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();}
+function sonify(births,deaths,living){
+  if(!soundEnabled||!audioCtx)return;
+  const density=living/(GRID_W*GRID_H);
+  const change=births+deaths;
+  if(change<3)return;
+  const osc=audioCtx.createOscillator();
+  const gain=audioCtx.createGain();
+  const filt=audioCtx.createBiquadFilter();
+  const pan=audioCtx.createStereoPanner();
+  osc.connect(filt);filt.connect(gain);gain.connect(pan);pan.connect(audioCtx.destination);
+  osc.frequency.value=80+density*900+Math.random()*20;
+  osc.type=births>deaths?'sine':'triangle';
+  filt.type='bandpass'; filt.frequency.value=200+density*800; filt.Q.value=3;
+  pan.pan.value=(births-deaths)/(births+deaths+1)*0.8;
+  const vol=Math.min(change/600,0.15);
+  const t=audioCtx.currentTime;
+  gain.gain.setValueAtTime(0,t);
+  gain.gain.linearRampToValueAtTime(vol,t+0.01);
+  gain.gain.exponentialRampToValueAtTime(0.001,t+0.15);
+  osc.start(t); osc.stop(t+0.15);
+}
+
+// ================================================================
+// RENDERING
+// ================================================================
+function worldToScreen(wx,wy){return{sx:wx*CELL*viewScale+viewX, sy:wy*CELL*viewScale+viewY};}
+function screenToWorld(sx,sy){return{wx:Math.floor((sx-viewX)/(CELL*viewScale)), wy:Math.floor((sy-viewY)/(CELL*viewScale))};}
+
+function resetView(){
+  const vw=glCanvas.width, vh=glCanvas.height;
+  const sx=vw/(GRID_W*CELL), sy=vh/(GRID_H*CELL);
+  viewScale=Math.min(sx,sy)*0.95;
+  viewX=(vw-GRID_W*CELL*viewScale)/2;
+  viewY=(vh-GRID_H*CELL*viewScale)/2;
+  document.getElementById('d-zoom').textContent=viewScale.toFixed(2)+'x';
+  drawAll();
+}
+
+function adjustZoom(factor,cx,cy){
+  cx=cx||glCanvas.width/2; cy=cy||glCanvas.height/2;
+  viewX=cx+(viewX-cx)*factor;
+  viewY=cy+(viewY-cy)*factor;
+  viewScale*=factor;
+  document.getElementById('d-zoom').textContent=viewScale.toFixed(2)+'x';
+  drawAll();
+}
+
+function drawAll(){
+  const cs=CELL*viewScale;
+  if(simMode==='rd'&&rdA) drawRD(cs);
+  else if(simMode==='lenia'&&leniaGrid) drawLenia(cs);
+  else if(simMode==='brian'&&brianGrid) drawBrian(cs);
+  else if(simMode==='wire'&&wireGrid) drawWire(cs);
+  else if(simMode==='langton'&&antGrid) drawLangton(cs);
+  else if(simMode==='cyclic'&&cyclicGrid) drawCyclic(cs);
+  else if(simMode==='smooth'&&smoothGrid) drawSmooth(cs);
+  else if(simMode==='elem'&&elemGrid) drawElem(cs);
+  else if(simMode==='forest'&&forestGrid) drawForest(cs);
+  else drawGoL(cs);
+  drawGrid_lines(cs);
+  // Draw persistent selection rect
+  if(selRect&&drawMode==='select'){
+    const cs2=CELL*viewScale;
+    const s0=worldToScreen(selRect.x,selRect.y);
+    const s1=worldToScreen(selRect.x+selRect.w,selRect.y+selRect.h);
+    overCtx.strokeStyle='rgba(102,126,234,0.85)'; overCtx.lineWidth=1.5;
+    overCtx.setLineDash([4,3]); overCtx.strokeRect(s0.sx,s0.sy,s1.sx-s0.sx,s1.sy-s0.sy);
+    overCtx.setLineDash([]);
+    // Fill tint
+    overCtx.fillStyle='rgba(102,126,234,0.07)';
+    overCtx.fillRect(s0.sx,s0.sy,s1.sx-s0.sx,s1.sy-s0.sy);
+  }
+  drawMinimap();
+}
+
+function drawGoL(cs){
+  const ctx=glCtx; const g=U.grid;
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,glCanvas.width,glCanvas.height);
+  // Heat layer
+  if(showHeat){
+    for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+      const h=heatGrid[y][x];
+      if(h<0.02)continue;
+      const px=viewX+x*cs, py=viewY+y*cs;
+      if(px+cs<0||px>glCanvas.width||py+cs<0||py>glCanvas.height)continue;
+      const r=Math.round(255*h), gb=Math.round(80*h);
+      ctx.fillStyle=`rgba(${r},${gb},0,${h*0.5})`;
+      ctx.fillRect(px,py,Math.max(1,cs),Math.max(1,cs));
+    }
+  }
+  // Trail canvas decay
+  if(showTrails){
+    trailCtx.globalAlpha=1-TRAIL_DECAY;
+    trailCtx.fillStyle='#000';
+    trailCtx.fillRect(0,0,trailCanvas.width,trailCanvas.height);
+    trailCtx.globalAlpha=1;
+  } else {
+    trailCtx.clearRect(0,0,trailCanvas.width,trailCanvas.height);
+  }
+
+  if(renderMode==='iso'){drawIsometric(ctx,g,cs);return;}
+  if(renderMode==='plasma'){drawPlasma(ctx,g,cs);return;}
+  if(renderMode==='aurora'){drawAurora(ctx,g,cs);return;}
+  if(renderMode==='quantum'){drawQuantum(ctx,g,cs);return;}
+  if(renderMode==='starfield'){drawStarfield(ctx,g,cs);return;}
+  if(renderMode==='crystal'){drawCrystal(ctx,g,cs);return;}
+
+  // Fast ImageData pixel-buffer rendering for standard modes
+  // Build one pixel per logical cell, then scale via drawImage for zoom
+  const cw=glCanvas.width, ch=glCanvas.height;
+  // For pixel-buffer modes we render at grid resolution then scale
+  const imgW=GRID_W, imgH=GRID_H;
+  const imgData=ctx.createImageData(imgW,imgH);
+  const buf=imgData.data;
+  const prev=U.history.length>0?U.history[U.history.length-1]:null;
+
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const alive=g[y][x];
+    const idx=(y*GRID_W+x)*4;
+    let r=0,gr=0,b=0,a=255;
+
+    if(renderMode==='classic'){
+      if(!alive){buf[idx+3]=0;continue;}
+      const t=Math.min(ageGrid[y][x]/60,1);
+      r=Math.round(color1Parsed.r+(color2Parsed.r-color1Parsed.r)*t);
+      gr=Math.round(color1Parsed.g+(color2Parsed.g-color1Parsed.g)*t);
+      b=Math.round(color1Parsed.b+(color2Parsed.b-color1Parsed.b)*t);
+    } else if(renderMode==='heat'){
+      if(!alive){buf[idx+3]=0;continue;}
+      const n=countNeighbors(g,x,y)/8;
+      const t=Math.min(ageGrid[y][x]/80,1);
+      r=Math.round(255*t); gr=Math.round(50+150*n); b=Math.round(200*(1-t));
+    } else if(renderMode==='age'){
+      if(!alive){buf[idx+3]=0;continue;}
+      const t=Math.min(ageGrid[y][x]/100,1);
+      r=Math.round(60+195*t); gr=Math.round(234-120*t); b=234;
+    } else if(renderMode==='velocity'){
+      if(alive){
+        if(prev&&!prev[y][x]){r=74;gr=222;b=128;}
+        else{r=color1Parsed.r;gr=color1Parsed.g;b=color1Parsed.b;}
+        // trail
+        if(showTrails&&prev&&!prev[y][x]){
+          const ti=(y*GRID_W+x)*4;
+          // write into trail separately — keep using canvas for trail blending
+        }
+      } else if(prev&&prev[y][x]){r=248;gr=113;b=113;}
+      else{buf[idx+3]=0;continue;}
+    } else if(renderMode==='nebula'){
+      if(!alive){buf[idx+3]=0;continue;}
+      // Nebula: glow handled as post-pass via shadow; pixel buf does base color
+      r=color1Parsed.r; gr=color1Parsed.g; b=color1Parsed.b;
+      a=Math.min(255,180+Math.floor(ageGrid[y][x]*2));
+    } else {
+      buf[idx+3]=0;continue;
+    }
+    buf[idx]=r; buf[idx+1]=gr; buf[idx+2]=b; buf[idx+3]=a;
+  }
+
+  // Create offscreen canvas at grid size, draw pixel data, then scale to viewport
+  if(!drawGoL._offscreen||drawGoL._offscreen.width!==imgW||drawGoL._offscreen.height!==imgH){
+    drawGoL._offscreen=new OffscreenCanvas(imgW,imgH);
+  }
+  const oCtx=drawGoL._offscreen.getContext('2d');
+  oCtx.putImageData(imgData,0,0);
+
+  // Scale and blit to main canvas at viewport position
+  const renderW=GRID_W*cs, renderH=GRID_H*cs;
+  ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(drawGoL._offscreen, viewX, viewY, renderW, renderH);
+
+  // Nebula glow pass on top (shadow blur can't be in pixel buf)
+  if(renderMode==='nebula'){
+    ctx.shadowBlur=cs*2.5; ctx.shadowColor=cellColor1;
+    ctx.drawImage(drawGoL._offscreen, viewX, viewY, renderW, renderH);
+    ctx.shadowBlur=0;
+  }
+}
+
+function lerpColor(c1,c2,t){
+  // kept for compat but use lerpColorFast where possible
+  return lerpColorFast(t);
+}
+
+// Pre-parse colors for lerp
+let color1Parsed={r:102,g:126,b:234}, color2Parsed={r:118,g:75,b:162};
+function parseColor(hex){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return{r,g,b};
+}
+function lerpColorFast(t){
+  const r=Math.round(color1Parsed.r+(color2Parsed.r-color1Parsed.r)*t);
+  const g=Math.round(color1Parsed.g+(color2Parsed.g-color1Parsed.g)*t);
+  const b=Math.round(color1Parsed.b+(color2Parsed.b-color1Parsed.b)*t);
+  return`rgb(${r},${g},${b})`;
+}
+
+function setCellColor(c1,c2){
+  cellColor1=c1; cellColor2=c2;
+  color1Parsed=parseColor(c1.length===7?c1:'#667eea');
+  color2Parsed=parseColor(c2.length===7?c2:'#764ba2');
+  document.querySelectorAll('.cswatch').forEach(s=>s.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  drawAll();
+}
+
+// Plasma render
+function drawPlasma(ctx,g,cs){
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,glCanvas.width,glCanvas.height);
+  const gen=U.generation;
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const px=viewX+x*cs, py=viewY+y*cs;
+    if(px+cs<0||px>glCanvas.width||py+cs<0||py>glCanvas.height)continue;
+    const n=countNeighbors(g,x,y);
+    const sz=Math.max(1,cs);
+    if(g[y][x]){
+      const hue=(n/8*280+gen*3+ageGrid[y][x]*2)%360;
+      ctx.fillStyle=`hsl(${hue},100%,65%)`;
+      ctx.shadowBlur=cs*2.5; ctx.shadowColor=`hsl(${hue},100%,80%)`;
+      ctx.fillRect(px,py,sz,sz);
+      ctx.shadowBlur=0;
+    } else if(n>0){
+      ctx.fillStyle=`rgba(100,80,255,${n*0.025})`;
+      ctx.fillRect(px,py,sz,sz);
+    }
+  }
+}
+
+// Aurora render — flowing color bands based on neighbor count + time
+function drawAurora(ctx,g,cs){
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,glCanvas.width,glCanvas.height);
+  const t=U.generation*0.05;
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const px=viewX+x*cs, py=viewY+y*cs;
+    if(px+cs<0||px>glCanvas.width||py+cs<0||py>glCanvas.height)continue;
+    if(!g[y][x])continue;
+    const n=countNeighbors(g,x,y);
+    const age=Math.min(ageGrid[y][x]/80,1);
+    const wave=Math.sin(x*0.15+t)*0.5+0.5;
+    const wave2=Math.cos(y*0.12-t*0.7)*0.5+0.5;
+    const hue=(wave*120+wave2*80+n*30+t*20)%360;
+    const light=40+age*30+wave*15;
+    const sz=Math.max(1,cs-0.3);
+    ctx.fillStyle=`hsl(${hue},${80+wave2*20}%,${light}%)`;
+    if(age>0.5){ctx.shadowBlur=cs*1.2;ctx.shadowColor=`hsl(${hue},100%,70%)`;
+    ctx.fillRect(px,py,sz,sz);ctx.shadowBlur=0;}
+    else ctx.fillRect(px,py,sz,sz);
+  }
+}
+
+// Quantum render — probability-cloud visualization
+function drawQuantum(ctx,g,cs){
+  ctx.fillStyle='#020208'; ctx.fillRect(0,0,glCanvas.width,glCanvas.height);
+  // First pass: draw glow for neighbor potential field
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const n=countNeighbors(g,x,y);
+    if(n===0)continue;
+    const px=viewX+x*cs, py=viewY+y*cs;
+    if(px+cs<0||px>glCanvas.width||py+cs<0||py>glCanvas.height)continue;
+    const prob=n/8;
+    const hue=g[y][x]?180+prob*60:280+prob*80;
+    ctx.fillStyle=`rgba(${Math.round(50+prob*200)},${Math.round(100+prob*155)},255,${prob*0.15})`;
+    const r=cs*1.5;
+    ctx.beginPath(); ctx.arc(px+cs/2,py+cs/2,r,0,Math.PI*2); ctx.fill();
+  }
+  // Second pass: cells
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    if(!g[y][x])continue;
+    const px=viewX+x*cs, py=viewY+y*cs;
+    if(px+cs<0||px>glCanvas.width||py+cs<0||py>glCanvas.height)continue;
+    const age=Math.min(ageGrid[y][x]/50,1);
+    const n=countNeighbors(g,x,y);
+    const radius=cs/2*(0.5+age*0.5);
+    ctx.shadowBlur=cs*3; ctx.shadowColor=`rgba(100,200,255,0.8)`;
+    ctx.fillStyle=`rgba(120,200,255,${0.6+age*0.4})`;
+    ctx.beginPath(); ctx.arc(px+cs/2,py+cs/2,radius,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+  }
+}
+
+// Isometric 3D render
+function drawIsometric(ctx,g,cs){
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,glCanvas.width,glCanvas.height);
+  const isoX=cs*0.7, isoY=cs*0.35;
+  const baseX=glCanvas.width/2, baseY=glCanvas.height*0.12;
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    if(!g[y][x])continue;
+    const px=baseX+(x-y)*isoX/2+viewX*0.3;
+    const py=baseY+(x+y)*isoY/2+viewY*0.3;
+    const h=Math.min(ageGrid[y][x]/80,1);
+    const cellH=cs*(0.5+h*2);
+    const r=Math.round(color1Parsed.r+(color2Parsed.r-color1Parsed.r)*h);
+    const gr=Math.round(color1Parsed.g+(color2Parsed.g-color1Parsed.g)*h);
+    const b2=Math.round(color1Parsed.b+(color2Parsed.b-color1Parsed.b)*h);
+    // Top face
+    ctx.fillStyle=`rgb(${r},${gr},${b2})`;
+    ctx.beginPath();ctx.moveTo(px,py-cellH);ctx.lineTo(px+isoX/2,py+isoY/2-cellH);
+    ctx.lineTo(px,py+isoY-cellH);ctx.lineTo(px-isoX/2,py+isoY/2-cellH);ctx.closePath();ctx.fill();
+    // Right face
+    ctx.fillStyle=`rgb(${Math.round(r*0.55)},${Math.round(gr*0.55)},${Math.round(b2*0.55)})`;
+    ctx.beginPath();ctx.moveTo(px+isoX/2,py+isoY/2-cellH);ctx.lineTo(px+isoX/2,py+isoY/2);
+    ctx.lineTo(px,py+isoY);ctx.lineTo(px,py+isoY-cellH);ctx.closePath();ctx.fill();
+    // Left face
+    ctx.fillStyle=`rgb(${Math.round(r*0.35)},${Math.round(gr*0.35)},${Math.round(b2*0.35)})`;
+    ctx.beginPath();ctx.moveTo(px,py+isoY-cellH);ctx.lineTo(px,py+isoY);
+    ctx.lineTo(px-isoX/2,py+isoY/2);ctx.lineTo(px-isoX/2,py+isoY/2-cellH);ctx.closePath();ctx.fill();
+  }
+}
+
+// Starfield render — cells as glowing stars with twinkle + depth
+function drawStarfield(ctx,g,cs){
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,glCanvas.width,glCanvas.height);
+  const gen=U.generation;
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    if(!g[y][x])continue;
+    const px=viewX+x*cs, py=viewY+y*cs;
+    if(px+cs<0||px>glCanvas.width||py+cs<0||py>glCanvas.height)continue;
+    const age=ageGrid[y][x];
+    const n=countNeighbors(g,x,y);
+    // Twinkle: each cell has a unique phase from position
+    const phase=(x*7+y*13+gen*2)*0.11;
+    const twinkle=0.6+0.4*Math.sin(phase);
+    const depth=Math.min(age/40,1);
+    // Size: older = bigger star
+    const starR=cs*(0.15+depth*0.4)*twinkle;
+    const cx2=px+cs/2, cy2=py+cs/2;
+    // Color: sparse cells = blue-white, dense = warm yellow-white
+    const warmth=n/8;
+    const r=Math.round(180+75*warmth);
+    const gr=Math.round(180+75*warmth*0.8);
+    const b=Math.round(255-60*warmth);
+    const alpha=0.4+0.6*twinkle*depth;
+    // Outer glow
+    const grad=ctx.createRadialGradient(cx2,cy2,0,cx2,cy2,starR*3.5);
+    grad.addColorStop(0,`rgba(${r},${gr},${b},${alpha})`);
+    grad.addColorStop(0.3,`rgba(${r},${gr},${b},${alpha*0.4})`);
+    grad.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=grad;
+    ctx.beginPath();ctx.arc(cx2,cy2,starR*3.5,0,Math.PI*2);ctx.fill();
+    // Bright core
+    ctx.fillStyle=`rgba(255,255,255,${alpha})`;
+    ctx.beginPath();ctx.arc(cx2,cy2,Math.max(0.5,starR*0.4),0,Math.PI*2);ctx.fill();
+    // Cross diffraction spike for bright/old stars
+    if(age>15&&twinkle>0.75){
+      ctx.strokeStyle=`rgba(${r},${gr},${b},${alpha*0.25})`;
+      ctx.lineWidth=0.5;
+      const spike=starR*3;
+      ctx.beginPath();ctx.moveTo(cx2-spike,cy2);ctx.lineTo(cx2+spike,cy2);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx2,cy2-spike);ctx.lineTo(cx2,cy2+spike);ctx.stroke();
+    }
+  }
+}
+
+// Crystal render — Voronoi-like faceted cells with edge highlights
+function drawCrystal(ctx,g,cs){
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,glCanvas.width,glCanvas.height);
+  const gen=U.generation;
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    if(!g[y][x])continue;
+    const px=viewX+x*cs, py=viewY+y*cs;
+    if(px+cs<0||px>glCanvas.width||py+cs<0||py>glCanvas.height)continue;
+    const age=Math.min(ageGrid[y][x]/80,1);
+    const n=countNeighbors(g,x,y);
+    // Crystal hue shifts by neighbor count + age + position
+    const hue=(x*3.7+y*2.3+age*120+n*25+gen*0.4)%360;
+    const sat=55+age*35;
+    const lit=25+age*30+n*3;
+    const sz=Math.max(1,cs-0.5);
+    // Base fill
+    ctx.fillStyle=`hsl(${hue},${sat}%,${lit}%)`;
+    ctx.fillRect(px,py,sz,sz);
+    // Top-left highlight edge (light face)
+    ctx.fillStyle=`hsla(${hue},${sat}%,${lit+35}%,${0.5+age*0.4})`;
+    ctx.fillRect(px,py,sz,Math.max(1,cs*0.15));
+    ctx.fillRect(px,py,Math.max(1,cs*0.15),sz);
+    // Bottom-right shadow edge (dark face)
+    ctx.fillStyle=`hsla(${hue},${sat}%,${Math.max(5,lit-25)}%,0.7)`;
+    ctx.fillRect(px,py+sz-Math.max(1,cs*0.15),sz,Math.max(1,cs*0.15));
+    ctx.fillRect(px+sz-Math.max(1,cs*0.15),py,Math.max(1,cs*0.15),sz);
+    // Glow for old/dense cells
+    if(age>0.6&&n>=3){
+      ctx.shadowBlur=cs*2; ctx.shadowColor=`hsl(${hue},100%,80%)`;
+      ctx.fillStyle=`hsla(${hue},100%,85%,0.15)`;
+      ctx.fillRect(px,py,sz,sz);
+      ctx.shadowBlur=0;
+    }
+  }
+}
+
+
+function drawRD(cs){
+  const ctx=glCtx; ctx.fillStyle='#000'; ctx.fillRect(0,0,glCanvas.width,glCanvas.height);
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const px=viewX+x*cs, py=viewY+y*cs;
+    if(px+cs<0||px>glCanvas.width||py+cs<0||py>glCanvas.height)continue;
+    const v=Math.max(0,Math.min(1,rdA[y][x]-rdB[y][x]));
+    const r=Math.round(v<0.5?0:(v-0.5)*2*200);
+    const g=Math.round(v*160);
+    const b=Math.round(v<0.5?v*2*255:255*(1-(v-0.5)*2));
+    ctx.fillStyle=`rgb(${r},${g},${Math.max(0,Math.min(255,b))})`;
+    ctx.fillRect(px,py,Math.max(1,cs),Math.max(1,cs));
+  }
+}
+
+function drawLenia(cs){
+  const ctx=glCtx; ctx.fillStyle='#000'; ctx.fillRect(0,0,glCanvas.width,glCanvas.height);
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const px=viewX+x*cs, py=viewY+y*cs;
+    if(px+cs<0||px>glCanvas.width||py+cs<0||py>glCanvas.height)continue;
+    const v=leniaGrid[y][x]; if(v<0.01)continue;
+    ctx.fillStyle=`rgba(${Math.round(102+153*v)},${Math.round(126+100*v)},${Math.round(234*(1-v*0.5))},${Math.min(1,v+0.1)})`;
+    ctx.fillRect(px,py,Math.max(1,cs),Math.max(1,cs));
+  }
+}
+
+function drawBrian(cs){
+  const ctx=glCtx; ctx.fillStyle='#000'; ctx.fillRect(0,0,glCanvas.width,glCanvas.height);
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const px=viewX+x*cs, py=viewY+y*cs;
+    if(px+cs<0||px>glCanvas.width||py+cs<0||py>glCanvas.height)continue;
+    const c=brianGrid[y][x]; if(!c)continue;
+    ctx.fillStyle=c===1?'#ffffff':'#5568cc';
+    ctx.fillRect(px,py,Math.max(1,cs-0.5),Math.max(1,cs-0.5));
+  }
+}
+
+function drawWire(cs){
+  const WIRE_COLORS=['#000000','#e8b04e','#00bfff','#ff6b6b'];
+  const ctx=glCtx; ctx.fillStyle='#000'; ctx.fillRect(0,0,glCanvas.width,glCanvas.height);
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const px=viewX+x*cs, py=viewY+y*cs;
+    if(px+cs<0||px>glCanvas.width||py+cs<0||py>glCanvas.height)continue;
+    const c=wireGrid[y][x]; if(!c)continue;
+    ctx.fillStyle=WIRE_COLORS[c]||'#fff';
+    if(c===2){ctx.shadowBlur=cs*2;ctx.shadowColor='#00bfff';}
+    ctx.fillRect(px,py,Math.max(1,cs-0.3),Math.max(1,cs-0.3));
+    if(c===2)ctx.shadowBlur=0;
+  }
+}
+
+function drawLangton(cs){
+  const ctx=glCtx; ctx.fillStyle='#000'; ctx.fillRect(0,0,glCanvas.width,glCanvas.height);
+  const nStates=langtonRule.length;
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const c=antGrid[y][x]; if(!c)continue;
+    const px=viewX+x*cs, py=viewY+y*cs;
+    if(px+cs<0||px>glCanvas.width||py+cs<0||py>glCanvas.height)continue;
+    const t=c/(nStates-1);
+    ctx.fillStyle=`hsl(${t*280},80%,60%)`;
+    ctx.fillRect(px,py,Math.max(1,cs),Math.max(1,cs));
+  }
+  // Draw ants
+  for(const ant of ants){
+    const px=viewX+ant.x*cs, py=viewY+ant.y*cs;
+    ctx.fillStyle='#ff0'; ctx.shadowBlur=cs*2; ctx.shadowColor='#ff0';
+    ctx.fillRect(px,py,Math.max(2,cs),Math.max(2,cs));
+    ctx.shadowBlur=0;
+  }
+}
+
+function drawCyclic(cs){
+  const ctx=glCtx; ctx.fillStyle='#000'; ctx.fillRect(0,0,glCanvas.width,glCanvas.height);
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const c=cyclicGrid[y][x];
+    const px=viewX+x*cs, py=viewY+y*cs;
+    if(px+cs<0||px>glCanvas.width||py+cs<0||py>glCanvas.height)continue;
+    const hue=(c/cyclicStates)*360;
+    ctx.fillStyle=`hsl(${hue},85%,55%)`;
+    ctx.fillRect(px,py,Math.max(1,cs),Math.max(1,cs));
+  }
+}
+
+function drawSmooth(cs){
+  const ctx=glCtx; ctx.fillStyle='#000'; ctx.fillRect(0,0,glCanvas.width,glCanvas.height);
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    const v=smoothGrid[y][x]; if(v<0.02)continue;
+    const px=viewX+x*cs, py=viewY+y*cs;
+    if(px+cs<0||px>glCanvas.width||py+cs<0||py>glCanvas.height)continue;
+    const r=Math.round(v*255), gb=Math.round(v*100), b3=Math.round(255-v*200);
+    ctx.fillStyle=`rgba(${r},${gb},${b3},${v})`;
+    ctx.fillRect(px,py,Math.max(1,cs),Math.max(1,cs));
+  }
+}
+
+function drawGrid_lines(cs){
+  overCtx.clearRect(0,0,overlayCanvas.width,overlayCanvas.height);
+  if(!showGrid||cs<3)return;
+  overCtx.strokeStyle='rgba(255,255,255,0.04)'; overCtx.lineWidth=0.5;
+  for(let x=0;x<=GRID_W;x++){
+    const px=viewX+x*cs; if(px<0||px>overlayCanvas.width)continue;
+    overCtx.beginPath();overCtx.moveTo(px,viewY);overCtx.lineTo(px,viewY+GRID_H*cs);overCtx.stroke();
+  }
+  for(let y=0;y<=GRID_H;y++){
+    const py=viewY+y*cs; if(py<0||py>overlayCanvas.height)continue;
+    overCtx.beginPath();overCtx.moveTo(viewX,py);overCtx.lineTo(viewX+GRID_W*cs,py);overCtx.stroke();
+  }
+}
+
+function drawMinimap(){
+  const mw=120,mh=90;
+  miniCtx.fillStyle='#000'; miniCtx.fillRect(0,0,mw,mh);
+  const g=U.grid;
+  const sx=mw/GRID_W, sy=mh/GRID_H;
+  if(simMode==='gol'){
+    miniCtx.fillStyle=cellColor1;
+    for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++)
+      if(g[y][x])miniCtx.fillRect(x*sx,y*sy,Math.max(1,sx),Math.max(1,sy));
+  }
+  // Viewport indicator
+  const cs=CELL*viewScale;
+  const vl=(-viewX/cs)*sx, vt=(-viewY/cs)*sy;
+  const vw=(glCanvas.width/cs)*sx, vh=(glCanvas.height/cs)*sy;
+  const mvp=document.getElementById('minimapViewport');
+  mvp.style.left=Math.max(0,vl)+'px';mvp.style.top=Math.max(0,vt)+'px';
+  mvp.style.width=Math.min(mw,vw)+'px';mvp.style.height=Math.min(mh,vh)+'px';
+}
+
+// ================================================================
+// TIMELINE GRAPHS
+// ================================================================
+function resizeTLCanvases(){
+  [tlPop,tlEnt,tlBD,tlVel,tlComp].forEach(c=>{c.width=c.parentElement.offsetWidth||200;c.height=c.parentElement.offsetHeight||60;});
+}
+function drawTimelines(){
+  resizeTLCanvases();
+  const u=U;
+  const pops=u.history.map(g=>countInGrid(g));
+  drawLine(tlPop,pops,'#667eea',GRID_W*GRID_H);
+  drawLine(tlEnt,u.entropyHistory,'#f59e0b',1);
+  drawBirthDeath(tlBD,u.birthHistory,u.deathHistory);
+  drawLine(tlVel,u.velHistory,'#a78bfa');
+  drawLine(tlComp,u.complexHistory,'#06b6d4');
+  document.getElementById('scrubber').max=u.history.length;
+  document.getElementById('scrubber').value=u.history.length;
+  document.getElementById('genDisp').textContent=u.generation;
+  document.getElementById('histDisp').textContent=u.history.length;
+}
+function drawLine(canvas,data,color,maxV){
+  const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
+  ctx.fillStyle='#000';ctx.fillRect(0,0,w,h);
+  if(data.length<2)return;
+  const max=maxV||Math.max(...data,1);
+  ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.beginPath();
+  const step=Math.max(1,Math.floor(data.length/w));
+  const filt=data.filter((_,i)=>i%step===0);
+  filt.forEach((v,i)=>{const x=(i/filt.length)*w,y=h-(v/max)*h*0.88;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.stroke();
+  // Fill under line
+  ctx.fillStyle=color.replace(')',',0.1)').replace('rgb','rgba').replace('#',color);
+  // skip fill for brevity
+}
+function drawBirthDeath(canvas,births,deaths){
+  const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
+  ctx.fillStyle='#000';ctx.fillRect(0,0,w,h);
+  if(births.length<2)return;
+  const maxBD=Math.max(...births,...deaths,1);
+  const drawD=(data,color)=>{
+    ctx.strokeStyle=color;ctx.lineWidth=1;ctx.beginPath();
+    const step=Math.max(1,Math.floor(data.length/w));
+    const filt=data.filter((_,i)=>i%step===0);
+    filt.forEach((v,i)=>{const x=(i/filt.length)*w,y=h-(v/maxBD)*h*0.85;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+    ctx.stroke();
+  };
+  drawD(births,'#4ade80');drawD(deaths,'#f87171');
+}
+
+// ================================================================
+// ANALYSIS
+// ================================================================
+function analyzePattern(){
+  const u=U; if(u.generation<3)return;
+  const g=u.grid;
+  let hm=0; for(let y=0;y<GRID_H/2;y++) for(let x=0;x<GRID_W;x++) if(g[y][x]===g[GRID_H-1-y][x])hm++;
+  const symH=((hm/(GRID_W*GRID_H/2))*100).toFixed(0);
+  let vm=0; for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W/2;x++) if(g[y][x]===g[y][GRID_W-1-x])vm++;
+  const symV=((vm/(GRID_H*GRID_W/2))*100).toFixed(0);
+  let stab=100;
+  if(u.history.length>=5){
+    const recent=u.history.slice(-5).map(h=>countInGrid(h));
+    const mean=recent.reduce((a,b)=>a+b,0)/recent.length;
+    const variance=recent.reduce((s,p)=>s+Math.pow(p-mean,2),0)/recent.length;
+    stab=Math.max(0,100-variance/10).toFixed(0);
+  }
+  const ent=(computeEntropy(g)*100).toFixed(0);
+  const living=countInGrid(g);
+  const clusters=estimateClusters(g);
+  const bbox=getBoundingBox(g);
+  const complex=(parseFloat(ent)*living/(GRID_W*GRID_H)*100).toFixed(0);
+  let cls='Undefined';
+  const sv=parseInt(stab), ev=parseInt(ent);
+  if(living===0)cls='Extinct';
+  else if(sv>95&&u.generation>20)cls='Still Life';
+  else if(sv>72&&parseInt(symH)>70)cls='Oscillator';
+  else if(sv<30&&ev>60)cls='Chaotic';
+  else if(sv>55&&ev<30)cls='Spaceship?';
+  else if(sv>60&&ev>40)cls='Complex';
+  else if(living<5&&u.generation>20)cls='Near Extinct';
+  else cls='Evolving';
+  document.getElementById('d-symH').textContent=symH+'%';
+  document.getElementById('d-symV').textContent=symV+'%';
+  document.getElementById('d-stab').textContent=stab+'%';
+  document.getElementById('d-ent').textContent=ent+'%';
+  document.getElementById('d-complex').textContent=complex;
+  document.getElementById('d-class').textContent=cls;
+  document.getElementById('d-bbox').textContent=bbox?`${bbox.w}×${bbox.h}`:'—';
+  document.getElementById('s-clusters').textContent=clusters;
+}
+
+function estimateClusters(g){
+  let count=0; const seen=new Uint8Array(GRID_W*GRID_H);
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+    if(g[y][x]&&!seen[y*GRID_W+x]){
+      count++;
+      const stack=[[x,y]];
+      while(stack.length){const[cx,cy]=stack.pop();
+        if(cx<0||cx>=GRID_W||cy<0||cy>=GRID_H||!g[cy][cx]||seen[cy*GRID_W+cx])continue;
+        seen[cy*GRID_W+cx]=1;
+        stack.push([cx+1,cy],[cx-1,cy],[cx,cy+1],[cx,cy-1]);
+      }
+    }
+  }
+  return count;
+}
+
+function getBoundingBox(g){
+  let minX=GRID_W,maxX=0,minY=GRID_H,maxY=0;
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++) if(g[y][x]){
+    if(x<minX)minX=x;if(x>maxX)maxX=x;if(y<minY)minY=y;if(y>maxY)maxY=y;
+  }
+  if(minX>maxX)return null;
+  return{x:minX,y:minY,w:maxX-minX+1,h:maxY-minY+1};
+}
+
+// ================================================================
+// UPDATE & DISPLAY
+// ================================================================
+function checkAlerts(living,births,deaths){
+  const c=document.getElementById('alertsBox'); const alerts=[];
+  if(U.generation>10&&births+deaths>600)alerts.push({msg:'⚠️ High volatility',cls:''});
+  if(living<5&&U.generation>15)alerts.push({msg:'💀 Near extinction!',cls:'danger'});
+  if(births+deaths<5&&living>30&&U.generation>20)alerts.push({msg:'⚖️ Stable equilibrium',cls:'success'});
+  if(living>GRID_W*GRID_H*0.8)alerts.push({msg:'🔥 Population explosion!',cls:'danger'});
+  if(orbitPeriod)alerts.push({msg:`↻ Period-${orbitPeriod} oscillator detected`,cls:'info'});
+  c.innerHTML=alerts.map(a=>`<div class="alert ${a.cls}">${a.msg}</div>`).join('');
+}
+
+function updateDisplay(){
+  drawAll();
+  if(simMode==='gol'){updateAgeGrid(U.grid);updateHeat(U.grid);}
+  drawTimelines();
+  const living=simMode==='gol'?countInGrid(U.grid):0;
+  const total=GRID_W*GRID_H;
+  const density=((living/total)*100).toFixed(1);
+  const births=U.birthHistory[U.birthHistory.length-1]||0;
+  const deaths=U.deathHistory[U.deathHistory.length-1]||0;
+  const changeRate=living>0?((births+deaths)/living*100).toFixed(1):0;
+  document.getElementById('s-gen').textContent=U.generation;
+  document.getElementById('s-pop').textContent=living.toLocaleString();
+  document.getElementById('s-dens').textContent=density+'%';
+  document.getElementById('s-change').textContent=changeRate+'%';
+  document.getElementById('s-births').textContent=births;
+  document.getElementById('s-deaths').textContent=deaths;
+  document.getElementById('s-fps').textContent=displayFps;
+  checkAlerts(living,births,deaths);
+  if(activeTab==='stats'&&simMode==='gol')analyzePattern();
+  updateMultiverseDisplay();
+}
+
+function tick(){
+  if(simMode==='gol'){
+    for(let s=0;s<stepsPerFrame;s++){
+      const{births,deaths,living}=stepGoL(U);
+      sonify(births,deaths,living);
+      spawnParticles(births,deaths,U.grid);
+      if(s===stepsPerFrame-1)checkOrbit(U.grid);
+    }
+  } else if(simMode==='rd'){
+    for(let i=0;i<5*stepsPerFrame;i++)stepRD();
+    U.generation+=stepsPerFrame;
+  } else if(simMode==='lenia'){
+    for(let s=0;s<stepsPerFrame;s++)stepLenia();
+    U.generation+=stepsPerFrame;
+  } else if(simMode==='brian'){
+    for(let s=0;s<stepsPerFrame;s++)stepBrian();
+    U.generation+=stepsPerFrame;
+  } else if(simMode==='wire'){
+    for(let s=0;s<stepsPerFrame;s++)stepWire();
+    U.generation+=stepsPerFrame;
+  } else if(simMode==='langton'){
+    for(let s=0;s<stepsPerFrame*5;s++)stepLangton();
+    U.generation+=stepsPerFrame;
+  } else if(simMode==='cyclic'){
+    for(let s=0;s<stepsPerFrame;s++)stepCyclic();
+    U.generation+=stepsPerFrame;
+  } else if(simMode==='smooth'){
+    for(let s=0;s<stepsPerFrame;s++)stepSmooth();
+    U.generation+=stepsPerFrame;
+  } else if(simMode==='elem'){
+    for(let s=0;s<stepsPerFrame;s++)stepElem();
+    U.generation+=stepsPerFrame;
+  } else if(simMode==='forest'){
+    for(let s=0;s<stepsPerFrame;s++)stepForest();
+    U.generation+=stepsPerFrame;
+  }
+  updateDisplay();
+  updateParticles();
+}
+
+// ================================================================
+// ANIMATION LOOP
+// ================================================================
+function animate(ts){
+  if(isRunning&&!isEvolving){
+    const elapsed=ts-lastFrameTime;
+    if(elapsed>=1000/speed){
+      tick(); lastFrameTime=ts;
+      fpsAccum+=elapsed; fpsFrames++;
+      if(fpsAccum>=500){displayFps=Math.round(fpsFrames/(fpsAccum/1000));
+        document.getElementById('fpsCounter').textContent=displayFps+' fps';
+        document.getElementById('s-fps').textContent=displayFps;
+        fpsAccum=0;fpsFrames=0;}
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+// ================================================================
+// MOUSE / DRAWING
+// ================================================================
+let isDrawing=false, lineStart=null, circleStart=null, rectStart=null, selStart=null;
+let selRect=null;
+let selClipboard=null; // {w, h, cells: Uint8Array}
+
+function copySelection(){
+  if(!selRect)return;
+  const{x,y,w,h}=selRect;
+  const cells=new Uint8Array(w*h);
+  for(let dy=0;dy<h;dy++) for(let dx=0;dx<w;dx++){
+    const gx=x+dx, gy=y+dy;
+    if(gx>=0&&gx<GRID_W&&gy>=0&&gy<GRID_H) cells[dy*w+dx]=U.grid[gy][gx];
+  }
+  selClipboard={w,h,cells};
+  showToast(`Copied ${w}×${h} selection`);
+}
+
+function cutSelection(){
+  if(!selRect)return;
+  copySelection();
+  saveUndo();
+  const{x,y,w,h}=selRect;
+  for(let dy=0;dy<h;dy++) for(let dx=0;dx<w;dx++){
+    const gx=x+dx, gy=y+dy;
+    if(gx>=0&&gx<GRID_W&&gy>=0&&gy<GRID_H) U.grid[gy][gx]=0;
+  }
+  drawAll();
+}
+
+function pasteSelection(atX,atY){
+  if(!selClipboard)return;
+  saveUndo();
+  const{w,h,cells}=selClipboard;
+  const ox=atX!==undefined?atX:Math.floor((GRID_W-w)/2);
+  const oy=atY!==undefined?atY:Math.floor((GRID_H-h)/2);
+  for(let dy=0;dy<h;dy++) for(let dx=0;dx<w;dx++){
+    const gx=ox+dx, gy=oy+dy;
+    if(gx>=0&&gx<GRID_W&&gy>=0&&gy<GRID_H) U.grid[gy][gx]=cells[dy*w+dx];
+  }
+  // Move selRect to paste location
+  selRect={x:ox,y:oy,w,h};
+  drawAll();
+  showToast(`Pasted ${w}×${h}`);
+}
+
+function deleteSelection(){
+  if(!selRect)return;
+  saveUndo();
+  const{x,y,w,h}=selRect;
+  for(let dy=0;dy<h;dy++) for(let dx=0;dx<w;dx++){
+    const gx=x+dx, gy=y+dy;
+    if(gx>=0&&gx<GRID_W&&gy>=0&&gy<GRID_H) U.grid[gy][gx]=0;
+  }
+  selRect=null; drawAll();
+}
+
+function showToast(msg){
+  let t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';
+    t.style.cssText='position:fixed;bottom:170px;left:50%;transform:translateX(-50%);background:rgba(102,126,234,0.9);color:#fff;padding:5px 14px;border-radius:20px;font-size:0.72em;pointer-events:none;z-index:9999;transition:opacity 0.4s;font-family:inherit;';
+    document.body.appendChild(t);}
+  t.textContent=msg; t.style.opacity='1';
+  clearTimeout(t._tid);
+  t._tid=setTimeout(()=>t.style.opacity='0',1600);
+}
+
+function getSym(x,y){
+  const pts=[[x,y]];
+  if(symmetryMode==='h'||symmetryMode==='4'||symmetryMode==='8') pts.push([GRID_W-1-x,y]);
+  if(symmetryMode==='v'||symmetryMode==='4'||symmetryMode==='8') pts.push([x,GRID_H-1-y]);
+  if(symmetryMode==='4'||symmetryMode==='8') pts.push([GRID_W-1-x,GRID_H-1-y]);
+  if(symmetryMode==='8'){pts.push([y,x],[GRID_W-1-y,x],[y,GRID_H-1-x],[GRID_W-1-y,GRID_H-1-x]);}
+  if(symmetryMode==='rot') pts.push([GRID_W-1-x,GRID_H-1-y]);
+  return pts;
+}
+
+function paintAt(cx,cy,val){
+  const pts=getSym(cx,cy);
+  pts.forEach(([px,py])=>{
+    for(let dy=-brushSize+1;dy<brushSize;dy++) for(let dx=-brushSize+1;dx<brushSize;dx++){
+      if(Math.sqrt(dx*dx+dy*dy)<brushSize){
+        const nx=px+dx,ny=py+dy;
+        if(nx>=0&&nx<GRID_W&&ny>=0&&ny<GRID_H){
+          if(simMode==='wire'){
+            // val=1 means draw conductor; val=0 means erase; wireDrawState sets head/tail
+            wireGrid[ny][nx]=val?wireDrawState:0;
+          } else if(simMode==='langton') antGrid[ny][nx]=val?0:0;
+          else U.grid[ny][nx]=val?1:0;
+        }
+      }
+    }
+  });
+}
+
+function floodFill(x,y,val){
+  const g=U.grid; const target=g[y][x];
+  if(target===val)return;
+  const stack=[[x,y]];
+  while(stack.length){const[cx,cy]=stack.pop();
+    if(cx<0||cx>=GRID_W||cy<0||cy>=GRID_H||g[cy][cx]!==target)continue;
+    g[cy][cx]=val;
+    stack.push([cx+1,cy],[cx-1,cy],[cx,cy+1],[cx,cy-1]);
+  }
+}
+
+function bresenham(x0,y0,x1,y1,val){
+  let dx=Math.abs(x1-x0),dy=Math.abs(y1-y0);
+  let sx=x0<x1?1:-1,sy=y0<y1?1:-1,err=dx-dy;
+  while(true){paintAt(x0,y0,val);if(x0===x1&&y0===y1)break;
+    const e2=2*err;if(e2>-dy){err-=dy;x0+=sx;}if(e2<dx){err+=dx;y0+=sy;}
+  }
+}
+
+uiCanvas.addEventListener('mousedown',e=>{
+  if(e.button===1||(e.button===0&&e.altKey)){isPanning=true;panStart={x:e.clientX-viewX,y:e.clientY-viewY};return;}
+  isDrawing=true;
+  const{wx,wy}=screenToWorld(e.offsetX,e.offsetY);
+  if(drawMode==='line'){lineStart={wx,wy};}
+  else if(drawMode==='circle'){circleStart={wx,wy};}
+  else if(drawMode==='rect'){rectStart={wx,wy};}
+  else if(drawMode==='select'){selStart={wx,wy};}
+  else{
+    saveUndo();
+    paintAt(wx,wy,drawMode==='erase'||e.button===2?0:1);
+    drawAll();
+  }
+});
+
+uiCanvas.addEventListener('contextmenu',e=>{e.preventDefault();isDrawing=true;
+  const{wx,wy}=screenToWorld(e.offsetX,e.offsetY);saveUndo();paintAt(wx,wy,0);drawAll();});
+
+uiCanvas.addEventListener('mousemove',e=>{
+  if(isPanning){viewX=e.clientX-panStart.x;viewY=e.clientY-panStart.y;drawAll();return;}
+  if(!isDrawing)return;
+  const{wx,wy}=screenToWorld(e.offsetX,e.offsetY);
+  if(drawMode==='draw'||drawMode==='erase'){
+    paintAt(wx,wy,drawMode==='erase'?0:1); drawAll();
+  } else if(drawMode==='line'&&lineStart){
+    drawAll(); overCtx.strokeStyle=cellColor1; overCtx.lineWidth=2;
+    const s=worldToScreen(lineStart.wx,lineStart.wy),d=worldToScreen(wx,wy);
+    const cs=CELL*viewScale;
+    overCtx.beginPath();overCtx.moveTo(s.sx+cs/2,s.sy+cs/2);overCtx.lineTo(d.sx+cs/2,d.sy+cs/2);overCtx.stroke();
+  } else if(drawMode==='rect'&&rectStart){
+    drawAll(); overCtx.strokeStyle=cellColor1; overCtx.lineWidth=1.5;
+    const s=worldToScreen(rectStart.wx,rectStart.wy),d=worldToScreen(wx,wy);
+    const cs=CELL*viewScale;
+    overCtx.strokeRect(s.sx,s.sy,(d.sx-s.sx)+cs,(d.sy-s.sy)+cs);
+  } else if(drawMode==='circle'&&circleStart){
+    drawAll(); overCtx.strokeStyle=cellColor1; overCtx.lineWidth=1.5;
+    const s=worldToScreen(circleStart.wx,circleStart.wy),d=worldToScreen(wx,wy);
+    const cs2=CELL*viewScale;
+    const cx2=s.sx+cs2/2,cy2=s.sy+cs2/2;
+    const r=Math.hypot(d.sx-s.sx,d.sy-s.sy);
+    overCtx.beginPath();overCtx.arc(cx2,cy2,r,0,Math.PI*2);overCtx.stroke();
+  } else if(drawMode==='select'&&selStart){
+    drawAll();
+    const cs=CELL*viewScale;
+    const x0=Math.min(selStart.wx,wx), y0=Math.min(selStart.wy,wy);
+    const x1=Math.max(selStart.wx,wx), y1=Math.max(selStart.wy,wy);
+    const s0=worldToScreen(x0,y0), s1=worldToScreen(x1+1,y1+1);
+    overCtx.strokeStyle='rgba(102,126,234,0.9)'; overCtx.lineWidth=1.5;
+    overCtx.setLineDash([4,3]); overCtx.strokeRect(s0.sx,s0.sy,s1.sx-s0.sx,s1.sy-s0.sy);
+    overCtx.setLineDash([]);
+  }
+});
+  if(isPanning){isPanning=false;return;}
+  if(!isDrawing)return;
+  const{wx,wy}=screenToWorld(e.offsetX,e.offsetY);
+  if(drawMode==='line'&&lineStart){
+    saveUndo(); bresenham(lineStart.wx,lineStart.wy,wx,wy,1); lineStart=null; drawAll();
+  } else if(drawMode==='fill'){
+    saveUndo(); if(wx>=0&&wx<GRID_W&&wy>=0&&wy<GRID_H){floodFill(wx,wy,U.grid[wy][wx]?0:1);} drawAll();
+  } else if(drawMode==='stamp'){
+    saveUndo(); loadPreset('glider',wx-2,wy-2); drawAll();
+  } else if(drawMode==='rect'&&rectStart){
+    saveUndo();
+    const x0=Math.min(rectStart.wx,wx),x1=Math.max(rectStart.wx,wx);
+    const y0=Math.min(rectStart.wy,wy),y1=Math.max(rectStart.wy,wy);
+    for(let y=y0;y<=y1;y++) for(let x=x0;x<=x1;x++) paintAt(x,y,1);
+    rectStart=null; drawAll();
+  } else if(drawMode==='circle'&&circleStart){
+    saveUndo();
+    const r=Math.round(Math.hypot(wx-circleStart.wx,wy-circleStart.wy));
+    for(let dy=-r;dy<=r;dy++) for(let dx=-r;dx<=r;dx++){
+      if(Math.abs(Math.sqrt(dx*dx+dy*dy)-r)<1){
+        const nx=circleStart.wx+dx,ny=circleStart.wy+dy;
+        if(nx>=0&&nx<GRID_W&&ny>=0&&ny<GRID_H)paintAt(nx,ny,1);
+      }
+    }
+    circleStart=null; drawAll();
+  }
+  } else if(drawMode==='select'&&selStart){
+    const x0=Math.min(selStart.wx,wx), y0=Math.min(selStart.wy,wy);
+    const x1=Math.max(selStart.wx,wx), y1=Math.max(selStart.wy,wy);
+    selRect={x:x0,y:y0,w:x1-x0+1,h:y1-y0+1};
+    selStart=null; drawAll();
+    showToast(`Selected ${selRect.w}×${selRect.h} — Ctrl+C copy · Ctrl+X cut · Ctrl+V paste`);
+  }
+  isDrawing=false; overCtx.clearRect(0,0,overlayCanvas.width,overlayCanvas.height);
+});
+
+uiCanvas.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const factor=e.deltaY<0?1.12:0.89;
+  adjustZoom(factor,e.offsetX,e.offsetY);
+},{passive:false});
+
+// Touch support
+let lastTouchDist=0;
+uiCanvas.addEventListener('touchstart',e=>{
+  if(e.touches.length===2){
+    lastTouchDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+    return;
+  }
+  const t=e.touches[0];
+  const rect=uiCanvas.getBoundingClientRect();
+  const{wx,wy}=screenToWorld(t.clientX-rect.left,t.clientY-rect.top);
+  isDrawing=true; paintAt(wx,wy,1); drawAll();
+},{passive:true});
+uiCanvas.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  if(e.touches.length===2){
+    const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+    adjustZoom(d/lastTouchDist); lastTouchDist=d; return;
+  }
+  const t=e.touches[0];
+  const rect=uiCanvas.getBoundingClientRect();
+  const{wx,wy}=screenToWorld(t.clientX-rect.left,t.clientY-rect.top);
+  if(isDrawing){paintAt(wx,wy,1);drawAll();}
+},{passive:false});
+uiCanvas.addEventListener('touchend',()=>{isDrawing=false;});
+
+// ================================================================
+// PRESETS
+// ================================================================
+function loadPreset(name,offX,offY){
+  const u=U; u.grid=makeGrid();
+  const cy=(offY!==undefined?offY:Math.floor(GRID_H/2));
+  const cx=(offX!==undefined?offX:Math.floor(GRID_W/2));
+  const P={
+    glider:[[0,1],[1,2],[2,0],[2,1],[2,2]],
+    pulsar:[[2,4],[2,5],[2,6],[2,10],[2,11],[2,12],[4,2],[4,7],[4,9],[4,14],[5,2],[5,7],[5,9],[5,14],[6,2],[6,7],[6,9],[6,14],[7,4],[7,5],[7,6],[7,10],[7,11],[7,12],[9,4],[9,5],[9,6],[9,10],[9,11],[9,12],[10,2],[10,7],[10,9],[10,14],[11,2],[11,7],[11,9],[11,14],[12,2],[12,7],[12,9],[12,14],[14,4],[14,5],[14,6],[14,10],[14,11],[14,12]],
+    gosperGun:[[0,24],[1,22],[1,24],[2,12],[2,13],[2,20],[2,21],[2,34],[2,35],[3,11],[3,15],[3,20],[3,21],[3,34],[3,35],[4,0],[4,1],[4,10],[4,16],[4,20],[4,21],[5,0],[5,1],[5,10],[5,14],[5,16],[5,17],[5,22],[5,24],[6,10],[6,16],[6,24],[7,11],[7,15],[8,12],[8,13]],
+    lwss:[[0,1],[0,4],[1,0],[2,0],[2,4],[3,0],[3,1],[3,2],[3,3]],
+    mwss:[[0,1],[0,2],[0,3],[0,4],[0,5],[1,0],[1,5],[2,5],[3,0],[3,4],[4,2]],
+    hwss:[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[1,0],[1,6],[2,6],[3,0],[3,5],[4,2],[4,3]],
+    pentadecathlon:[[0,1],[1,1],[2,0],[2,2],[3,1],[4,1],[5,1],[6,1],[7,0],[7,2],[8,1],[9,1]],
+    acorn:[[0,1],[1,3],[2,0],[2,1],[2,4],[2,5],[2,6]],
+    diehard:[[0,6],[1,0],[1,1],[2,1],[2,5],[2,6],[2,7]],
+    rPentomino:[[0,1],[0,2],[1,0],[1,1],[2,1]],
+    simkinGun:[[0,0],[0,1],[1,0],[1,1],[0,7],[0,8],[1,7],[1,8],[4,4],[4,5],[5,3],[5,4],[5,5],[5,6],[6,4],[6,5],[10,1],[10,2],[11,0],[11,1],[11,2],[12,0],[12,1],[13,4],[13,5],[14,4],[14,5]],
+    beehive:[[0,1],[0,2],[1,0],[1,3],[2,1],[2,2]],
+    loaf:[[0,1],[0,2],[1,0],[1,3],[2,1],[2,3],[3,2]],
+    boat:[[0,0],[0,1],[1,0],[1,2],[2,1]],
+    blinker:[[0,0],[0,1],[0,2]],
+    toad:[[0,1],[0,2],[0,3],[1,0],[1,1],[1,2]],
+    beacon:[[0,0],[0,1],[1,0],[1,1],[2,2],[2,3],[3,2],[3,3]],
+    blockLayer:[[0,0],[0,1],[1,0],[1,1],[2,2],[2,3],[3,2],[3,3],[5,5],[5,6],[6,5],[6,6]],
+    gliderGalaxy:[[0,1],[1,2],[2,0],[2,1],[2,2],[10,1],[11,2],[12,0],[12,1],[12,2],[5,8],[5,9],[6,8],[6,9]],
+  };
+  if(name==='random15'||name==='random30'||name==='random50'){
+    const pct=name==='random15'?0.15:name==='random30'?0.30:0.50;
+    for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++) u.grid[y][x]=Math.random()<pct?1:0;
+  } else if(P[name]){
+    P[name].forEach(([dy,dx])=>{
+      const ny=cy+dy,nx=cx+dx;
+      if(ny>=0&&ny<GRID_H&&nx>=0&&nx<GRID_W)u.grid[ny][nx]=1;
+    });
+  }
+  u.history=[];u.birthHistory=[];u.deathHistory=[];u.entropyHistory=[];u.velHistory=[];u.complexHistory=[];
+  u.generation=0; ageGrid=makeIntArr2D(0); heatGrid=makeFloat2D(0); hashHistory=[];
+  updateDisplay();
+}
+
+// ================================================================
+// RULES
+// ================================================================
+const RULE_PRESETS={
+  conway:{b:[3],s:[2,3]},highlife:{b:[3,6],s:[2,3]},daynight:{b:[3,6,7,8],s:[3,4,6,7,8]},
+  seeds:{b:[2],s:[]},morley:{b:[3,6,8],s:[2,4,5]},coral:{b:[3],s:[4,5,6,7,8]},
+  '2x2':{b:[3,6],s:[1,2,5]},maze:{b:[3],s:[1,2,3,4,5]},anneal:{b:[4,6,7,8],s:[3,5,6,7,8]},
+  stains:{b:[3,6,7,8],s:[2,3,5,6,7,8]},walled:{b:[4,5,6,7,8],s:[2,3,4,5]},
+  vote:{b:[5,6,7,8],s:[4,5,6,7,8]},serviettes:{b:[2,3,4],s:[]},
+  gnarl:{b:[1],s:[1,3,5,7,8]},fredkin:{b:[1,3,5,7],s:[0,2,4,6,8]},
+  random_rule:null
+};
+
+function buildRuleGrids(){
+  ['birthGrid','survGrid'].forEach(id=>{
+    const c=document.getElementById(id); c.innerHTML='';
+    for(let i=0;i<=8;i++){
+      const el=document.createElement('div'); el.className='rcell';
+      el.textContent=i; el.dataset.n=i; el.dataset.type=id==='birthGrid'?'birth':'surv';
+      el.addEventListener('click',()=>toggleRule(el));
+      c.appendChild(el);
+    }
+  });
+  syncRuleUI();
+}
+
+function toggleRule(cell){
+  const n=parseInt(cell.dataset.n);
+  const arr=cell.dataset.type==='birth'?U.birthRules:U.survivalRules;
+  const idx=arr.indexOf(n);
+  if(idx>=0)arr.splice(idx,1);else arr.push(n);
+  arr.sort((a,b)=>a-b); syncRuleUI(); updateBadge();
+}
+
+function syncRuleUI(){
+  document.querySelectorAll('#birthGrid .rcell').forEach(c=>c.classList.toggle('active',U.birthRules.includes(parseInt(c.dataset.n))));
+  document.querySelectorAll('#survGrid .rcell').forEach(c=>c.classList.toggle('active',U.survivalRules.includes(parseInt(c.dataset.n))));
+  document.getElementById('ruleDisp').textContent=`B${U.birthRules.join('')}/S${U.survivalRules.join('')}`;
+}
+
+function loadRule(name){
+  if(name==='random_rule'){
+    const rnd=()=>{const a=[];for(let i=0;i<=8;i++)if(Math.random()>0.65)a.push(i);return a;};
+    U.birthRules=rnd(); U.survivalRules=rnd();
+  } else { const p=RULE_PRESETS[name]; if(!p)return; U.birthRules=[...p.b]; U.survivalRules=[...p.s]; }
+  syncRuleUI(); updateBadge();
+}
+
+function parseRuleStr(str){
+  const m=str.toUpperCase().match(/B([0-8]*)\/S([0-8]*)/);
+  if(!m)return false;
+  U.birthRules=m[1].split('').map(Number).filter(n=>!isNaN(n));
+  U.survivalRules=m[2].split('').map(Number).filter(n=>!isNaN(n));
+  syncRuleUI();updateBadge();return true;
+}
+
+// ================================================================
+// RLE IMPORT/EXPORT
+// ================================================================
+function exportRLE(){
+  const g=U.grid;
+  const b=U.birthRules.join(''),s=U.survivalRules.join('');
+  let rows=[];
+  for(let y=0;y<GRID_H;y++){
+    let row='',count=0,last=null;
+    for(let x=0;x<GRID_W;x++){
+      const c=g[y][x]?'o':'b';
+      if(c===last){count++;}else{if(last)row+=(count>1?count:'')+last;last=c;count=1;}
+    }
+    if(last&&last!=='b')row+=(count>1?count:'')+last;
+    rows.push(row.replace(/b+$/,''));
+  }
+  while(rows.length&&!rows[rows.length-1])rows.pop();
+  return`x = ${GRID_W}, y = ${GRID_H}, rule = B${b}/S${s}\n${rows.join('$')}!`;
+}
+
+function importRLE(rle){
+  try{
+    const lines=rle.trim().split('\n').filter(l=>!l.startsWith('#'));
+    const header=lines.find(l=>l.includes('x ='));
+    let rule='B3/S23';
+    if(header){const rm=header.match(/rule\s*=\s*(\S+)/i);if(rm)rule=rm[1];}
+    const body=lines.filter(l=>!l.includes('=')).join('').replace(/\s/g,'');
+    const g=makeGrid();
+    let x=0,y=0,numS='';
+    for(const ch of body){
+      if(ch>='0'&&ch<='9'){numS+=ch;continue;}
+      const n=numS?parseInt(numS):1;numS='';
+      if(ch==='b'){x+=n;}
+      else if(ch==='o'){for(let i=0;i<n;i++){if(x<GRID_W&&y<GRID_H)g[y][x]=1;x++;}}
+      else if(ch==='$'){y+=n;x=0;}
+      else if(ch==='!')break;
+    }
+    U.grid=g; parseRuleStr(rule);
+    U.history=[];U.birthHistory=[];U.deathHistory=[];U.entropyHistory=[];U.velHistory=[];U.complexHistory=[];U.generation=0;
+    ageGrid=makeIntArr2D(0);heatGrid=makeFloat2D(0);hashHistory=[];updateDisplay();return true;
+  }catch(e){return false;}
+}
+
+// Drag-drop
+document.getElementById('mainview').addEventListener('dragover',e=>e.preventDefault());
+document.getElementById('mainview').addEventListener('drop',e=>{
+  e.preventDefault();
+  const f=e.dataTransfer.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{const txt=ev.target.result;if(!importRLE(txt))alert('Could not parse pattern file.');};
+  r.readAsText(f);
+});
+document.getElementById('left').addEventListener('dragover',e=>e.preventDefault());
+document.getElementById('left').addEventListener('drop',e=>{
+  e.preventDefault();
+  const f=e.dataTransfer.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>{importRLE(ev.target.result);};r.readAsText(f);
+});
+
+// ================================================================
+// MULTIVERSE
+// ================================================================
+function forkUniverse(mutate=false){
+  const src=U;
+  const u=makeUniverse(universes.length);
+  u.grid=src.grid.map(r=>r.slice());
+  u.birthRules=[...src.birthRules];u.survivalRules=[...src.survivalRules];
+  u.metadata.name=`U${u.id}${mutate?' (mut)':''}`;
+  if(mutate){
+    const times=1+Math.floor(Math.random()*3);
+    for(let i=0;i<times;i++){
+      const n=Math.floor(Math.random()*9);
+      if(Math.random()>0.5){const idx=u.birthRules.indexOf(n);idx>=0?u.birthRules.splice(idx,1):u.birthRules.push(n);}
+      else{const idx=u.survivalRules.indexOf(n);idx>=0?u.survivalRules.splice(idx,1):u.survivalRules.push(n);}
+    }
+    u.birthRules.sort((a,b)=>a-b);u.survivalRules.sort((a,b)=>a-b);
+  }
+  universes.push(u);
+  document.getElementById('univCount').textContent=universes.length;
+  updateMultiverseDisplay();
+}
+
+function updateMultiverseDisplay(){
+  const c=document.getElementById('multiverseContainer');
+  c.innerHTML=universes.map((u,i)=>`
+    <div class="ucard ${u.id===U.id?'active':''}" onclick="switchUniverse(${i})">
+      <canvas class="upreview" id="uprev-${i}"></canvas>
+      <div class="uinfo">${u.metadata.name}<br>Gen:${u.generation} <span class="urule">B${u.birthRules.join('')}/S${u.survivalRules.join('')}</span></div>
+      ${universes.length>1?`<button class="udel" onclick="event.stopPropagation();deleteUniverse(${i})">✕</button>`:''}
+    </div>`).join('');
+  setTimeout(()=>{
+    universes.forEach((u,i)=>{
+      const cv=document.getElementById(`uprev-${i}`);if(!cv)return;
+      cv.width=cv.offsetWidth||110;cv.height=60;
+      const ctx2=cv.getContext('2d');
+      const sx=cv.width/GRID_W,sy=60/GRID_H;
+      ctx2.fillStyle='#000';ctx2.fillRect(0,0,cv.width,60);
+      ctx2.fillStyle=u.id===U.id?cellColor1:'#555';
+      for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++)
+        if(u.grid[y][x])ctx2.fillRect(x*sx,y*sy,Math.max(1,sx),Math.max(1,sy));
+    });
+  },10);
+}
+
+function switchUniverse(i){U=universes[i];ageGrid=makeIntArr2D(0);syncRuleUI();updateDisplay();updateBadge();}
+function deleteUniverse(i){
+  if(universes.length<=1)return;
+  universes.splice(i,1);if(!universes.includes(U))U=universes[0];
+  document.getElementById('univCount').textContent=universes.length;updateMultiverseDisplay();
+}
+
+// ================================================================
+// PATTERN CATALOG
+// ================================================================
+function savePattern(){
+  const living=countInGrid(U.grid);if(!living)return;
+  const name=prompt('Name this pattern:',`Pattern ${patternCatalog.length+1}`);if(!name)return;
+  patternCatalog.push({name,grid:U.grid.map(r=>r.slice()),rule:`B${U.birthRules.join('')}/S${U.survivalRules.join('')}`,
+    generation:U.generation,population:living,birthRules:[...U.birthRules],survivalRules:[...U.survivalRules]});
+  renderCatalog();
+}
+function renderCatalog(){
+  const c=document.getElementById('patternCatalog');
+  document.getElementById('catCount').textContent=patternCatalog.length;
+  if(!patternCatalog.length){
+    c.innerHTML='<div style="font-size:0.7em;color:#333;text-align:center;padding:14px;">No saved patterns yet.</div>';
+    return;
+  }
+  c.innerHTML=patternCatalog.map((p,i)=>`
+    <div class="catitem" onclick="loadCatalogPat(${i})" style="gap:7px;">
+      <canvas id="cthmb-${i}" width="48" height="36"
+        style="flex-shrink:0;border-radius:3px;background:#000;image-rendering:pixelated;border:1px solid #222;"></canvas>
+      <div style="flex:1;min-width:0;">
+        <div class="cname" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</div>
+        <div class="crule">${p.rule}</div>
+        <div style="display:flex;gap:6px;margin-top:1px;">
+          <span class="cgen">G${p.generation}</span>
+          <span style="font-size:0.65em;color:#4ade80;">${p.population} ▪</span>
+        </div>
+      </div>
+      <button class="xs danger" style="flex-shrink:0;align-self:flex-start;margin:0;padding:2px 5px;"
+        onclick="event.stopPropagation();deleteCatalogPat(${i})">✕</button>
+    </div>`).join('');
+  // Draw thumbnails after DOM is ready
+  requestAnimationFrame(()=>{
+    patternCatalog.forEach((p,i)=>{
+      const cv=document.getElementById(`cthmb-${i}`);
+      if(!cv)return;
+      const tCtx=cv.getContext('2d');
+      const tw=cv.width, th=cv.height;
+      tCtx.fillStyle='#000'; tCtx.fillRect(0,0,tw,th);
+      // Find bounding box for zoom-to-fit
+      let minX=GRID_W,maxX=0,minY=GRID_H,maxY=0;
+      for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++) if(p.grid[y][x]){
+        if(x<minX)minX=x;if(x>maxX)maxX=x;if(y<minY)minY=y;if(y>maxY)maxY=y;
+      }
+      if(minX>maxX){return;} // empty
+      const pw=maxX-minX+1, ph=maxY-minY+1;
+      const pad=2;
+      const sx=(tw-pad*2)/pw, sy=(th-pad*2)/ph;
+      const scale=Math.min(sx,sy,4);
+      const offX=pad+(tw-pad*2-pw*scale)/2;
+      const offY=pad+(th-pad*2-ph*scale)/2;
+      tCtx.fillStyle=cellColor1;
+      for(let y=minY;y<=maxY;y++) for(let x=minX;x<=maxX;x++){
+        if(p.grid[y][x]){
+          tCtx.fillRect(
+            offX+(x-minX)*scale, offY+(y-minY)*scale,
+            Math.max(1,scale-0.5), Math.max(1,scale-0.5)
+          );
+        }
+      }
+    });
+  });
+}
+
+function deleteCatalogPat(i){
+  patternCatalog.splice(i,1);
+  renderCatalog();
+}
+function loadCatalogPat(i){
+  const p=patternCatalog[i];U.grid=p.grid.map(r=>r.slice());
+  U.birthRules=[...p.birthRules];U.survivalRules=[...p.survivalRules];
+  U.history=[];U.generation=0;ageGrid=makeIntArr2D(0);
+  syncRuleUI();updateDisplay();updateBadge();
+}
+
+// ================================================================
+// SHARE / CODES
+// ================================================================
+function generateShareCode(){
+  const state={g:U.grid.map(r=>Array.from(r)),b:U.birthRules,s:U.survivalRules,n:U.generation,mode:simMode};
+  return btoa(JSON.stringify(state));
+}
+function loadShareCode(code){
+  try{const s=JSON.parse(atob(code));U.grid=s.g.map(r=>new Uint8Array(r));U.birthRules=s.b;U.survivalRules=s.s;U.generation=s.n||0;
+    U.history=[];ageGrid=makeIntArr2D(0);syncRuleUI();updateDisplay();return true;}
+  catch{return false;}
+}
+
+// ================================================================
+// SCREENSHOT
+// ================================================================
+function takeScreenshot(){
+  const merged=document.createElement('canvas');
+  merged.width=glCanvas.width;merged.height=glCanvas.height;
+  const mCtx=merged.getContext('2d');
+  mCtx.drawImage(glCanvas,0,0);
+  mCtx.drawImage(trailCanvas,0,0);
+  mCtx.drawImage(particleCanvas,0,0);
+  merged.toBlob(blob=>{
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download=`cell_g${U.generation}.png`;a.click();
+  });
+}
+
+// ================================================================
+// EVOLUTIONARY ENGINE
+// ================================================================
+async function runEvolution(){
+  if(isEvolving)return;
+  isEvolving=true;isRunning=false;
+  const popSize=parseInt(document.getElementById('evoPopSlider').value);
+  const testGens=parseInt(document.getElementById('evoGensSlider').value);
+  const mutRate=parseFloat(document.getElementById('evoMutSlider').value)/10;
+  const goal=document.getElementById('fitnessGoal').value;
+  const log=document.getElementById('evoLog');
+  const statusEl=document.getElementById('evoStatus');
+  const bar=document.getElementById('evoBar');
+  document.getElementById('startEvoBtn').style.display='none';
+  document.getElementById('stopEvoBtn').style.display='';
+  document.getElementById('evoResult').style.display='none';
+  let population=[];
+  for(let i=0;i<popSize;i++){
+    const b=i===0?[...U.birthRules]:randRules();
+    const s=i===0?[...U.survivalRules]:randRules();
+    population.push({b,s,fitness:0});
+  }
+  const GENS=14; log.innerHTML='';
+  for(let gen=0;gen<GENS&&isEvolving;gen++){
+    statusEl.innerHTML=`<span style="display:inline-block;width:8px;height:8px;border:2px solid rgba(255,255,255,0.15);border-top-color:var(--accent);border-radius:50%;animation:spin 0.6s linear infinite;margin-right:4px;vertical-align:middle;"></span>Gen ${gen+1}/${GENS}`;
+    for(let pi=0;pi<population.length&&isEvolving;pi++){
+      population[pi].fitness=evalFitness(population[pi].b,population[pi].s,testGens,goal);
+      bar.style.width=((gen*population.length+pi+1)/(GENS*population.length)*100)+'%';
+      await new Promise(r=>setTimeout(r,0));
+    }
+    population.sort((a,b)=>b.fitness-a.fitness);
+    const best=population[0];
+    const e=document.createElement('div');e.className='evoe'+(best.fitness<0.01?' ext':'');
+    e.textContent=`G${gen+1}: B${best.b.join('')}/S${best.s.join('')} → ${best.fitness.toFixed(3)}`;
+    log.prepend(e);
+    if(!isEvolving)break;
+    const survivors=population.slice(0,Math.max(2,Math.floor(popSize*0.25)));
+    const nextPop=[...survivors];
+    while(nextPop.length<popSize){
+      const p1=survivors[Math.floor(Math.random()*survivors.length)];
+      const p2=survivors[Math.floor(Math.random()*survivors.length)];
+      nextPop.push(crossoverRules(p1,p2,mutRate));
+    }
+    population=nextPop;
+  }
+  if(isEvolving){
+    winnerRules=population[0];
+    statusEl.innerHTML=`✅ Winner: B${winnerRules.b.join('')}/S${winnerRules.s.join('')}`;
+    bar.style.width='100%';
+    document.getElementById('evoWinner').innerHTML=`
+      <div class="drow"><span class="dlabel">Rules:</span><span class="dval">B${winnerRules.b.join('')}/S${winnerRules.s.join('')}</span></div>
+      <div class="drow"><span class="dlabel">Fitness:</span><span class="dval">${winnerRules.fitness.toFixed(4)}</span></div>
+      <div class="drow"><span class="dlabel">Goal:</span><span class="dval">${goal}</span></div>`;
+    document.getElementById('evoResult').style.display='';
+  }
+  isEvolving=false;
+  document.getElementById('startEvoBtn').style.display='';
+  document.getElementById('stopEvoBtn').style.display='none';
+}
+
+function evalFitness(b,s,gens,goal){
+  let g=makeGrid();
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++) g[y][x]=U.grid[y][x];
+  const pops=[],ents=[];
+  for(let i=0;i<gens;i++){
+    const next=makeGrid();
+    for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++){
+      const n=countNeighbors(g,x,y);
+      next[y][x]=g[y][x]?s.includes(n)?1:0:b.includes(n)?1:0;
+    }
+    g=next; pops.push(countInGrid(g)); ents.push(computeEntropy(g));
+  }
+  const fp=pops[pops.length-1];const mp=pops.reduce((a,b)=>a+b,0)/pops.length;
+  const vp=pops.reduce((s,p)=>s+(p-mp)**2,0)/pops.length;
+  const me=ents.reduce((a,b)=>a+b,0)/ents.length;
+  switch(goal){
+    case'stability':return fp>0?(1-vp/(mp*mp+1))*(fp/(GRID_W*GRID_H)):0;
+    case'growth':return Math.max(...pops)/(GRID_W*GRID_H);
+    case'oscillation':return vp/(mp*mp+1);
+    case'complexity':return me*(fp>0?1:0)*(1-vp/(mp*mp+100));
+    case'longevity':return pops.filter(p=>p>0).length/gens;
+    case'gliders':{const chg=pops.map((p,i)=>i>0?Math.abs(p-pops[i-1]):0);return(chg.filter(c=>c>0&&c<20).length/gens)*(fp>0?1:0);}
+    case'diversity':return me*(fp>0?1:0);
+    default:return 0;
+  }
+}
+
+function randRules(){const a=[];for(let i=0;i<=8;i++)if(Math.random()>0.75)a.push(i);return a;}
+function crossoverRules(p1,p2,mutRate){
+  const cb=[...new Set([...p1.b,...p2.b].filter(()=>Math.random()>0.5))].sort((a,b)=>a-b);
+  const cs=[...new Set([...p1.s,...p2.s].filter(()=>Math.random()>0.5))].sort((a,b)=>a-b);
+  for(let i=0;i<=8;i++){
+    if(Math.random()<mutRate){const bi=cb.indexOf(i);bi>=0?cb.splice(bi,1):cb.push(i);}
+    if(Math.random()<mutRate){const si=cs.indexOf(i);si>=0?cs.splice(si,1):cs.push(i);}
+  }
+  return{b:cb.sort((a,b)=>a-b),s:cs.sort((a,b)=>a-b),fitness:0};
+}
+
+// ================================================================
+// AI FEATURES
+// ================================================================
+async function callClaude(prompt,system){
+  const body={model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]};
+  if(system)body.system=system;
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const data=await r.json();
+  return data.content?.find(c=>c.type==='text')?.text||'';
+}
+
+function getSnap(){
+  const living=countInGrid(U.grid);
+  return{simMode,rules:`B${U.birthRules.join('')}/S${U.survivalRules.join('')}`,
+    generation:U.generation,population:living,density:((living/(GRID_W*GRID_H))*100).toFixed(1)+'%',
+    symmetryH:document.getElementById('d-symH').textContent,
+    stability:document.getElementById('d-stab').textContent,
+    entropy:document.getElementById('d-ent').textContent,
+    classification:document.getElementById('d-class').textContent,
+    clusters:document.getElementById('s-clusters').textContent,
+    orbitPeriod:orbitPeriod||'unknown',
+    renderMode,universeCount:universes.length};
+}
+
+document.getElementById('aiDiscoverBtn').addEventListener('click',async()=>{
+  const prompt=document.getElementById('aiPrompt').value.trim();if(!prompt)return;
+  const div=document.getElementById('aiResponse');div.innerHTML='Designing rules...<span class="spin"></span>';
+  try{const text=await callClaude(`Design cellular automaton rules for: "${prompt}". Respond ONLY with valid JSON: {"birth":[3],"survival":[2,3],"explanation":"brief reason","preset":"glider"}`,
+    'You are a cellular automaton expert. Always respond with only valid JSON, no markdown, no preamble.');
+    const match=text.match(/\{[\s\S]*\}/);
+    if(match){const rules=JSON.parse(match[0]);U.birthRules=rules.birth||[3];U.survivalRules=rules.survival||[2,3];
+      syncRuleUI();updateBadge();div.innerHTML=`<div class="aibox fade"><strong>✨ B${rules.birth?.join('')}/S${rules.survival?.join('')}</strong><br>${rules.explanation}</div>`;}
+    else div.innerHTML=`<div class="aibox">${text}</div>`;
+  }catch(e){div.innerHTML=`<div class="aibox">Error: ${e.message}</div>`;}
+});
+
+document.getElementById('aiPredictBtn').addEventListener('click',async()=>{
+  const div=document.getElementById('aiResponse');div.innerHTML='Predicting...<span class="spin"></span>';
+  try{const text=await callClaude(`Cellular automaton state:\n${JSON.stringify(getSnap(),null,2)}\n\nPredict what will happen in the next 50-100 generations. Be specific and concise about whether it will stabilize, die out, explode, or oscillate.`);
+    div.innerHTML=`<div class="aibox fade"><strong>🔮 Prediction</strong><br>${text}</div>`;}
+  catch(e){div.innerHTML=`<div class="aibox">Error: ${e.message}</div>`;}
+});
+
+document.getElementById('aiOptimizeBtn').addEventListener('click',async()=>{
+  const div=document.getElementById('aiResponse');div.innerHTML='Scanning 200 generations...<span class="spin"></span>';
+  const snap=U.grid.map(r=>r.slice());const sg=U.generation;
+  let maxPop=0,maxG=0,minPop=Infinity,minG=0;const pops=[];
+  for(let i=0;i<200;i++){stepGoL(U);const pop=countInGrid(U.grid);pops.push(pop);if(pop>maxPop){maxPop=pop;maxG=i;}if(pop<minPop&&pop>0){minPop=pop;minG=i;}}
+  U.grid=snap;U.generation=sg;updateDisplay();
+  const variance=pops.reduce((s,p,_,a)=>{const m=a.reduce((x,y)=>x+y)/a.length;return s+(p-m)**2;},0)/pops.length;
+  div.innerHTML=`<div class="aibox fade"><strong>⚡ 200-Gen Scan</strong><br>Peak: ${maxPop.toLocaleString()} cells at gen ${sg+maxG}<br>Min: ${minPop>0?minPop:'extinct'} at gen ${sg+minG}<br>Variance: ${variance.toFixed(0)}<br>${variance<100?'Highly stable':variance<10000?'Moderate flux':'Chaotic/Explosive'}</div>`;
+});
+
+document.getElementById('aiNameBtn').addEventListener('click',async()=>{
+  const div=document.getElementById('aiResponse');div.innerHTML='Naming...<span class="spin"></span>';
+  try{const text=await callClaude(`Give this cellular automaton pattern a memorable creative name:\n${JSON.stringify(getSnap(),null,2)}\nRespond: NAME: [name]\nREASON: [one sentence]`);
+    div.innerHTML=`<div class="aibox fade"><strong>🏷️ Named</strong><br>${text}</div>`;}
+  catch(e){div.innerHTML=`<div class="aibox">Error: ${e.message}</div>`;}
+});
+
+document.getElementById('aiStoryBtn').addEventListener('click',async()=>{
+  const div=document.getElementById('aiResponse');div.innerHTML='Writing...<span class="spin"></span>';
+  try{const text=await callClaude(`Write a short poetic narrative (3-4 sentences) describing this cellular automaton as a living world:\n${JSON.stringify(getSnap(),null,2)}`);
+    div.innerHTML=`<div class="aibox fade"><em>${text}</em></div>`;}
+  catch(e){div.innerHTML=`<div class="aibox">Error: ${e.message}</div>`;}
+});
+
+document.getElementById('aiMusicBtn').addEventListener('click',async()=>{
+  const div=document.getElementById('aiResponse');div.innerHTML='Composing...<span class="spin"></span>';
+  try{const text=await callClaude(`Describe this cellular automaton as a musical composition. Instrument, tempo, genre, emotion:\n${JSON.stringify(getSnap(),null,2)}`);
+    div.innerHTML=`<div class="aibox fade"><strong>🎵 As Music</strong><br>${text}</div>`;}
+  catch(e){div.innerHTML=`<div class="aibox">Error: ${e.message}</div>`;}
+});
+
+document.getElementById('aiClassifyBtn').addEventListener('click',async()=>{
+  const div=document.getElementById('aiResponse');div.innerHTML='Classifying...<span class="spin"></span>';
+  try{const text=await callClaude(`Classify this cellular automaton behavior using Wolfram's four classes (I:fixed, II:periodic, III:chaotic, IV:complex). Also comment on any emergent behavior:\n${JSON.stringify(getSnap(),null,2)}`);
+    div.innerHTML=`<div class="aibox fade"><strong>🔬 Classification</strong><br>${text}</div>`;}
+  catch(e){div.innerHTML=`<div class="aibox">Error: ${e.message}</div>`;}
+});
+
+document.getElementById('analyzeBtn').addEventListener('click',async()=>{
+  const div=document.getElementById('dnaResult');div.innerHTML='Analyzing...<span class="spin"></span>';
+  try{const text=await callClaude(`Deep analysis of cellular automaton:\n${JSON.stringify(getSnap(),null,2)}\n\nCover: uniqueness, why these rules produce this behavior, real-world parallels, long-term prognosis.`);
+    div.innerHTML=`<div class="aibox fade"><strong>🔬 Deep Analysis</strong><br>${text}</div>`;}
+  catch(e){div.innerHTML=`<div class="aibox">Error: ${e.message}</div>`;}
+});
+
+// ================================================================
+// RENDER MODE
+// ================================================================
+const renderModes=['classic','heat','age','velocity','nebula','plasma','aurora','quantum','iso','starfield','crystal'];
+let renderModeIdx=0;
+function setRender(mode){
+  renderMode=mode;
+  document.querySelectorAll('.rtab').forEach(t=>t.classList.remove('active'));
+  renderModeIdx=renderModes.indexOf(mode);
+  const tabs=document.querySelectorAll('.rtab');
+  if(tabs[renderModeIdx])tabs[renderModeIdx].classList.add('active');
+  drawAll();
+}
+function cycleRenderMode(){
+  renderModeIdx=(renderModeIdx+1)%renderModes.length;
+  setRender(renderModes[renderModeIdx]);
+}
+
+// ================================================================
+// UI CONTROLS
+// ================================================================
+document.getElementById('playPauseBtn').addEventListener('click',()=>{
+  if(soundEnabled)initAudio();
+  isRunning=!isRunning;
+  document.getElementById('playPauseBtn').textContent=isRunning?'⏸ Pause':'▶ Start';
+});
+document.getElementById('stepBtn').addEventListener('click',()=>tick());
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  if(U.history.length){U.grid=U.history[0].map(r=>r.slice());U.generation=0;ageGrid=makeIntArr2D(0);updateDisplay();}
+});
+document.getElementById('clearBtn').addEventListener('click',()=>{
+  U.grid=makeGrid();U.history=[];U.birthHistory=[];U.deathHistory=[];U.entropyHistory=[];U.velHistory=[];U.complexHistory=[];
+  U.generation=0;ageGrid=makeIntArr2D(0);heatGrid=makeFloat2D(0);hashHistory=[];
+  if(simMode==='rd')initRD();if(simMode==='lenia')initLenia();if(simMode==='brian')initBrian();
+  if(simMode==='wire')initWire();if(simMode==='langton')initLangton();if(simMode==='cyclic')initCyclic();if(simMode==='smooth')initSmooth();
+  if(simMode==='elem')initElem();if(simMode==='forest')initForest();
+  updateDisplay();
+});
+document.getElementById('invertBtn').addEventListener('click',()=>{
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++) U.grid[y][x]=U.grid[y][x]?0:1; drawAll();
+});
+document.getElementById('randomBtn').addEventListener('click',()=>loadPreset('random30'));
+document.getElementById('noiseBtn').addEventListener('click',()=>{
+  for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++) if(Math.random()<0.05)U.grid[y][x]=U.grid[y][x]?0:1; drawAll();
+});
+
+document.getElementById('speedSlider').addEventListener('input',e=>{speed=parseInt(e.target.value);document.getElementById('speedVal').textContent=speed;});
+document.getElementById('stepsSlider').addEventListener('input',e=>{stepsPerFrame=parseInt(e.target.value);document.getElementById('stepsVal').textContent=stepsPerFrame;});
+document.getElementById('brushSlider').addEventListener('input',e=>{brushSize=parseInt(e.target.value);document.getElementById('brushVal').textContent=brushSize;});
+document.getElementById('soundToggle').addEventListener('change',e=>{soundEnabled=e.target.checked;if(soundEnabled)initAudio();});
+document.getElementById('gridToggle').addEventListener('change',e=>{showGrid=e.target.checked;drawAll();});
+document.getElementById('trailToggle').addEventListener('change',e=>{showTrails=e.target.checked;if(!showTrails)trailCtx.clearRect(0,0,trailCanvas.width,trailCanvas.height);});
+document.getElementById('heatToggle').addEventListener('change',e=>{showHeat=e.target.checked;drawAll();});
+
+['drawBtn','eraseBtn','lineBtn','fillBtn','stampBtn','circleBtn','rectBtn','selectBtn'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',()=>{
+    document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    drawMode=id.replace('Btn','');
+  });
+});
+
+function setSym(mode){
+  symmetryMode=mode;
+  document.querySelectorAll('.sym').forEach(b=>b.classList.remove('active'));
+  const idMap={none:'symNone',h:'symH',v:'symV','4':'sym4','8':'sym8',rot:'symRot'};
+  document.getElementById(idMap[mode])?.classList.add('active');
+}
+
+document.getElementById('forkBtn').addEventListener('click',()=>forkUniverse(false));
+document.getElementById('forkMutateBtn').addEventListener('click',()=>forkUniverse(true));
+document.getElementById('compareBtn').addEventListener('click',()=>{
+  const was=isRunning;isRunning=false;
+  universes.forEach(u=>{for(let i=0;i<200;i++)stepGoL(u);});
+  updateMultiverseDisplay();isRunning=was;
+});
+
+document.getElementById('rleImportBtn').addEventListener('click',()=>{
+  const rle=document.getElementById('rleInput').value.trim();
+  if(!rle)return;if(!importRLE(rle))alert('Failed to parse RLE.');
+});
+document.getElementById('rleExportBtn').addEventListener('click',()=>{document.getElementById('rleInput').value=exportRLE();});
+document.getElementById('exportRLEBtn').addEventListener('click',()=>{
+  const rle=exportRLE();
+  const blob=new Blob([rle],{type:'text/plain'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`pattern_g${U.generation}.rle`;a.click();
+});
+document.getElementById('screenshotBtn').addEventListener('click',takeScreenshot);
+document.getElementById('shareBtn').addEventListener('click',()=>{
+  const code=generateShareCode();
+  navigator.clipboard.writeText(code);
+  history.replaceState(null,'',`#${code}`);
+  const btn=document.getElementById('shareBtn');btn.textContent='✅ Copied!';setTimeout(()=>btn.textContent='🔗 Share',2000);
+});
+
+document.getElementById('rlePasteBtn').addEventListener('click',async()=>{
+  try{
+    const text=await navigator.clipboard.readText();
+    if(!importRLE(text)){
+      // Maybe they pasted a share code instead
+      if(!loadShareCode(text)) alert('Clipboard did not contain valid RLE or share code.');
+    }
+  }catch(e){alert('Clipboard read failed. Try pasting into the RLE text area manually.');}
+});
+document.getElementById('rleCopyBtn').addEventListener('click',()=>{
+  const rle=exportRLE();
+  navigator.clipboard.writeText(rle);
+  const btn=document.getElementById('rleCopyBtn');btn.textContent='✅ Copied!';setTimeout(()=>btn.textContent='📤 Copy RLE',1800);
+});
+
+document.getElementById('mutateRuleBtn').addEventListener('click',()=>{
+  const n=Math.floor(Math.random()*9);
+  if(Math.random()>0.5){const i=U.birthRules.indexOf(n);i>=0?U.birthRules.splice(i,1):U.birthRules.push(n);U.birthRules.sort((a,b)=>a-b);}
+  else{const i=U.survivalRules.indexOf(n);i>=0?U.survivalRules.splice(i,1):U.survivalRules.push(n);U.survivalRules.sort((a,b)=>a-b);}
+  syncRuleUI();updateBadge();
+});
+document.getElementById('copyRuleBtn').addEventListener('click',()=>navigator.clipboard.writeText(`B${U.birthRules.join('')}/S${U.survivalRules.join('')}`));
+document.getElementById('applyRuleBtn').addEventListener('click',()=>{if(!parseRuleStr(document.getElementById('ruleInput').value))alert('Invalid rule. Use B36/S23 format.');});
+
+document.getElementById('savePatBtn').addEventListener('click',savePattern);
+document.getElementById('clearCatBtn').addEventListener('click',()=>{if(confirm('Clear all saved patterns?')){patternCatalog=[];renderCatalog();}});
+document.getElementById('genCodeBtn').addEventListener('click',()=>document.getElementById('shareCodeDisp').textContent=generateShareCode());
+document.getElementById('loadCodeBtn').addEventListener('click',()=>{const c=prompt('Paste share code:');if(c&&!loadShareCode(c))alert('Invalid code.');});
+
+document.getElementById('startEvoBtn').addEventListener('click',runEvolution);
+document.getElementById('stopEvoBtn').addEventListener('click',()=>{isEvolving=false;});
+document.getElementById('applyWinnerBtn').addEventListener('click',()=>{
+  if(!winnerRules)return;U.birthRules=[...winnerRules.b];U.survivalRules=[...winnerRules.s];syncRuleUI();updateBadge();
+});
+
+// Slider bindings
+[['evoPopSlider','evoPop',v=>v],['evoGensSlider','evoGens',v=>v],['evoMutSlider','evoMut',v=>(parseInt(v)/10).toFixed(1)]].forEach(([sid,vid,fn])=>{
+  document.getElementById(sid).addEventListener('input',e=>document.getElementById(vid).textContent=fn(e.target.value));
+});
+
+document.getElementById('rdFeed').addEventListener('input',e=>{rdFeed=parseInt(e.target.value)/1000;document.getElementById('rdFeedVal').textContent=rdFeed.toFixed(3);updateBadge();});
+document.getElementById('rdKill').addEventListener('input',e=>{rdKill=parseInt(e.target.value)/1000;document.getElementById('rdKillVal').textContent=rdKill.toFixed(3);updateBadge();});
+document.getElementById('leniaR').addEventListener('input',e=>{leniaR=parseInt(e.target.value);document.getElementById('leniaRVal').textContent=leniaR;buildLeniaKernel();updateBadge();});
+document.getElementById('leniaMu').addEventListener('input',e=>{leniaMu=parseInt(e.target.value)/100;document.getElementById('leniaMuVal').textContent=leniaMu.toFixed(2);updateBadge();});
+document.getElementById('leniaSign').addEventListener('input',e=>{leniaSign=parseInt(e.target.value)/1000;document.getElementById('leniaSignVal').textContent=leniaSign.toFixed(3);updateBadge();});
+document.getElementById('leniaDt').addEventListener('input',e=>{leniaDt=parseInt(e.target.value)/100;document.getElementById('leniaDtVal').textContent=leniaDt.toFixed(2);});
+document.getElementById('cyclicStates').addEventListener('input',e=>{cyclicStates=parseInt(e.target.value);document.getElementById('cyclicStatesVal').textContent=cyclicStates;});
+document.getElementById('cyclicThresh').addEventListener('input',e=>{cyclicThresh=parseInt(e.target.value);document.getElementById('cyclicThreshVal').textContent=cyclicThresh;});
+document.getElementById('slInnerR').addEventListener('input',e=>{slInnerR=parseInt(e.target.value);document.getElementById('slInnerRVal').textContent=slInnerR;updateBadge();});
+document.getElementById('slOuterR').addEventListener('input',e=>{slOuterR=parseInt(e.target.value);document.getElementById('slOuterRVal').textContent=slOuterR;updateBadge();});
+document.getElementById('langtonAnts').addEventListener('input',e=>{numAnts=parseInt(e.target.value);document.getElementById('langtonAntsVal').textContent=numAnts;initLangton();updateBadge();});
+document.getElementById('langtonRule').addEventListener('change',e=>{langtonRule=e.target.value;initLangton();updateBadge();});
+
+// Timeline scrubber
+document.getElementById('scrubber').addEventListener('input',e=>{
+  const i=parseInt(e.target.value);
+  if(i<U.history.length){U.grid=U.history[i].map(r=>r.slice());U.generation=i;updateDisplay();}
+});
+['tlFirst','tlBack','tlFwd','tlLast'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',()=>{
+    const h=U.history;let i;
+    if(id==='tlFirst')i=0;
+    else if(id==='tlBack')i=Math.max(0,U.generation-1);
+    else if(id==='tlFwd')i=Math.min(h.length-1,U.generation+1);
+    else i=h.length-1;
+    if(i>=0&&h[i]){U.grid=h[i].map(r=>r.slice());U.generation=i;updateDisplay();}
+  });
+});
+
+function switchTab(name){
+  activeTab=name;
+  const names=['stats','rules','ai','driven','catalog','evolve','info'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
+  document.querySelectorAll('.tc').forEach(c=>c.classList.remove('active'));
+  document.getElementById(`tc-${name}`)?.classList.add('active');
+}
+
+document.getElementById('elemRuleSlider').addEventListener('input',e=>{
+  elemRuleNum=parseInt(e.target.value);
+  document.getElementById('elemRuleVal').textContent=elemRuleNum;
+  initElem(); updateBadge();
+});
+document.getElementById('ffIgniteSlider').addEventListener('input',e=>{
+  ffIgniteProb=parseInt(e.target.value)/1000;
+  document.getElementById('ffIgniteVal').textContent=ffIgniteProb.toFixed(3);
+  updateBadge();
+});
+document.getElementById('ffGrowSlider').addEventListener('input',e=>{
+  ffGrowProb=parseInt(e.target.value)/1000;
+  document.getElementById('ffGrowVal').textContent=ffGrowProb.toFixed(3);
+  updateBadge();
+});
+
+// ================================================================
+// AI-DRIVEN MODE ENGINE
+// ================================================================
+let aiDrivenActive=false, aiDrivenTimer=null, aiDrivenInterval=30;
+
+function aiDrivenLog(msg,color='#555'){
+  const log=document.getElementById('drivenLog');
+  const ts=new Date().toLocaleTimeString('en',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const el=document.createElement('div');
+  el.innerHTML=`<span style="color:#333;">[${ts}]</span> <span style="color:${color};">${msg}</span>`;
+  log.prepend(el);
+  while(log.children.length>60)log.removeChild(log.lastChild);
+}
+
+function aiDrivenSetStatus(msg,color='var(--text3)'){
+  const el=document.getElementById('drivenStatus');
+  el.textContent=msg; el.style.color=color;
+}
+
+document.getElementById('drivenInterval').addEventListener('input',e=>{
+  aiDrivenInterval=parseInt(e.target.value);
+  document.getElementById('drivenIntervalVal').textContent=aiDrivenInterval+'s';
+  if(aiDrivenActive){ clearInterval(aiDrivenTimer); aiDrivenTimer=setInterval(aiDrivenTick, aiDrivenInterval*1000); }
+});
+
+document.getElementById('drivenStartBtn').addEventListener('click',()=>{
+  if(aiDrivenActive)return;
+  aiDrivenActive=true;
+  document.getElementById('drivenStartBtn').style.display='none';
+  document.getElementById('drivenStopBtn').style.display='';
+  document.getElementById('aiDrivenToggle').textContent='🤖 AI-Driven: ON';
+  document.getElementById('aiDrivenToggle').style.background='rgba(74,222,128,0.15)';
+  document.getElementById('aiDrivenToggle').style.borderColor='#4ade80';
+  document.getElementById('aiDrivenToggle').style.color='#4ade80';
+  if(!isRunning){isRunning=true;document.getElementById('playPauseBtn').textContent='⏸ Pause';}
+  aiDrivenLog('🤖 AI Pilot activated','#4ade80');
+  aiDrivenSetStatus('Active','#4ade80');
+  aiDrivenTick(); // immediate first intervention
+  aiDrivenTimer=setInterval(aiDrivenTick, aiDrivenInterval*1000);
+});
+
+document.getElementById('drivenStopBtn').addEventListener('click',stopAiDriven);
+document.getElementById('aiDrivenToggle').addEventListener('click',()=>{
+  if(aiDrivenActive) stopAiDriven();
+  else { switchTab('driven'); document.getElementById('drivenStartBtn').click(); }
+});
+
+function stopAiDriven(){
+  aiDrivenActive=false;
+  clearInterval(aiDrivenTimer);
+  document.getElementById('drivenStartBtn').style.display='';
+  document.getElementById('drivenStopBtn').style.display='none';
+  document.getElementById('aiDrivenToggle').textContent='🤖 AI-Driven: OFF';
+  document.getElementById('aiDrivenToggle').style.background='rgba(167,139,250,0.15)';
+  document.getElementById('aiDrivenToggle').style.borderColor='#a78bfa';
+  document.getElementById('aiDrivenToggle').style.color='#a78bfa';
+  aiDrivenLog('⏹ AI Pilot stopped','#f87171');
+  aiDrivenSetStatus('Idle','var(--text3)');
+}
+
+async function aiDrivenTick(){
+  if(!aiDrivenActive)return;
+  const goal=document.getElementById('drivenGoal').value;
+  const allowRules=document.getElementById('drivenAllowRules').checked;
+  const allowStamps=document.getElementById('drivenAllowStamps').checked;
+  const allowSpeed=document.getElementById('drivenAllowSpeed').checked;
+  const living=countInGrid(U.grid);
+  const pop=((living/(GRID_W*GRID_H))*100).toFixed(1);
+  const ent=(computeEntropy(U.grid)*100).toFixed(0);
+  const births=U.birthHistory[U.birthHistory.length-1]||0;
+  const deaths=U.deathHistory[U.deathHistory.length-1]||0;
+
+  const snap={
+    goal, generation:U.generation, population:living, densityPct:pop,
+    entropyPct:ent, births, deaths, orbitPeriod:orbitPeriod||null,
+    currentRules:`B${U.birthRules.join('')}/S${U.survivalRules.join('')}`,
+    renderMode, simMode,
+    allowRules, allowStamps, allowSpeed,
+    currentSpeed:speed
+  };
+
+  aiDrivenSetStatus('Thinking…','#f59e0b');
+  aiDrivenLog('🔍 Observing simulation…','#666');
+
+  const systemPrompt=`You are an AI pilot controlling a cellular automaton simulator. Your job is to steer the simulation toward the user's stated goal by issuing commands.
+
+You MUST respond with ONLY a valid JSON object (no markdown, no explanation outside JSON) with these fields:
+{
+  "narrative": "1-2 sentence poetic description of what you observe and what you're doing",
+  "actions": [
+    // array of action objects — include 1 to 4 actions
+    // Action types and their fields:
+    // {"type":"set_rules","birth":[3],"survival":[2,3],"reason":"why"}   — only if allowRules=true
+    // {"type":"stamp_pattern","pattern":"glider|gosperGun|pulsar|acorn|rPentomino|random30","x":optional_int,"y":optional_int,"reason":"why"}  — only if allowStamps=true
+    // {"type":"set_speed","fps":int_1_to_60,"reason":"why"}              — only if allowSpeed=true
+    // {"type":"add_noise","density":0.05,"reason":"why"}                 — always allowed
+    // {"type":"invert_region","reason":"why"}                            — always allowed
+    // {"type":"observe","reason":"why"}                                  — do nothing, just watch
+  ],
+  "logMessage": "short 1-line status for the activity log"
+}
+
+Goals:
+- explore: Try different rules and patterns, look for interesting emergent behavior
+- beauty: Optimise for visually striking patterns — density 20-40%, high entropy, oscillators
+- stability: Find rules/patterns that persist for many generations without dying or exploding
+- chaos: Push toward maximum entropy and volatility, prevent any stable equilibrium
+- oscillators: Detect and reinforce cyclic patterns, mutate rules toward B36/S23 or similar
+- spaceships: Use rules and stamps that produce moving structures (LWSS, gliders)
+- story: Each tick narrate the simulation as an evolving world with dramatic events
+
+Be decisive. Don't just observe. Make interventions that meaningfully push toward the goal.`;
+
+  try{
+    const resp=await callClaude(
+      `Current simulation state:\n${JSON.stringify(snap,null,2)}\n\nIssue your pilot commands now.`,
+      systemPrompt
+    );
+    const match=resp.match(/\{[\s\S]*\}/);
+    if(!match)throw new Error('No JSON in response');
+    const cmd=JSON.parse(match[0]);
+
+    // Show narrative
+    if(cmd.narrative){
+      const narDiv=document.getElementById('drivenNarrative');
+      narDiv.style.display='';
+      narDiv.innerHTML=`<em>${cmd.narrative}</em>`;
+    }
+
+    // Log
+    aiDrivenLog(cmd.logMessage||'Pilot acted','#a78bfa');
+
+    // Execute actions
+    for(const action of (cmd.actions||[])){
+      if(!aiDrivenActive)break;
+      await executeAiAction(action, allowRules, allowStamps, allowSpeed);
+    }
+
+    aiDrivenSetStatus(`Active · Gen ${U.generation}`,'#4ade80');
+  } catch(err){
+    aiDrivenLog(`⚠️ Error: ${err.message}`,'#f87171');
+    aiDrivenSetStatus('Error — retrying next interval','#f87171');
+  }
+}
+
+async function executeAiAction(action, allowRules, allowStamps, allowSpeed){
+  switch(action.type){
+    case 'set_rules':
+      if(!allowRules)break;
+      if(Array.isArray(action.birth))U.birthRules=action.birth.filter(n=>n>=0&&n<=8);
+      if(Array.isArray(action.survival))U.survivalRules=action.survival.filter(n=>n>=0&&n<=8);
+      U.birthRules.sort((a,b)=>a-b); U.survivalRules.sort((a,b)=>a-b);
+      syncRuleUI(); updateBadge();
+      aiDrivenLog(`📐 Rules → B${U.birthRules.join('')}/S${U.survivalRules.join('')}  — ${action.reason||''}`, '#06b6d4');
+      break;
+    case 'stamp_pattern':
+      if(!allowStamps)break;
+      const px=action.x!==undefined?action.x:Math.floor(Math.random()*(GRID_W-20)+10);
+      const py=action.y!==undefined?action.y:Math.floor(Math.random()*(GRID_H-20)+10);
+      saveUndo();
+      loadPreset(action.pattern||'glider', px, py);
+      aiDrivenLog(`🖨 Stamped ${action.pattern||'glider'} @ (${px},${py}) — ${action.reason||''}`, '#f59e0b');
+      break;
+    case 'set_speed':
+      if(!allowSpeed)break;
+      speed=Math.max(1,Math.min(240,parseInt(action.fps)||10));
+      document.getElementById('speedSlider').value=speed;
+      document.getElementById('speedVal').textContent=speed;
+      aiDrivenLog(`⚡ Speed → ${speed} fps — ${action.reason||''}`, '#667eea');
+      break;
+    case 'add_noise':
+      saveUndo();
+      const density=Math.max(0.01,Math.min(0.2,action.density||0.05));
+      for(let y=0;y<GRID_H;y++) for(let x=0;x<GRID_W;x++)
+        if(Math.random()<density) U.grid[y][x]=U.grid[y][x]?0:1;
+      drawAll();
+      aiDrivenLog(`〰 Added noise (${(density*100).toFixed(0)}%) — ${action.reason||''}`, '#a78bfa');
+      break;
+    case 'invert_region':
+      saveUndo();
+      const rx=Math.floor(Math.random()*(GRID_W*0.6));
+      const ry=Math.floor(Math.random()*(GRID_H*0.6));
+      const rw=Math.floor(GRID_W*0.2+Math.random()*GRID_W*0.3);
+      const rh=Math.floor(GRID_H*0.2+Math.random()*GRID_H*0.3);
+      for(let y=ry;y<Math.min(ry+rh,GRID_H);y++)
+        for(let x=rx;x<Math.min(rx+rw,GRID_W);x++)
+          U.grid[y][x]=U.grid[y][x]?0:1;
+      drawAll();
+      aiDrivenLog(`⬡ Inverted region (${rw}×${rh}) — ${action.reason||''}`, '#e879f9');
+      break;
+    case 'observe':
+      aiDrivenLog(`👁 Observing — ${action.reason||''}`, '#444');
+      break;
+  }
+}
+
+
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
+  switch(e.key){
+    case ' ':e.preventDefault();document.getElementById('playPauseBtn').click();break;
+    case 'ArrowRight':tick();break;
+    case 'd':document.getElementById('drawBtn').click();break;
+    case 'e':document.getElementById('eraseBtn').click();break;
+    case 'l':document.getElementById('lineBtn').click();break;
+    case 'f':document.getElementById('fillBtn').click();break;
+    case 's':document.getElementById('stampBtn').click();break;
+    case 'o':document.getElementById('circleBtn').click();break;
+    case 'r':if(!e.ctrlKey)document.getElementById('rectBtn').click();break;
+    case 'x':if(e.ctrlKey||e.metaKey){e.preventDefault();cutSelection();}else document.getElementById('selectBtn').click();break;
+    case 'c':if(e.ctrlKey||e.metaKey){e.preventDefault();copySelection();}else if(!e.ctrlKey)document.getElementById('clearBtn').click();break;
+    case 'i':document.getElementById('invertBtn').click();break;
+    case 'g':document.getElementById('gridToggle').click();break;
+    case 't':document.getElementById('trailToggle').click();break;
+    case 'm':cycleRenderMode();break;
+    case '0':resetView();break;
+    case '+':case'=':adjustZoom(1.2);break;
+    case '-':adjustZoom(0.83);break;
+    case 'z':if(e.ctrlKey||e.metaKey){e.preventDefault();undo();}break;
+    case 'v':if(e.ctrlKey||e.metaKey){e.preventDefault();pasteSelection();}break;
+    case 'Delete':case'Backspace':if(selRect)deleteSelection();break;
+    case 'Escape':selRect=null;drawAll();break;
+    case 'ArrowUp':e.preventDefault();viewY+=30;drawAll();break;
+    case 'ArrowDown':e.preventDefault();viewY-=30;drawAll();break;
+    case 'ArrowLeft':e.preventDefault();viewX+=30;drawAll();break;
+  }
+});
+
+// ================================================================
+// PRESET FILTER
+// ================================================================
+function filterPresets(q){
+  document.querySelectorAll('#presetGrid button').forEach(btn=>{
+    btn.style.display=btn.textContent.toLowerCase().includes(q.toLowerCase())?'':'none';
+  });
+}
+
+// ================================================================
+// WIREWORLD DRAW STATE
+// ================================================================
+function setWireBtn(el){
+  document.querySelectorAll('#wireControls button').forEach(b=>{
+    b.style.outline='';b.style.opacity='0.6';
+  });
+  el.style.outline='2px solid rgba(255,255,255,0.7)';el.style.opacity='1';
+}
+
+// ================================================================
+// CUSTOM COLORS
+// ================================================================
+function applyCustomColors(){
+  const c1=document.getElementById('customColor1').value;
+  const c2=document.getElementById('customColor2').value;
+  color1Parsed=parseColor(c1);
+  color2Parsed=parseColor(c2);
+  cellColor1=c1; cellColor2=c2;
+  document.querySelectorAll('.cswatch').forEach(s=>s.classList.remove('active'));
+  drawAll();
+}
+
+// ================================================================
+// INIT
+// ================================================================
+resizeCanvases();
+resetView();
+buildRuleGrids();
+
+// Wire up wireworld draw buttons default state
+(()=>{
+  const btns=document.querySelectorAll('#wireControls button');
+  if(btns[0]){btns[0].style.opacity='1';btns[0].style.outline='2px solid rgba(255,255,255,0.7)';}
+  btns.forEach((b,i)=>{if(i>0){b.style.opacity='0.6';}});
+})();
+
+// Priority: ?code= share code > #hash share code > ?preset= name > default
+(()=>{
+  const params=new URLSearchParams(window.location.search);
+  const codeParam=params.get('code');
+  const presetParam=params.get('preset');
+
+  if(codeParam){
+    if(!loadShareCode(codeParam)) loadPreset('gosperGun');
+  } else if(window.location.hash.length>1){
+    try{ loadShareCode(window.location.hash.slice(1)); }
+    catch(e){ loadPreset('gosperGun'); }
+  } else if(presetParam){
+    // Match against known preset keys (case-insensitive, ignores spaces/dashes)
+    const normalize=s=>s.toLowerCase().replace(/[\s\-_]/g,'');
+    const keys=['glider','gosperGun','pulsar','pentadecathlon','lwss','mwss','hwss',
+      'acorn','diehard','rPentomino','simkinGun','blockLayer','beehive','loaf',
+      'boat','blinker','toad','beacon','gliderGalaxy','random15','random30','random50'];
+    const match=keys.find(k=>normalize(k)===normalize(presetParam));
+    loadPreset(match||'gosperGun');
+    if(match) showToast(`Loaded: ${match}`);
+  } else {
+    loadPreset('gosperGun');
+  }
+})();
+
+updateMultiverseDisplay();
+renderCatalog();
+updateBadge();
+requestAnimationFrame(animate);
+
+window.addEventListener('resize',()=>{resizeCanvases();resetView();resizeTLCanvases();drawTimelines();});
+</script>
+</body>
+</html>

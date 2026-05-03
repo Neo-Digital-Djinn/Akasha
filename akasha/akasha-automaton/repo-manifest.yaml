@@ -1,0 +1,125 @@
+repo:
+  name: akasha-automaton
+  ecosystem: akasha
+  version: 1.0.0
+  status: canonical
+  source: Cellular_Automation_Explorer (ULTRAVERSE v10 / v8)
+  lineage: Cellular_Automation_Explorer → akasha-automaton (canonicalization)
+
+engine:
+  family: simulation
+  class: emergence_engine
+  role: cellular_automaton_simulation_and_observation
+
+identity:
+  role: engine
+  layer: simulation
+  description: >
+    Emergent-systems simulation and observation engine for the Akasha constellation.
+    Implements eight distinct cellular automaton computational systems: Conway's
+    Game of Life (with full B/S rule configurability), Reaction-Diffusion (Gray-Scott),
+    Lenia (continuous CA), Brian's Brain, WireWorld, Langton's Ant, Cyclic CA, and
+    SmoothLife. Provides a professional-grade interactive desktop explorer (Pygame/NumPy),
+    a zero-dependency browser dashboard (single HTML), a genetic evolution engine for
+    rule discovery, multi-universe forking, time-travel history, AI-powered pattern
+    analysis, and a living README grid updated by GitHub Actions. Aligned with Akasha's
+    mission to expand human capacity to observe, reason, and discover structure in
+    emergent systems.
+
+ownership:
+  steward: human
+  approval_required: true
+
+interfaces:
+  consumes:
+    - rule_definitions
+    - initial_grid_states
+    - rle_pattern_strings
+    - user_draw_events
+    - ai_prompts
+    - simulation_parameters
+  produces:
+    - grid_state_snapshots
+    - pattern_dna_metrics
+    - emergence_event_payloads
+    - wolfram_class_classifications
+    - evolved_rule_sets
+    - regime_history_buffers
+    - ai_pattern_analyses
+    - rle_exports
+    - png_screenshots
+
+capabilities:
+  - conway_game_of_life
+  - reaction_diffusion_gray_scott
+  - lenia_continuous_ca
+  - brians_brain
+  - wireworld_circuit_simulation
+  - langtons_ant
+  - cyclic_ca
+  - smoothlife
+  - vectorized_numpy_rendering
+  - nine_render_modes
+  - genetic_rule_evolution
+  - multi_universe_forking
+  - time_travel_history_scrubbing
+  - ai_pattern_analysis
+  - pattern_dna_metrics
+  - rle_import_export
+  - living_readme_grid
+  - webgl_browser_dashboard
+
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+  alignment_statement: >
+    This system is part of the Akasha ecosystem and aligns with
+    akasha-axioms, akasha-world, and akasha-constellation.
+    It expands human capacity to observe and reason about emergent systems
+    (Axiom 4 — Augmentation), maintains traceable simulation outputs
+    (Axiom 5 — Traceability), is composed of independently replaceable engines
+    (Axiom 6 — Modularity), makes all classification logic human-inspectable
+    (Axiom 7 — Transparency), and accumulates regime history across generations
+    (Axiom 10 — Continuity).
+
+canonical_status: canonical
+maturity: stable
+
+depends_on:
+  - akasha-suite
+  - akasha-events
+  - akasha-axioms
+  - akasha-world
+
+adapters:
+  - name: ai_client
+    path: core/automaton.py::AIClient
+    description: >
+      Async Claude API client for pattern analysis, rule design, behavior
+      classification, and narrative generation. Gracefully degrades when
+      anthropic package unavailable.
+  - name: browser_dashboard
+    path: assets/explorer_v8.html
+    description: >
+      Zero-dependency single-file browser dashboard. WebGL-accelerated.
+      No install required.
+
+inputs:
+  - rule_definitions
+  - initial_grid_states
+  - rle_pattern_strings
+  - simulation_parameters
+
+outputs:
+  - grid_state_snapshots
+  - pattern_dna_metrics
+  - wolfram_class_classifications
+  - evolved_rule_sets
+  - emergence_event_payloads
+  - ai_pattern_analyses
+
+type: organ
+family: simulation
+role: engine
+generated_by: human-assisted-canonicalization

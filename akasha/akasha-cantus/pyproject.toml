@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "akasha-cantus"
+version = "2.1.0"
+description = "Cantus — Acoustic Transition Virtual Machine (Akasha Ecosystem)"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+
+dependencies = []
+
+[project.optional-dependencies]
+audio = [
+    "librosa>=0.10",
+    "soundfile>=0.12",
+    "numpy>=1.24",
+]
+dev = [
+    "pytest>=8",
+]
+
+[project.scripts]
+cantus = "cantus.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["cantus*"]

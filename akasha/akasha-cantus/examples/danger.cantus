@@ -1,0 +1,11 @@
+# danger.cantus — self-modifying demo (dangerous, per spec)
+# POKEs a new value into token[0], then adds 1 to it.
+# Expected output: 100
+
+PUSH 99
+PUSH 0
+POKE
+PUSH 1
+ADD
+PRINT
+HALT

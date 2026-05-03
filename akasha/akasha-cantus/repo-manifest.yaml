@@ -1,0 +1,81 @@
+repo_name: akasha-cantus
+role: engine
+layer: simulation
+canonical_status: canonical
+maturity: stable
+source_lineage: Cantus-v2.0 (Termux/Android)
+
+description: >
+  Acoustic Transition Virtual Machine (ATVM) and stack-based language engine.
+  Cantus is a dual-mode computational instrument: programs may be written in
+  the Cantus DSL (.cantus text files) or encoded as ordered acoustic state
+  transitions in audio signals. A MIDI bridge maps musical note sequences to
+  opcodes, realizing the "executable music" concept. The self-modifying POKE
+  instruction constitutes the "dangerous" half of v2 (per COLLABORATION.md).
+  Ported from Termux/Android to Debian 13 Linux.
+
+inputs:
+  - cantus_source_files (.cantus)
+  - audio_files (WAV/FLAC via ATVM acoustic tokenizer)
+  - midi_note_sequences (integer lists via midi bridge)
+
+outputs:
+  - vm_execution_results (final stack state)
+  - bytecode_sequences (integer arrays)
+  - halt_reason_traces (Axiom 5 traceability)
+
+dependencies:
+  - akasha-axioms
+  - akasha-events      # optional: future event export of execution traces
+
+adapters:
+  - cantus.tokenizer   # acoustic → token (ATVM frontend)
+  - cantus.midi        # MIDI → token
+  - cantus.dsl         # text source → token
+  - cantus.compiler    # token → bytecode
+
+alignment_statement: >
+  This system is part of the Akasha ecosystem and aligns with
+  akasha-axioms, akasha-world, and akasha-constellation.
+
+axiom_alignment:
+  axiom_1_coherence: >
+    VM halt conditions are explicit and traceable (halt_reason).
+    Apparent contradiction in execution surfaces as a named halt, not silence.
+  axiom_2_discoverability: >
+    Acoustic tokenizer infers program structure from patterned pitch transitions.
+    Gap in pitch → silence → NOOP/DELIMITER (per ATVM spec §6).
+  axiom_3_alignment: >
+    Declared, manifest-registered, constellation-placed.
+  axiom_4_augmentation: >
+    Expands human capacity to encode computation in acoustic and musical domains.
+    Recursive tool creation is embodied in POKE (self-modifying execution).
+  axiom_5_traceability: >
+    All VM halt conditions recorded in halt_reason.
+    All tokenizer fallback paths documented and deterministic.
+    Bytecode compiler produces inspectable integer sequences.
+  axiom_6_modularity: >
+    VM, DSL parser, acoustic tokenizer, MIDI bridge, compiler are independently
+    replaceable modules with clean interfaces.
+  axiom_7_transparency: >
+    All opcode semantics are explicit and human-readable in vm.py.
+    ATVM spec and invariants are documented in docs/.
+  axiom_8_iteration: >
+    v1 → v2 evolution (MIDI + POKE) recorded in CHANGELOG.md.
+    Spec versions tracked in spec/ directory.
+  axiom_9_stewardship: >
+    Human steward required for canonical promotion and release.
+    POKE (dangerous) is intentional and documented, not hidden.
+  axiom_10_continuity: >
+    Source lineage from Termux origin preserved in CHANGELOG.
+    All porting decisions documented.
+
+constellation_position:
+  layer: simulation
+  peers:
+    - akasha-automaton    # also a simulation engine
+    - akasha-cipher-lab  # also operates on symbolic transformation
+  feeds_into:
+    - akasha-events       # future: emit execution traces as Akasha events
+  receives_from:
+    - akasha-domain-music # domain context for musical opcode semantics
