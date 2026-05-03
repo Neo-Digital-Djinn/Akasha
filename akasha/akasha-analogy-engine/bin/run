@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MODE="pretty"
+
+if [[ "${1:-}" == "--json" ]]; then
+  MODE="json"
+  shift
+fi
+
+INPUT=$(cat)
+
+RAW="$(akasha-brainstorm "$INPUT")"
+
+# 🔥 JSON mode: pass through cleanly
+if [ "$MODE" = "json" ]; then
+  echo "$RAW"
+  exit 0
+fi
+
+# 🔥 Pretty mode: interpret
+python3 - <<PY
+import json
+
+raw = """$RAW""".strip()
+
+if not raw:
+    print("No output from brainstorm.")
+    exit(1)
+
+try:
+    data = json.loads(raw)
+except Exception:
+    print("Invalid JSON from brainstorm:")
+    print(raw)
+    exit(1)
+
+mutations = data.get("mutations", [])
+
+analogy = None
+for m in mutations:
+    if m.get("lens") == "lateral":
+        analogy = m
+        break
+
+if not analogy:
+    print("No analogy found.")
+    exit(1)
+
+print(f"Analogy: {analogy['title']}")
+print(f"Explanation: {analogy['summary']}")
+print(f"Confidence: {analogy['score']}")
+PY

@@ -1,0 +1,3 @@
+Explain this concept using a real-world analogy:
+
+{{input}}
