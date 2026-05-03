@@ -1,0 +1,37 @@
+providers:
+  astronomy:
+    - name: sunrise-sunset
+      module: akasha_apis.astronomy.sunrise_sunset
+      auth: none
+      status: active
+      outputs:
+        - sunrise_local
+        - sunset_local
+        - is_daylight
+    - name: lunar-stub
+      module: akasha_apis.astronomy.lunar_stub
+      auth: none
+      status: stub
+      outputs:
+        - moon_phase
+        - moon_illumination_pct
+
+  weather:
+    - name: open-meteo
+      module: akasha_apis.weather.open_meteo
+      auth: none
+      status: active
+      outputs:
+        - temperature_c
+        - humidity_pct
+        - pressure_mb
+        - wind_kph
+        - precipitation_mm
+
+  geo:
+    - name: timezone-lookup
+      module: akasha_apis.geo.timezone_lookup
+      auth: none
+      status: active
+      outputs:
+        - timezone_name
