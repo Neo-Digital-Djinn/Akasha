@@ -1,0 +1,74 @@
+# Akasha Ecosystem — Repository Manifest
+# Schema: akasha-world/schemas/repo-manifest.schema.json
+
+repo_name: akasha-alexandria
+role: engine
+layer: verification
+canonical_status: canonical
+maturity: stable
+
+description: >
+  Alexandria is a deterministic, auditable temporal kernel — a Canonicalization Field.
+  It treats history as primary and derives all state from an immutable, hash-chained
+  ledger of events. It enforces invariant-bound state transitions, propagates constraints
+  via a two-phase arc-consistency + energy-minimization solver, and guarantees that
+  replay always produces identical state. Acts as the truth-verification and structured
+  memory layer of the Akasha ecosystem.
+
+alignment_statement: >
+  This system is part of the Akasha ecosystem and aligns with
+  akasha-axioms, akasha-world, and akasha-constellation.
+
+axiom_alignment:
+  coherence:      "Contradictions halt as InvariantViolation or SolverContradiction — diagnostic, not suppressed."
+  discoverability: "Ledger replay and schema inference surface latent structure from evidence streams."
+  alignment:      "Declared here. Role: engine. Layer: verification. Inputs and outputs explicit."
+  augmentation:   "Trust-domain model and generator interface enable recursive tool creation."
+  traceability:   "Every value traces to its originating event via provenance chains and explain_chain()."
+  modularity:     "Generators, policies, relations, and invariants are all composable and replaceable."
+  transparency:   "Ledger is human-readable JSONL. CLI exposes replay, verify, report, schema commands."
+  iteration:      "Schema inference proposes new lattice positions from observed event streams."
+  stewardship:    "Humans approve generator trust levels. Kernel validates; humans govern."
+  continuity:     "Ledger grows monotonically. Nothing verified is deleted — only superseded."
+
+inputs:
+  - hypothesis_json_payloads
+  - ledger_jsonl_files
+  - lattice_definitions
+  - invariant_declarations
+  - domain_trust_assignments
+
+outputs:
+  - verified_truth_objects
+  - hash_chained_ledger_entries
+  - equilibrium_reports
+  - provenance_chains
+  - schema_inference_proposals
+  - akasha_event_payloads
+
+dependencies:
+  - akasha-axioms
+  - akasha-world
+  - akasha-constellation
+
+adapters:
+  - generators/api_adapter.py        # external API scaffold
+  - generators/manual_adapter.py     # JSON file input
+  - generators/symbolic_adapter.py   # deterministic symbolic input
+  - generators/local_adapter.py      # local LLM (Ollama)
+  - generators/tasker_bridge_adapter.py  # HTTP bridge (Debian port of Android Tasker bridge)
+
+layer_position: >
+  Sits between akasha-events (event storage) and akasha-attractor (pattern analysis).
+  Receives raw hypotheses from generators; emits verified, hash-stamped ledger entries
+  that can be consumed downstream by akasha-attractor or akasha-lens.
+
+platform:
+  origin: Termux (Android)
+  ported_to: Debian Linux
+  python_requires: ">=3.9"
+  debian_packages: []
+  python_dependencies:
+    - pyyaml>=6.0
+
+source_lineage: Alexandria-v9.0 (Termux/Android) → akasha-alexandria-v9.1.0 (Debian)

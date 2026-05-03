@@ -1,0 +1,1 @@
+# SPEC\nProvider-agnostic constitutional hypothesis engine.
