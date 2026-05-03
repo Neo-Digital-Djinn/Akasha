@@ -1,0 +1,13 @@
+{
+  "entity_type": "environment",
+  "conditions": [
+    "humid summers",
+    "foggy mornings near river",
+    "quiet nights with distant traffic"
+  ],
+  "sensory_details": [
+    "smell of gasoline",
+    "sound of trucks",
+    "buzz of fluorescent lights"
+  ]
+}

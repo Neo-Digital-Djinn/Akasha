@@ -1,0 +1,100 @@
+{
+  "id": "store_001",
+  "name": "Clark’s Pump-n-Shop",
+  "location_tag": "Boyd County",
+
+  "owner": "John Clark",
+  "store_type": "gas_station_convenience",
+
+  "operational_profile": {
+    "hours": "early morning through evening (exact TBD)",
+    "rush_periods": [
+      "5:00am - 9:00am (primary rush)",
+      "lunch spillover",
+      "after-work trickle"
+    ]
+  },
+
+  "physical_layout": {
+    "type": "compact, front-loaded",
+
+    "zones": [
+      "register cluster (primary control point)",
+      "cigarette wall (behind register)",
+      "impulse-buy rack zone (candy, snacks, lotto)",
+      "grill / hot food (adjacent, not isolated)",
+      "drink coolers (perimeter)",
+      "coffee station",
+      "bathrooms (back / side)",
+      "parking lot",
+      "outside smoking area (ashtrays)"
+    ],
+
+    "layout_notes": [
+      "front counter acts as command center",
+      "customer flow compresses near register",
+      "visual clutter increases perceived chaos",
+      "multiple functions overlap in small space"
+    ],
+
+    "flow": "enter → compress toward register → interact → exit"
+  },
+
+  "environmental_traits": [
+    "high-density interaction space",
+    "constant micro-interruptions",
+    "visual noise from product displays",
+    "rapid customer turnover in mornings"
+  ],
+
+  "sensory_profile": {
+    "lighting": "bright fluorescent",
+    "sound": [
+      "door chime",
+      "register beeps",
+      "conversation overlap",
+      "kitchen noise"
+    ],
+    "visual": "dense, cluttered, high stimulus"
+  },
+
+  "store_quirks": [
+    "ashtrays outside act as social hubs",
+    "regulars appear on tight morning schedule",
+    "front counter must handle multiple roles simultaneously",
+    "space feels smaller during rush than it actually is"
+  ],
+
+  "system_dynamics": {
+    "baseline_state": "busy but controlled",
+    "rush_state": "compressed chaos at front counter",
+    "failure_state": "overload at register + grill overlap",
+
+    "recovery_mechanism": [
+      "Mavis increases output",
+      "Kelsey absorbs overflow",
+      "Amanda locks attention onto problems",
+      "Debbie stabilizes and redistributes flow"
+    ]
+  },
+
+  "character_integration": {
+    "mavis_zone": "grill + movement between zones",
+    "amanda_zone": "register / front control",
+    "kelsey_zone": "back areas / overflow tasks",
+    "debbie_zone": "full store oversight"
+  },
+
+  "visual_identity": {
+    "style": "Ben-Day halftone comic",
+    "dot_behavior": {
+      "normal": "moderate density",
+      "rush": "tight clustered dots at register",
+      "calm": "spread, breathable spacing"
+    }
+  },
+
+  "narrative_function": "Pressure chamber where personalities collide and amplify",
+
+  "notes": "Small-space, high-interaction environment; chaos is created by compression, not scale"
+}

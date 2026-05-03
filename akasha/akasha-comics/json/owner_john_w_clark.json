@@ -1,0 +1,19 @@
+{
+  "entity_type": "owner",
+  "name": "John W. Clark",
+  "associated_businesses": [
+    "John W. Clark Oil Co.",
+    "Clark's Pump-n-Shop"
+  ],
+  "archetype": "Regional Fuel Baron",
+  "traits": [
+    "private",
+    "business-focused",
+    "locally influential"
+  ],
+  "narrative_hooks": [
+    "controls multiple fuel stations across region",
+    "seen as unseen force behind daily routines",
+    "possible mythologized figure in local stories"
+  ]
+}

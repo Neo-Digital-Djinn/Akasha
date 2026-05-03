@@ -1,0 +1,49 @@
+A vertical comic-style character card split into two equal halves.
+
+LEFT SIDE:
+Use the provided reference photo (Teresa.jpg). A red-haired woman wearing a black visor and red glasses, smiling warmly. She is wearing a black hoodie in the reference, but adapt her into a black polo uniform with "Clark’s Pump-n-Shop" written in UK blue letters (no border). Keep her friendly, upbeat expression.
+
+RIGHT SIDE:
+Stylized comic version of the same woman.
+
+She has bright red hair and wears her black visor prominently like a crown. She is holding a spatula in one hand as a signature tool.
+
+Her pose is dynamic and in motion, as if she is simultaneously flipping food, turning, and engaging with customers.
+
+VISUAL EFFECTS:
+- Multiple faint arm trails suggesting multi-tasking (like extra arms in motion)
+- Radiating halftone (Ben-Day dot) energy bursts
+- Rhythmic circular dot waves emanating from her movement
+
+DOT STYLE (MANDATORY):
+- visible Ben-Day dot pattern across entire image
+- no smooth gradients
+- dot density increases around motion and energy areas
+- retro comic print texture
+
+COLOR PALETTE:
+- warm reds and oranges (energy)
+- neon highlights
+- strong contrast
+
+TEXT:
+Mavis / Teresa
+Energy Engine
+
+Traits:
+- Energetic
+- Joyful
+- Relentless
+
+Powers:
+- Multi-tasking motion
+- Energy amplification
+- Flow-state generation
+
+Catchphrase:
+"MAVIS POWERS ACTIVATE!"
+
+LAYOUT:
+clean vertical divider
+balanced composition
+no clutter

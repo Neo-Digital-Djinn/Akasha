@@ -1,0 +1,29 @@
+{
+  "id": "mavis_001",
+  "name": "Mavis",
+  "real_name_optional": "Teresa",
+  "alias": "Mavis",
+  "title": "Energy Engine",
+
+  "core_trait": "Joyfully overwhelming but functional",
+
+  "visual_identity": {
+    "hair": "red",
+    "signature_items": [
+      "black visor (crown/source of power)",
+      "spatula (primary tool/weapon)"
+    ],
+    "uniform": "black polo, tucked in, 'Clark’s Pump-n-Shop' in UK blue letters (no border)"
+  },
+
+  "power_expression": "Transforms motion, rhythm, and positivity into continuous kinetic output",
+
+  "abilities": [
+    "multi-tasking through rhythmic motion",
+    "radiates energy to coworkers and customers",
+    "creates flow state during rush periods",
+    "maintains high output without fatigue"
+  ],
+
+  "catchphrase": "MAVIS POWERS ACTIVATE!"
+}

@@ -1,0 +1,25 @@
+{
+  "id": "",
+  "alias": "",
+  "real_world": {
+    "name": "",
+    "summary": "",
+    "traits": [
+      ""
+    ]
+  },
+  "character_version": {
+    "title": "",
+    "tagline": "",
+    "core_trait": "",
+    "power_summary": "",
+    "abilities": [],
+    "limitations": [],
+    "catchphrase": ""
+  },
+  "visuals": {
+    "real_reference_image": "reference_images/.jpg",
+    "character_art_image": "character_cards/.png",
+    "environment": ""
+  }
+}

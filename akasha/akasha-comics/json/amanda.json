@@ -1,0 +1,96 @@
+{
+  "id": "amanda_001",
+  "name": "Amanda",
+  "alias": "Rainbow",
+  "secondary_alias": "Price Check",
+  "title": "Frontline Enforcer",
+
+  "archetype": "Rapid Response Sentinel",
+  "alignment": "hero",
+
+  "core_trait": "Immediate awareness and response to disruption",
+
+  "real_summary": "Known as 'Rainbow' by coworkers, Amanda brings bold personality and sharp awareness to the front of the store. She notices problems instantly and isn’t afraid to call them out, keeping everything from getting out of control.",
+
+  "traits": [
+    "assertive",
+    "quick-witted",
+    "confident",
+    "alert",
+    "protective"
+  ],
+
+  "power_summary": "Rainbow detects disruptions instantly and emits a signal that forces attention and response, restoring order before chaos spreads.",
+
+  "abilities": [
+    "Detects problems the moment they begin",
+    "Forces immediate attention from others",
+    "Commands focus in chaotic environments",
+    "Interrupts and neutralizes disruptions"
+  ],
+
+  "activation_trigger": "Noticing something out of place",
+
+  "catchphrase": "Can I get a price check?",
+
+  "power_translation": {
+    "real_world": "Calling attention to something that needs handled",
+    "comic_world": "Emits a system-wide alert that locks all attention onto a target"
+  },
+
+  "personality": {
+    "demeanor": "direct, confident",
+    "energy_level": "high",
+    "social_style": "assertive",
+    "humor_style": "sharp, reactive"
+  },
+
+  "quirks_and_ticks": [
+    "First to react when something goes wrong",
+    "Keeps constant watch over the front",
+    "Naturally takes control in tense moments"
+  ],
+
+  "appearance": {
+    "hair": "bright pink roots with dark green lengths (watermelon style)",
+    "nickname_origin": "Distinctive colorful hair",
+    "default_expression": "focused, alert"
+  },
+
+  "work_profile": {
+    "role": "cashier / front control",
+    "primary_zone": "register area",
+    "function": "frontline monitoring and response"
+  },
+
+  "uniform": {
+    "base": "black polo",
+    "details": "tucked in, Clark’s Pump-n-Shop in UK blue letters, no border"
+  },
+
+  "superhero_form": {
+    "visual_theme": "signal emission and targeting",
+    "color_palette": [
+      "neon pink",
+      "deep green",
+      "high-contrast accents"
+    ],
+    "dot_behavior": "sharp, directional halftone lines",
+    "effects": [
+      "radiating signal bursts",
+      "targeting lines locking onto disruptions",
+      "sudden contrast spikes when activated"
+    ]
+  },
+
+  "system_role": "Detection and response",
+
+  "team_dynamic": {
+    "mavis": "amplifies her alerts into action",
+    "kelsey": "cuts through his delay when needed",
+    "debbie": "reports upward to authority"
+  },
+
+  "tone": "assertive_comedic",
+  "notes": "‘Rainbow’ is identity; ‘Price Check’ is her activation signal"
+}

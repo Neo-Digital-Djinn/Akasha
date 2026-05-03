@@ -1,0 +1,96 @@
+{
+  "id": "kelsey_001",
+  "name": "Kelsey",
+  "alias": "Slow Burn",
+  "title": "Entropy Regulator",
+
+  "archetype": "Gentle Stabilizer",
+  "alignment": "hero",
+
+  "core_trait": "Slow, steady presence that absorbs chaos",
+
+  "real_summary": "Kelsey is quiet, kind, and soft-spoken. He often comes into work a little sleepy with bed head, moving at his own slower pace. He’s frequently given the less desirable tasks, but he handles them without complaint. Despite being overlooked or scolded at times, he remains gentle and consistent.",
+
+  "traits": [
+    "quiet",
+    "kind",
+    "humble",
+    "slow-paced",
+    "non-reactive"
+  ],
+
+  "power_summary": "Kelsey absorbs excess energy from the environment, slowing chaos and preventing overload by dispersing intensity over time.",
+
+  "abilities": [
+    "reduces intensity of chaotic situations",
+    "slows down fast-moving environments",
+    "absorbs emotional and physical stress",
+    "creates passive stability without confrontation"
+  ],
+
+  "activation_trigger": "High activity, stress, or overwhelming pace",
+
+  "catchphrase": "...okay.",
+
+  "power_translation": {
+    "real_world": "Moving slower than others and staying calm under pressure",
+    "comic_world": "Acts as a buffer that dampens energy spikes and prevents system overload"
+  },
+
+  "personality": {
+    "demeanor": "gentle, reserved",
+    "energy_level": "low",
+    "social_style": "quiet observer",
+    "humor_style": "subtle, unintentional"
+  },
+
+  "quirks_and_ticks": [
+    "often slightly sleepy or spaced out",
+    "hair slightly messy (bed head)",
+    "accepts tasks without arguing",
+    "gets stuck with bathroom duty frequently"
+  ],
+
+  "appearance": {
+    "build": "plumper, soft features",
+    "hair": "curly, slightly messy",
+    "default_expression": "calm, neutral, faint smile"
+  },
+
+  "work_profile": {
+    "role": "support staff",
+    "primary_zone": "wherever needed (often less desirable tasks)",
+    "function": "absorbs workload pressure"
+  },
+
+  "uniform": {
+    "base": "black polo",
+    "details": "tucked in, Clark’s Pump-n-Shop in UK blue letters, no border"
+  },
+
+  "superhero_form": {
+    "visual_theme": "diffusion and slowdown",
+    "color_palette": [
+      "soft blues",
+      "muted tones",
+      "low contrast"
+    ],
+    "dot_behavior": "wide, soft halftone spacing",
+    "effects": [
+      "energy trails that fade instead of burst",
+      "blurred motion edges",
+      "soft fields that dampen surrounding activity"
+    ]
+  },
+
+  "system_role": "Energy dampener",
+
+  "team_dynamic": {
+    "mavis": "absorbs her overflow so she can keep going",
+    "amanda": "slows her intensity slightly when needed",
+    "debbie": "protected and supported by her leadership"
+  },
+
+  "tone": "gentle_comedic",
+  "notes": "Not incompetent—essential for preventing burnout and overload"
+}

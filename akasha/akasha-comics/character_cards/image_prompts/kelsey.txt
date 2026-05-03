@@ -1,0 +1,50 @@
+A vertical comic-style character card split into two equal halves.
+
+LEFT SIDE:
+Use the provided reference image of a young man with a plumper build, soft facial features, curly slightly messy hair (bed head), and a gentle expression. He is wearing a Clark’s Pump-n-Shop uniform: black polo, tucked in, with UK blue lettering (no border).
+
+He looks slightly sleepy but calm and kind—not disheveled, not intoxicated.
+
+RIGHT SIDE:
+Stylized comic version of the same man.
+
+He stands relaxed, slightly slouched posture, with a soft presence. His expression is neutral with a faint, gentle smile.
+
+VISUAL EFFECTS:
+- Soft, wide halftone (Ben-Day) dot patterns
+- Dots spread out and diffuse rather than cluster
+- Subtle fading trails behind movement
+- Environment around him appears slightly slowed or softened
+
+DOT STYLE (MANDATORY):
+- visible halftone dots
+- no gradients
+- low contrast, wide spacing
+- retro comic print texture
+
+COLOR PALETTE:
+- muted blues
+- soft grays
+- low saturation tones
+
+TEXT:
+Kelsey / Slow Burn
+Entropy Regulator
+
+Traits:
+- Gentle
+- Quiet
+- Steady
+
+Powers:
+- Absorbs chaos
+- Slows environments
+- Stabilizes energy
+
+Catchphrase:
+"...okay."
+
+LAYOUT:
+clean vertical divider
+balanced composition
+no clutter

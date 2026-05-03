@@ -1,0 +1,18 @@
+{
+  "entity_type": "location",
+  "name": "Clark's Pump-n-Shop",
+  "brand": "ARCO",
+  "address": "900 Center St, Catlettsburg, KY",
+  "type": "gas_station",
+  "setting_traits": [
+    "high traffic",
+    "blue collar customers",
+    "late night activity",
+    "intersection of travelers and locals"
+  ],
+  "narrative_potential": [
+    "chance encounters",
+    "conflict between locals and outsiders",
+    "hub for overheard stories"
+  ]
+}

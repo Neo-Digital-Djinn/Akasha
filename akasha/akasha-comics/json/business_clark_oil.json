@@ -1,0 +1,9 @@
+{
+  "entity_type": "business",
+  "name": "John W. Clark Oil Co.",
+  "industry": "fuel_distribution",
+  "locations_type": "gas_stations",
+  "brand": "Clark's Pump-n-Shop",
+  "archetype": "Energy Network",
+  "narrative_role": "infrastructure backbone of local life"
+}

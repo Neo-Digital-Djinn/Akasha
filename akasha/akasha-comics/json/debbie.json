@@ -1,0 +1,95 @@
+{
+  "id": "debbie_001",
+  "name": "Debbie",
+  "alias": "The Anchor",
+  "title": "Store Overseer",
+
+  "archetype": "Stabilizing Authority",
+  "alignment": "hero",
+
+  "core_trait": "Calm, understanding leadership that stabilizes the entire environment",
+
+  "real_summary": "Debbie is the boss and the emotional center of the store. Kind, patient, and understanding, she keeps everything running smoothly while supporting her team. She brings calm authority and a steady presence that everyone relies on.",
+
+  "traits": [
+    "calm",
+    "understanding",
+    "patient",
+    "grounded",
+    "supportive"
+  ],
+
+  "power_summary": "Debbie stabilizes the entire system, preventing chaos from escalating and maintaining balance between all moving parts.",
+
+  "abilities": [
+    "Maintains control without raising tension",
+    "Balances strong personalities",
+    "Diffuses conflict before escalation",
+    "Provides emotional grounding to the team"
+  ],
+
+  "activation_trigger": "Rising tension, conflict, or instability in the store",
+
+  "catchphrase": "",
+
+  "power_translation": {
+    "real_world": "Being a steady, supportive boss who keeps things running",
+    "comic_world": "Emits a stabilizing field that keeps the entire system from breaking down"
+  },
+
+  "personality": {
+    "demeanor": "warm, steady",
+    "energy_level": "moderate",
+    "social_style": "supportive, guiding",
+    "humor_style": "gentle, kind"
+  },
+
+  "quirks_and_ticks": [
+    "Encourages small moments of care (like breaks, conversation)",
+    "Allows small human moments in a busy environment",
+    "Trusted by everyone without needing to assert authority loudly"
+  ],
+
+  "appearance": {
+    "age_range": "60-65",
+    "presence": "calm, approachable",
+    "default_expression": "kind, attentive"
+  },
+
+  "work_profile": {
+    "role": "store manager",
+    "primary_zone": "entire store",
+    "function": "oversight, support, and stability"
+  },
+
+  "uniform": {
+    "base": "black polo",
+    "details": "tucked in, Clark’s Pump-n-Shop in UK blue letters, no border"
+  },
+
+  "superhero_form": {
+    "visual_theme": "stability and balance",
+    "color_palette": [
+      "soft neutrals",
+      "warm tones",
+      "subtle gold accents"
+    ],
+    "dot_behavior": "even, balanced halftone patterns",
+    "effects": [
+      "smooth, evenly distributed dot fields",
+      "calming wave-like patterns",
+      "stabilizing aura that reduces visual chaos"
+    ]
+  },
+
+  "system_role": "Stabilizer and overseer",
+
+  "team_dynamic": {
+    "mavis": "channels her energy into productivity",
+    "kelsey": "protects and supports his pace",
+    "amanda": "backs her authority and decisions"
+  },
+
+  "tone": "grounded_comedic",
+  "notes": "Represents balance, care, and control; the system fails without her"
+}
