@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "akasha-discovery"
+version = "4.0.0"
+description = "Constraint-driven structural discovery engine for the Akasha ecosystem"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy",
+    "networkx",
+]
+
+[project.scripts]
+akasha-discovery = "great_discovery.driver:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -1,0 +1,44 @@
+repo_name: akasha-discovery
+role: engine
+layer: discovery
+canonical_status: canonical
+maturity: stable
+source_lineage: The_Great_Discovery (ver+4, written in Termux on Android)
+
+description: >
+  Constraint-driven structural discovery engine. Grows a typed knowledge graph,
+  measures structural pressure across it, detects forbidden motifs, identifies
+  named holes (structurally demanded but unfilled positions), generates natural
+  language questions from hole profiles, and attempts settlement via
+  Laplacian energy minimisation. Operates in a recursive loop where the engine
+  eventually maps its own discovery process (depth-0 questions → depth-1
+  meta-questions). Emits structured hole profiles and question outputs for
+  downstream Akasha consumers.
+
+inputs:
+  - seed_concepts (optional — defaults to built-in vocabulary)
+  - domain_pack_yaml (optional — overrides default domain list)
+  - sqlite_db_path (optional — resumes from existing ledger)
+
+outputs:
+  - named_hole_profiles (JSON — ranked by precision)
+  - question_log (NDJSON — bridge / depth / boundary / meta questions)
+  - convergence_state (STABLE | DEADLOCKED | EXPANDING | DIVERGENT | OSCILLATORY)
+  - discovery_db (SQLite — nodes, edges, motifs, forbidden, holes, semantic_pressure)
+
+dependencies:
+  - akasha-axioms
+  - akasha-world
+  - akasha-constellation
+  - akasha-events (optional — for emitting hole-found events)
+
+adapters:
+  - akasha-anomaly (hole_profiles can be stamped as observations)
+  - akasha-attractor (convergence state can feed the ledger)
+  - akasha-edge-generator (named holes are candidate cross-domain edges)
+
+alignment_statement: >
+  This system is part of the Akasha ecosystem and aligns with
+  akasha-axioms, akasha-world, and akasha-constellation.
+  It embodies Axiom 2 (Discoverability), Axiom 4 (Augmentation),
+  Axiom 5 (Traceability), Axiom 8 (Iteration), and Axiom 10 (Continuity).

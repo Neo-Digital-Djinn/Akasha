@@ -1,0 +1,69 @@
+# CONSTELLATION PATCH
+# akasha-discovery — canonical admission
+#
+# Instructions:
+#   In akasha-constellation/registry.yaml, replace the existing stub entry:
+#
+#     engine-discovery:
+#       role: engine
+#       layer: discovery
+#       description: Legacy discovery engine preserved for compatibility.
+#
+#   ...with the following two entries (the legacy stub is preserved as-is,
+#   and the new canonical entry is added separately):
+#
+# ─────────────────────────────────────────────────────────────────────────────
+
+  engine-discovery:
+    role: engine
+    layer: discovery
+    description: Legacy discovery engine preserved for compatibility.
+
+  akasha-discovery:
+    role: engine
+    layer: discovery
+    description: >
+      Constraint-driven structural discovery engine. Grows a typed knowledge
+      graph, measures 3-force structural pressure (pull + void + hole_attraction
+      − forbidden_repulsion), detects forbidden motifs via WL-1 isomorphism
+      signatures, identifies named holes (transitive / co-citation / symmetry
+      gaps), generates precision-ranked structural questions, and settles holes
+      via Laplacian energy minimisation. Phase 4 active: question nodes re-enter
+      topology, creating a recursive layer where the engine maps its own
+      discovery process. Emits NDJSON epoch records and structured hole profiles
+      for downstream Akasha consumers.
+    canonical_status: canonical
+    maturity: stable
+    source_lineage: The_Great_Discovery (ver+4, written in Termux on Android)
+    depends_on:
+      - akasha-axioms
+      - akasha-world
+      - akasha-constellation
+    optional_depends_on:
+      - akasha-events
+    outputs_consumed_by:
+      - akasha-edge-generator
+      - akasha-attractor
+      - akasha-suggestion-engine
+    inputs:
+      - seed_concepts (optional)
+      - domain_pack_yaml (optional)
+      - sqlite_db_path (optional — resumes existing ledger)
+    outputs:
+      - named_hole_profiles
+      - question_log
+      - convergence_state
+      - discovery_db
+    convergence_states:
+      - STABLE
+      - DEADLOCKED
+      - EXPANDING
+      - DIVERGENT
+      - OSCILLATORY
+    phases_complete:
+      - "Phase 0: Structural Foundation"
+      - "Phase 1: Structural Integrity"
+      - "Phase 2: Abstraction Layer"
+      - "Phase 3: Named Holes"
+    phases_active:
+      - "Phase 4: Recursive Discovery"
