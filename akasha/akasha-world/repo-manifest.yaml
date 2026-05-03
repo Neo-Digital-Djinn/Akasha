@@ -1,0 +1,47 @@
+repo:
+  name: akasha-world
+  ecosystem: akasha
+  version: 0.1.0
+  status: active
+engine:
+  family: simulation
+  class: simulation_engine
+  role: world_state_modeling
+identity:
+  role: engine
+  layer: simulation
+  description: 'World modeling engine for the Akasha constellation. Responsible for
+    representing broader environmental, situational, and contextual world states in
+    which events, patterns, and structures unfold.
+
+    '
+ownership:
+  steward: human
+  approval_required: true
+interfaces:
+  consumes:
+  - event_records
+  - contextual_inputs
+  - environmental_models
+  produces:
+  - world_state_models
+  - situational_contexts
+  - environmental_frames
+capabilities:
+- world_state_modeling
+- situational_frame_generation
+- environmental_context_structuring
+- context_simulation_support
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+depends_on:
+- akasha-time-nexus
+- akasha-events
+type: organ
+family: discovery
+role: world
+name: akasha-world
+version: 1.0.0
+generated_by: akasha-canon

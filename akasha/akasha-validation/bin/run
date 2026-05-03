@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MODE="pretty"
+
+if [[ "${1:-}" == "--json" ]]; then
+  MODE="json"
+  shift
+fi
+
+INPUT=$(cat)
+
+# JSON mode = pass through
+if [ "$MODE" = "json" ]; then
+  echo "$INPUT"
+  exit 0
+fi
+
+python3 - <<PY
+import json
+
+raw = """$INPUT""".strip()
+
+if not raw:
+    print("No input received.")
+    exit(1)
+
+try:
+    data = json.loads(raw)
+except Exception:
+    print("Invalid JSON:")
+    print(raw)
+    exit(1)
+
+mutations = data.get("mutations", [])
+
+if not mutations:
+    print("No candidates found.")
+    exit(1)
+
+# 🔥 pick highest score
+best = sorted(mutations, key=lambda x: x.get("score", 0), reverse=True)[0]
+
+print("Best Idea:")
+print(best["title"])
+print(best["summary"])
+print(f"Lens: {best['lens']}")
+print(f"Score: {best['score']}")
+PY

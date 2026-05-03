@@ -1,0 +1,48 @@
+repo:
+  name: akasha-validation
+  ecosystem: akasha
+  version: 0.1.0
+  status: active
+engine:
+  family: truth
+  class: validation_engine
+  role: structured_output_validation
+identity:
+  role: engine
+  layer: governance
+  description: 'Validation engine for the Akasha constellation. Responsible for checking
+    outputs, structures, bundles, and derived results against declared constraints,
+    canonical rules, and expected integrity conditions.
+
+    '
+ownership:
+  steward: human
+  approval_required: true
+interfaces:
+  consumes:
+  - validation_targets
+  - event_records
+  - structure_outputs
+  - candidate_bundles
+  produces:
+  - validation_reports
+  - integrity_checks
+  - acceptance_or_rejection_signals
+capabilities:
+- output_validation
+- integrity_checking
+- constraint_testing
+- acceptance_signal_generation
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+depends_on:
+- akasha-events
+- akasha-ontology
+type: organ
+family: discovery
+role: validation
+name: akasha-validation
+version: 1.0.0
+generated_by: akasha-canon

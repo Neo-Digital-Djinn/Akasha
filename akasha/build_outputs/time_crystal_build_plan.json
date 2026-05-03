@@ -1,0 +1,20 @@
+{
+  "target": "time_crystal",
+  "gap_type": "structural_sink",
+  "reason": "time_crystal receives references but does not yet propagate into adjacent structures",
+  "gap_score": 0.9,
+  "action": "propose_extension",
+  "source_proposal": "Explore missing connections for 'time_crystal'",
+  "recommended_action": "Create exploratory module for 'time_crystal'",
+  "repo_candidate": "akasha-time_crystal",
+  "files_to_create": [
+    "README.md",
+    "repo-manifest.yaml",
+    "NOTES.md"
+  ],
+  "next_steps": [
+    "Link 'time_crystal' to adjacent domains",
+    "Search for analogous structures in other fields",
+    "Generate tool or model to bridge domain gap"
+  ]
+}

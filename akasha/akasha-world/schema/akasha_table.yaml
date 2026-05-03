@@ -1,0 +1,57 @@
+schema_version: 1
+
+node_types:
+
+  state:
+    description: stable condition of a system
+    expects_incoming:
+      - transitions_to
+    expects_outgoing:
+      - transitions_to
+      - tends_toward
+
+  process:
+    description: transformation between states
+    expects_incoming:
+      - transitions_to
+    expects_outgoing:
+      - transitions_to
+
+  constraint:
+    description: boundary condition or limiting rule
+    expects_outgoing:
+      - constrains
+
+  attractor:
+    description: terminal convergence point
+    allows_outgoing: []
+
+  observer:
+    description: measurement or perception entity
+    expects_outgoing:
+      - observes
+
+relation_types:
+
+  transitions_to:
+    description: state change pathway
+
+  tends_toward:
+    description: asymptotic movement toward stability
+
+  constrains:
+    description: limiting influence
+
+  observes:
+    description: measurement relation
+
+relation_aliases:
+  transitions_to:
+    - emerges_from
+    - recovers_to
+    - transitions_to_instability
+  tends_toward:
+    - settles_into
+  constrains:
+    - stabilizes
+    - destabilizes
