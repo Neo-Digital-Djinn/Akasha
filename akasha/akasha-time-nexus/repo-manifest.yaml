@@ -1,0 +1,50 @@
+repo:
+  name: akasha-time-nexus
+  ecosystem: akasha
+  version: 0.2.0
+  status: active
+engine:
+  family: observation
+  class: context_engine
+  role: world_state_enrichment
+identity:
+  role: core
+  layer: temporal
+  description: 'Akasha-native context engine that transforms a plain timestamp and
+    location into a multi-axis world-state record using astronomical, calendrical,
+    environmental, and geospatial context.
+
+    '
+ownership:
+  steward: human
+  approval_required: true
+interfaces:
+  consumes:
+  - utc_timestamp
+  - latitude
+  - longitude
+  - optional_event_metadata
+  - akasha_apis_adapters
+  produces:
+  - enriched_event_records
+  - normalized_context_bundles
+  - akasha_event_payloads
+  - sqlite_event_storage
+capabilities:
+- event_stamping
+- world_state_enrichment
+- temporal_normalization
+- contextual_query_support
+- correlation_ready_records
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+depends_on:
+- akasha-apis
+type: organ
+family: discovery
+role: time-nexus
+name: akasha-time-nexus
+version: 1.0.0
+generated_by: akasha-canon

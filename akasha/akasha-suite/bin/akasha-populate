@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+
+import sys
+from pathlib import Path
+
+HOME = Path.home()
+
+if len(sys.argv) < 2:
+    print("Usage: akasha-populate <repo>")
+    sys.exit(1)
+
+repo = sys.argv[1]
+path = HOME / repo
+
+if not path.exists():
+    print("Repo not found:", path)
+    sys.exit(1)
+
+(path/"src").mkdir(exist_ok=True)
+(path/"docs").mkdir(exist_ok=True)
+(path/"tests").mkdir(exist_ok=True)
+
+title = repo.replace("akasha-","").replace("-"," ").title()
+
+(path/"README.md").write_text(f"# {title}\n\nAkasha organ.\n")
+(path/"repo-manifest.yaml").write_text(
+f"repo: {repo}\ntype: organ\nfamily: unspecified\nrole: {repo.replace('akasha-','')}\n"
+)
+
+(path/"docs"/"design.md").write_text("# Design\n\nDescribe system.\n")
+
+(path/"src"/"main.py").write_text(
+'def main():\n'
+'    print("organ initialized")\n\n'
+'if __name__ == "__main__":\n'
+'    main()\n'
+)
+
+(path/"tests"/"test_smoke.py").write_text("def test_smoke(): assert True\n")
+
+print("Populated:", path)

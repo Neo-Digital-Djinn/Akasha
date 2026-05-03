@@ -1,0 +1,175 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# ----------------------------------------
+# Config
+# ----------------------------------------
+
+AKASHA_HOME="${AKASHA_HOME:-$HOME/akasha}"
+REPO_DIR="$AKASHA_HOME/repos"
+
+DEBUG="${DEBUG:-0}"
+
+# Python detection
+if command -v python3 >/dev/null 2>&1; then
+  PYTHON="python3"
+elif command -v python >/dev/null 2>&1; then
+  PYTHON="python"
+else
+  echo "❌ No Python interpreter found"
+  exit 1
+fi
+
+# Mythology Engine entry (adjust if needed)
+MYTH_ENGINE="$AKASHA_HOME/repos/mythology-engine/studio/cli/main.py"
+
+# ----------------------------------------
+# Logging
+# ----------------------------------------
+
+log() { echo "[akasha-sync] $1"; }
+debug() { [ "$DEBUG" = "1" ] && echo "[DEBUG] $1"; }
+warn() { echo "[WARN] $1"; }
+
+# ----------------------------------------
+# Repo Discovery
+# ----------------------------------------
+
+list_repos() {
+  for d in "$REPO_DIR"/akasha-*; do
+    [ -d "$d" ] || continue
+    echo "$d"
+  done
+}
+
+# ----------------------------------------
+# Manifest Helpers
+# ----------------------------------------
+
+has_manifest_flag() {
+  local manifest="$1"
+  local key="$2"
+
+  $PYTHON - <<EOF
+import yaml, sys
+try:
+    data = yaml.safe_load(open("$manifest"))
+    val = data
+    for part in "$key".split("."):
+        val = val.get(part, {})
+    print("true" if val else "false")
+except:
+    print("false")
+EOF
+}
+
+# ----------------------------------------
+# Engine Trigger
+# ----------------------------------------
+
+run_engine() {
+  local repo="$1"
+  local manifest="$repo/repo-manifest.yaml"
+
+  [ -f "$manifest" ] || return
+
+  log "Evaluating engine trigger for $(basename "$repo")"
+
+  local supports_story
+  supports_story=$(has_manifest_flag "$manifest" "story.supports_dynamic_generation")
+
+  if [ "$supports_story" != "true" ]; then
+    debug "No dynamic generation support"
+    return
+  fi
+
+  if [ ! -f "$MYTH_ENGINE" ]; then
+    warn "Mythology engine not found"
+    return
+  fi
+
+  log "🚀 Triggering Mythology Engine"
+
+  $PYTHON "$MYTH_ENGINE" run \
+    --world "$repo" \
+    --mode "scene_generator" \
+    || warn "Engine run failed"
+}
+
+# ----------------------------------------
+# Sync Logic
+# ----------------------------------------
+
+sync_repo() {
+  local repo="$1"
+  local name
+  name=$(basename "$repo")
+
+  echo ""
+  log "Syncing $name"
+
+  # --- Git safe ---
+  if [ -d "$repo/.git" ]; then
+    if git -C "$repo" remote >/dev/null 2>&1; then
+      git -C "$repo" pull --ff-only || warn "git pull failed"
+    fi
+  fi
+
+  # --- Canon ---
+  if command -v akasha-canon >/dev/null 2>&1; then
+    akasha-canon fix >/dev/null 2>&1 || warn "canon fix failed"
+  fi
+
+  # --- Engine Trigger ---
+  run_engine "$repo"
+
+  echo "  ✔ Done"
+}
+
+# ----------------------------------------
+# Commands
+# ----------------------------------------
+
+cmd_sync() {
+  log "Starting full sync + engine cycle"
+
+  local found=0
+
+  for repo in $(list_repos); do
+    found=1
+    sync_repo "$repo"
+  done
+
+  [ "$found" -eq 0 ] && warn "No repos found"
+
+  log "Cycle complete"
+}
+
+cmd_debug() {
+  echo "AKASHA_HOME=$AKASHA_HOME"
+  echo "REPO_DIR=$REPO_DIR"
+  echo "PYTHON=$PYTHON"
+  echo "MYTH_ENGINE=$MYTH_ENGINE"
+  echo ""
+  echo "Repos:"
+  list_repos || true
+}
+
+# ----------------------------------------
+# Entry
+# ----------------------------------------
+
+case "${1:-}" in
+  sync|"")
+    cmd_sync
+    ;;
+  debug)
+    DEBUG=1
+    cmd_debug
+    ;;
+  *)
+    echo "Usage: akasha-sync [sync|debug]"
+    exit 1
+    ;;
+esac

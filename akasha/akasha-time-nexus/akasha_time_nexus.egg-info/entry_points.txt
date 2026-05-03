@@ -1,0 +1,2 @@
+[console_scripts]
+akasha-time-nexus = akasha_time_nexus.cli:main

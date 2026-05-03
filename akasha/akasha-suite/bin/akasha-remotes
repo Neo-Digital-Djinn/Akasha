@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -e
+
+echo "=================================="
+echo "         AKASHA REMOTES"
+echo "=================================="
+echo
+
+for d in ~/akasha-* ~/engine-* ~/node-herald; do
+  [ -d "$d/.git" ] || continue
+  repo="$(basename "$d")"
+  new_url="git@github-akasha:mythologyprospector-hub/${repo}.git"
+
+  git -C "$d" remote set-url origin "$new_url"
+  git -C "$d" config user.name "Jimmy Stambaugh"
+  git -C "$d" config user.email "mythologyprospector@gmail.com"
+
+  echo "$repo -> $new_url"
+done
+
+echo
+echo "Done."

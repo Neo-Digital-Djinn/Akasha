@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -e
+
+echo "=================================="
+echo "          AKASHA CLEAN"
+echo "=================================="
+
+for d in ~/akasha-* ~/engine-* ~/node-herald; do
+  [ -d "$d/build_outputs" ] || continue
+  echo "Cleaning $(basename "$d")/build_outputs"
+  find "$d/build_outputs" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+done
+
+echo
+echo "Done."

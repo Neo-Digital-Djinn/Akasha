@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+import json
+import sys
+
+text = " ".join(sys.argv[1:]).strip().lower()
+
+if not text:
+    print("Usage: akasha-brainstorm \"idea text here\"")
+    sys.exit(1)
+
+def detect_context(t):
+    return {
+        "concurrency": any(k in t for k in ["race", "thread", "concurrent", "parallel", "multiple users"]),
+        "performance": any(k in t for k in ["slow", "latency", "lag", "performance"]),
+        "crash": any(k in t for k in ["crash", "fail", "error", "exception"]),
+        "network": any(k in t for k in ["server", "network", "remote", "api"]),
+        "data": any(k in t for k in ["database", "data", "corrupt", "write"]),
+        "observability": any(k in t for k in ["log", "logs", "debug", "trace"]),
+        "environment": any(k in t for k in ["cron", "env", "environment", "path", "works locally"]),
+    }
+
+ctx = detect_context(text)
+
+def build_mutations(t, ctx):
+    mutations = []
+
+    # --- extension ---
+    if ctx["environment"]:
+        title = f"Align runtime environment for: {t}"
+        summary = "Cron runs with limited environment. Set PATH, working directory, and required variables explicitly."
+    elif ctx["concurrency"] and ctx["data"]:
+        title = f"Protect data integrity in: {t}"
+        summary = "Concurrent writes detected. Use transactions, locks, or queues to prevent corruption."
+    elif ctx["concurrency"]:
+        title = f"Control shared access in: {t}"
+        summary = "Likely race condition. Add locking, queues, or isolate shared state."
+    elif ctx["performance"]:
+        title = f"Optimize bottlenecks in: {t}"
+        summary = "Identify slow paths, reduce repeated work, and cache or batch operations."
+    elif ctx["crash"] and ctx["network"]:
+        title = f"Handle unstable environments in: {t}"
+        summary = "Differences between local and server suggest environment or network instability. Add retries and logging."
+    elif ctx["crash"]:
+        title = f"Stabilize failure points in: {t}"
+        summary = "Trace where failure occurs and add guards, retries, or input validation."
+    elif ctx["observability"]:
+        title = f"Improve signal clarity in: {t}"
+        summary = "Logs exist but lack value. Add structured logging, levels, and correlation IDs."
+    else:
+        title = f"Refine system handling: {t}"
+        summary = "Break problem into smaller parts and handle each step more explicitly."
+
+    mutations.append({
+        "lens": "extension",
+        "title": title,
+        "summary": summary,
+        "score": 0.95
+    })
+
+    # --- lateral ---
+    if ctx["environment"]:
+        summary = "Like running a machine in a different room without the same tools or setup."
+    elif ctx["concurrency"]:
+        summary = "Like multiple people editing the same document at once — needs coordination."
+    elif ctx["network"]:
+        summary = "Like messages getting lost between two people — unreliable communication."
+    elif ctx["performance"]:
+        summary = "Like a traffic jam — too many things trying to pass through a narrow path."
+    elif ctx["observability"]:
+        summary = "Like having cameras everywhere but none pointed at the problem."
+    else:
+        summary = "Map the problem to a real-world system to reveal hidden structure."
+
+    mutations.append({
+        "lens": "lateral",
+        "title": f"{t} as a real-world system",
+        "summary": summary,
+        "score": 0.8
+    })
+
+    # --- weird ---
+    mutations.append({
+        "lens": "weird",
+        "title": f"Exploit the behavior in: {t}",
+        "summary": "Instead of preventing the issue, capture and use it to reveal deeper system patterns.",
+        "score": 0.6
+    })
+
+    return mutations
+
+mutations = build_mutations(text, ctx)
+best = sorted(mutations, key=lambda x: x["score"], reverse=True)[0]
+
+output = {
+    "source": text,
+    "context": ctx,
+    "mutation_count": len(mutations),
+    "mutations": mutations,
+    "surfaced": {
+        "best_next": best
+    }
+}
+
+print(json.dumps(output, indent=2))

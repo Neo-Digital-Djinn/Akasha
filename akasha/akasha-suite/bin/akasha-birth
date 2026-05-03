@@ -1,0 +1,175 @@
+#!/usr/bin/env bash
+set -e
+
+NAME="$1"
+BASE="$HOME"
+
+if [ -z "$NAME" ]; then
+    echo "Usage: akasha-birth <repo-name>"
+    exit 1
+fi
+
+REPO="$BASE/$NAME"
+
+echo "=================================="
+echo "          AKASHA BIRTH"
+echo "=================================="
+echo "Creating: $NAME"
+echo ""
+
+if [ -d "$REPO" ]; then
+    echo "Directory already exists."
+else
+    mkdir -p "$REPO"
+fi
+
+cd "$REPO"
+
+########################################
+# README
+########################################
+
+if [ ! -f README.md ]; then
+
+cat <<BLOCK > README.md
+# $NAME
+
+Part of the Akasha Constellation.
+
+## Purpose
+
+Describe the role of this repository within the Akasha knowledge ecosystem.
+
+## Notes
+
+Born via \`akasha-birth\`.
+BLOCK
+
+echo "README created"
+
+fi
+
+########################################
+# MANIFEST
+########################################
+
+if [ ! -f repo-manifest.yaml ]; then
+
+cat <<BLOCK > repo-manifest.yaml
+engine: null
+
+identity:
+  name: $NAME
+  type: module
+
+ownership:
+  maintainer: mythologyprospector@gmail.com
+
+interfaces:
+  inputs: []
+  outputs: []
+
+capabilities: []
+
+alignment:
+  constellation: akasha
+
+depends_on: []
+BLOCK
+
+echo "Manifest created"
+
+fi
+
+########################################
+# GITIGNORE
+########################################
+
+if [ ! -f .gitignore ]; then
+touch .gitignore
+fi
+
+if ! grep -q "AKASHA_CANON_GUARD" .gitignore 2>/dev/null; then
+
+cat <<BLOCK >> .gitignore
+
+# ==================================
+# AKASHA_CANON_GUARD
+# Protect canonical files
+# ==================================
+!/README.md
+!/repo-manifest.yaml
+
+# Generated artifacts
+ARCHETYPE_COVERAGE_MAP.md
+*.log
+*.tmp
+*.cache
+.DS_Store
+tree.txt
+output.txt
+BLOCK
+
+echo "Gitignore guard installed"
+
+fi
+
+########################################
+# GIT INIT
+########################################
+
+if [ ! -d ".git" ]; then
+
+git init -q
+git branch -M main
+
+git add .
+git commit -m "Birth of $NAME"
+
+echo "Git initialized"
+
+else
+
+echo "Git already initialized"
+
+fi
+
+########################################
+# OPTIONAL REMOTE
+########################################
+
+if command -v gh >/dev/null 2>&1; then
+
+echo ""
+read -p "Create GitHub repo? (y/n): " answer
+
+if [ "$answer" = "y" ]; then
+
+gh repo create mythologyprospector-hub/$NAME \
+    --private \
+    --source=. \
+    --remote=origin \
+    --push
+
+echo "GitHub repo created and pushed"
+
+fi
+
+fi
+
+########################################
+# CANON CHECK
+########################################
+
+if command -v akasha-canon >/dev/null 2>&1; then
+
+echo ""
+echo "Running Canon Check..."
+akasha-canon
+
+fi
+
+echo ""
+echo "=================================="
+echo "        BIRTH COMPLETE"
+echo "=================================="

@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+
+echo "=================================="
+echo "           AKASHA LOG"
+echo "=================================="
+echo
+
+STATE_FILE=~/akasha-discovery/state/system_state.json
+OUTPUT_DIR=~/akasha-discovery/build_outputs
+
+python - <<'PY'
+import json
+from pathlib import Path
+from datetime import datetime, UTC
+
+STATE_FILE = next((p for p in [Path.home() / "akasha-discovery/state/system_state.json", Path.home() / "akasha/akasha-discovery/state/system_state.json"] if p.exists()), Path.home() / "akasha-discovery/state/system_state.json")
+OUTPUT_DIR = next((p for p in [Path.home() / "akasha-discovery/build_outputs", Path.home() / "akasha/akasha-discovery/build_outputs"] if p.exists()), Path.home() / "akasha-discovery/build_outputs")
+
+
+def parse_iso(ts):
+    try:
+        return datetime.fromisoformat(ts.replace("Z", "+00:00"))
+    except Exception:
+        return None
+
+
+def fmt_duration(delta):
+    seconds = int(delta.total_seconds())
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    return f"{hours}h {minutes}m"
+
+
+# --- LOAD STATE ---
+if STATE_FILE.exists():
+    try:
+        raw = STATE_FILE.read_text().strip()
+        state = json.loads(raw) if raw else {}
+    except Exception:
+        state = {}
+else:
+    state = {}
+
+# --- CURRENT STATE ---
+if state.get("status") == "stable":
+    since = parse_iso(state.get("since"))
+    now = datetime.now(UTC)
+
+    print("Current State:")
+    print("  System stable.")
+
+    if since:
+        delta = now - since
+        print(f"  Stable for: {fmt_duration(delta)}")
+
+    event = state.get("last_event")
+    if event:
+        print(f"  Last disturbance: {event.get('target')} ({event.get('type')})")
+        if event.get("resolved_at"):
+            print(f"  Resolved at: {event.get('resolved_at')}")
+    print()
+
+elif state.get("status") == "unstable":
+    event = state.get("last_event", {})
+
+    print("Current State:")
+    print("  System unstable.")
+    print(f"  Active issue: {event.get('target')} ({event.get('type')})")
+    print(f"  Since: {event.get('timestamp')}")
+    print()
+
+else:
+    print("Current State:")
+    print("  Unknown / not initialized.")
+    print()
+
+# --- DISCOVERY TRAIL ---
+print("Discovery Trail:")
+
+files = sorted(
+    OUTPUT_DIR.glob("*_build_plan.json"),
+    key=lambda p: p.stat().st_mtime,
+    reverse=True
+)
+
+if not files:
+    print("  (no build plans found)")
+else:
+    for f in files[:5]:
+        try:
+            data = json.loads(f.read_text())
+        except Exception:
+            continue
+
+        print(f"- {f.name}")
+        print(f"  Time:   {datetime.fromtimestamp(f.stat().st_mtime).strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"  Target: {data.get('target')}")
+        print(f"  Gap:    {data.get('gap_type')}")
+        print(f"  Action: {data.get('action')}")
+        print(f"  Reason: {data.get('reason')}")
+        print()
+
+PY

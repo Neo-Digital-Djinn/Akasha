@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+echo "=================================="
+echo "         AKASHA CONSOLE"
+echo "=================================="
+echo
+
+ROOT=~
+DISCOVERY="$ROOT/akasha-discovery"
+CONFIG="$DISCOVERY/config.yaml"
+
+# --- graph source ---
+if [ -f "$CONFIG" ]; then
+  GRAPH_SOURCE=$(grep graph_source "$CONFIG" | cut -d':' -f2 | xargs)
+  RESOLVED_PATH=$(realpath "$DISCOVERY/$GRAPH_SOURCE" 2>/dev/null)
+else
+  GRAPH_SOURCE="(missing config.yaml)"
+  RESOLVED_PATH="unknown"
+fi
+
+# --- repo scan ---
+REPOS=$(ls -d $ROOT/akasha-* 2>/dev/null | wc -l)
+DIRTY=0
+
+for r in $ROOT/akasha-*; do
+  if [ -d "$r/.git" ]; then
+    if [ -n "$(git -C "$r" status --porcelain)" ]; then
+      DIRTY=$((DIRTY+1))
+    fi
+  fi
+done
+
+# --- latest log ---
+LATEST=$(ls -t $DISCOVERY/build_outputs/*.json 2>/dev/null | head -n 1)
+
+if [ -f "$LATEST" ]; then
+  TARGET=$(grep '"target"' "$LATEST" | head -1 | cut -d'"' -f4)
+  GAP=$(grep '"gap_type"' "$LATEST" | head -1 | cut -d'"' -f4)
+  ACTION=$(grep '"action"' "$LATEST" | head -1 | cut -d'"' -f4)
+else
+  TARGET="none"
+  GAP="none"
+  ACTION="none"
+fi
+
+echo "Repos:        $REPOS"
+echo "Dirty repos:  $DIRTY"
+echo
+
+echo "Graph Source:"
+echo "  $RESOLVED_PATH"
+echo
+
+echo "Latest Discovery:"
+echo "  Target: $TARGET"
+echo "  Gap:    $GAP"
+echo "  Action: $ACTION"
+echo
+
+echo "Quick Commands:"
+echo "  akasha-doctor    # repo health"
+echo "  akasha-run       # run discovery"
+echo "  akasha-log       # latest structured output"
+echo "  akasha-clean     # clean generated outputs"
+echo "  akasha-sync      # add/commit/push all repos"
+echo "  akasha-remotes   # repair Akasha remote URLs"
+echo

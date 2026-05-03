@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO="$1"
+shift || true
+
+# Support both ~/akasha-REPO and ~/akasha/akasha-REPO layouts
+if [ -d "$HOME/$REPO" ]; then
+  ROOT="$HOME/$REPO"
+elif [ -d "$HOME/akasha/$REPO" ]; then
+  ROOT="$HOME/akasha/$REPO"
+elif [ -d "$HOME/akasha/repos/$REPO" ]; then
+  ROOT="$HOME/akasha/repos/$REPO"
+else
+  echo "Repo not found: $REPO"
+  exit 1
+fi
+
+RUN="$ROOT/bin/run"
+
+if [ ! -x "$RUN" ]; then
+  echo "No executable run script for $REPO (looked in $ROOT/bin/run)"
+  exit 1
+fi
+
+"$RUN" "$@"

@@ -1,0 +1,51 @@
+repo:
+  name: akasha-suite
+  ecosystem: akasha
+  version: 0.1.0
+  status: active
+engine:
+  family: meta
+  class: coordination_engine
+  role: constellation_governance
+identity:
+  role: engine
+  layer: coordination
+  description: 'Coordination and tooling layer for the Akasha constellation. Responsible
+    for housing canonical utilities, synchronization helpers, repo health tools, and
+    cross-repo governance scripts.
+
+    '
+ownership:
+  steward: human
+  approval_required: true
+interfaces:
+  consumes:
+  - repo_states
+  - manifest_files
+  - documentation_states
+  - sync_targets
+  produces:
+  - repo_health_reports
+  - canon_outputs
+  - sync_reports
+  - governance_artifacts
+capabilities:
+- constellation_governance
+- repo_health_checking
+- synchronization_support
+- canon_enforcement
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+depends_on:
+- akasha-grand-atlas
+- akasha-events
+- akasha-attractor
+- akasha-prospector
+type: organ
+family: discovery
+role: suite
+name: akasha-suite
+version: 1.0.0
+generated_by: akasha-canon

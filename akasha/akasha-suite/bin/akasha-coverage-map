@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+
+from pathlib import Path
+from collections import Counter
+
+HOME = Path.home()
+OUT = HOME / "ARCHETYPE_COVERAGE_MAP.md"
+
+ARCHETYPES = {
+    "feedback": ["feedback", "control loop", "homeostasis", "regulation"],
+    "oscillation": ["oscillation", "periodic", "cycle", "cyclic", "floquet", "rhythm"],
+    "resonance": ["resonance", "entrainment", "harmonic", "phase lock", "synchron"],
+    "network": ["network", "graph", "node", "edge", "topology", "connectivity"],
+    "diffusion": ["diffusion", "spread", "propagation", "flow", "percolation"],
+    "attractor": ["attractor", "basin", "stable state", "limit cycle", "chaos"],
+    "phase_transition": ["phase transition", "tipping point", "critical", "bifurcation"],
+    "optimization": ["optimization", "optimize", "search", "gradient", "fitness"],
+    "constraint": ["constraint", "solver", "satisfy", "logic", "rule system"],
+    "symmetry": ["symmetry", "symmetrical", "invariant", "symmetry-breaking"],
+    "signal": ["signal", "noise", "filter", "detection", "anomaly"],
+    "duality": ["duality", "mirror", "generator", "solver", "builder", "discriminator"],
+    "hierarchy": ["hierarchy", "layer", "composition", "nested", "multi-level"],
+    "emergence": ["emergence", "emergent", "self-organization", "collective behavior"],
+    "inference": ["inference", "infer", "pattern completion", "hidden structure", "abductive"],
+}
+
+def read_text_if_exists(path: Path) -> str:
+    try:
+        if path.exists():
+            return path.read_text(encoding="utf-8", errors="ignore")
+    except Exception:
+        pass
+    return ""
+
+def detect_archetypes(text: str):
+    lower = text.lower()
+    hits = []
+    for name, terms in ARCHETYPES.items():
+        if any(term in lower for term in terms):
+            hits.append(name)
+    return sorted(set(hits))
+
+def probable_missing(repo_name: str, detected: list[str]):
+    missing = []
+
+    if "music" in repo_name:
+        for a in ["oscillation", "resonance", "hierarchy", "inference"]:
+            if a not in detected:
+                missing.append(a)
+
+    if "cipher" in repo_name:
+        for a in ["duality", "constraint", "signal", "inference", "optimization"]:
+            if a not in detected:
+                missing.append(a)
+
+    if "discovery" in repo_name:
+        for a in ["inference", "signal", "network", "emergence"]:
+            if a not in detected:
+                missing.append(a)
+
+    if "domain-" in repo_name:
+        for a in ["hierarchy", "inference"]:
+            if a not in detected:
+                missing.append(a)
+
+    if "translator" in repo_name:
+        for a in ["hierarchy", "inference"]:
+            if a not in detected:
+                missing.append(a)
+
+    return sorted(set(missing))
+
+def is_engine_repo(repo_name: str) -> bool:
+    return repo_name.endswith("-engine")
+
+repos = sorted(
+    p for p in HOME.iterdir()
+    if p.is_dir() and p.name.startswith("akasha-")
+)
+
+repo_results = []
+archetype_index = {k: [] for k in ARCHETYPES.keys()}
+counter = Counter()
+
+for repo in repos:
+    text = ""
+    text += read_text_if_exists(repo / "README.md")
+    text += "\n"
+    text += read_text_if_exists(repo / "repo-manifest.yaml")
+    text += "\n"
+    text += read_text_if_exists(repo / "docs" / "design.md")
+    text += "\n"
+    text += read_text_if_exists(repo / "NOTES.md")
+    text += "\n"
+    text += repo.name
+
+    detected = detect_archetypes(text)
+    missing = probable_missing(repo.name, detected)
+
+    for a in detected:
+        archetype_index[a].append(repo.name)
+        counter[a] += 1
+
+    repo_results.append({
+        "name": repo.name,
+        "detected": detected,
+        "missing": missing,
+        "engine": is_engine_repo(repo.name),
+        "score": len(detected),
+        "gap_score": len(missing),
+    })
+
+repo_results_sorted = sorted(
+    repo_results,
+    key=lambda r: (r["gap_score"], -r["score"], r["name"]),
+    reverse=True
+)
+
+least_represented = sorted(counter.items(), key=lambda x: (x[1], x[0]))
+most_represented = sorted(counter.items(), key=lambda x: (-x[1], x[0]))
+
+lines = []
+lines.append("# Archetype Coverage Map")
+lines.append("")
+
+lines.append("## Summary")
+lines.append("")
+lines.append(f"- total repos scanned: {len(repo_results)}")
+lines.append(f"- total archetypes tracked: {len(ARCHETYPES)}")
+lines.append(f"- engine repos detected: {sum(1 for r in repo_results if r['engine'])}")
+lines.append("")
+
+lines.append("### Most Represented Archetypes")
+lines.append("")
+for name, count in most_represented[:8]:
+    lines.append(f"- {name}: {count}")
+lines.append("")
+
+lines.append("### Least Represented Archetypes")
+lines.append("")
+for name, count in least_represented[:8]:
+    lines.append(f"- {name}: {count}")
+lines.append("")
+
+lines.append("### Most Under-Modeled Repos")
+lines.append("")
+under_modeled = [r for r in repo_results_sorted if r["gap_score"] > 0][:12]
+if under_modeled:
+    for r in under_modeled:
+        lines.append(
+            f"- {r['name']} → missing plausible: {', '.join(r['missing'])}"
+        )
+else:
+    lines.append("- none")
+lines.append("")
+
+lines.append("## Repo Coverage")
+lines.append("")
+
+for r in sorted(repo_results, key=lambda x: x["name"]):
+    lines.append(f"### {r['name']}")
+    lines.append(f"- detected: {', '.join(r['detected']) if r['detected'] else 'none'}")
+    lines.append(f"- missing but plausible: {', '.join(r['missing']) if r['missing'] else 'none'}")
+    lines.append(f"- coverage score: {r['score']}")
+    lines.append("")
+
+lines.append("## Archetype Index")
+lines.append("")
+
+for archetype, repos_using in archetype_index.items():
+    lines.append(f"### {archetype}")
+    if repos_using:
+        for r in sorted(repos_using):
+            lines.append(f"- {r}")
+    else:
+        lines.append("- none detected")
+    lines.append("")
+
+OUT.write_text("\n".join(lines), encoding="utf-8")
+print(f"Wrote: {OUT}")

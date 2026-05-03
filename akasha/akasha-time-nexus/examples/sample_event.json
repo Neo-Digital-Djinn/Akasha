@@ -1,0 +1,9 @@
+{
+  "timestamp_utc": "2026-03-30T20:00:00Z",
+  "latitude": 38.42,
+  "longitude": -82.44,
+  "event_type": "observation",
+  "title": "Test anomaly",
+  "notes": "First living Akasha loop test",
+  "source": "manual"
+}

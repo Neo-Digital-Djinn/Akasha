@@ -1,0 +1,141 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MODE="${1:-check}"
+HOME_DIR="$HOME"
+
+print_header() {
+    echo "=================================="
+    echo "          AKASHA DOCTOR"
+    echo "=================================="
+    echo "Mode: $MODE"
+    echo ""
+}
+
+is_git_repo() {
+    [ -d "$1/.git" ]
+}
+
+check_repo() {
+    local d="$1"
+    local name
+    name="$(basename "$d")"
+
+    echo "----------------------------------"
+    echo "Repo: $name"
+
+    if ! is_git_repo "$d"; then
+        echo "  Git: NOT A REPO"
+        return
+    fi
+
+    local branch remote email dirty manifest archetypes remote_ok
+
+    branch="$(git -C "$d" branch --show-current 2>/dev/null || true)"
+    remote="$(git -C "$d" remote get-url origin 2>/dev/null || true)"
+    email="$(git -C "$d" config user.email 2>/dev/null || true)"
+
+    if [ -f "$d/repo-manifest.yaml" ]; then
+        manifest="OK"
+        if grep -q "^archetypes:" "$d/repo-manifest.yaml" 2>/dev/null; then
+            archetypes="OK"
+        else
+            archetypes="MISSING"
+        fi
+    else
+        manifest="MISSING"
+        archetypes="N/A"
+    fi
+
+    if [ -n "$(git -C "$d" status --short 2>/dev/null)" ]; then
+        dirty="DIRTY"
+    else
+        dirty="clean"
+    fi
+
+    if [[ "$remote" == git@github-akasha:mythologyprospector-hub/* ]] || [[ "$remote" == git@github.com:mythologyprospector-hub/* ]] || [[ "$remote" == https://github.com/mythologyprospector-hub/* ]]; then
+        remote_ok="OK"
+    elif [ -z "$remote" ]; then
+        remote_ok="MISSING"
+    else
+        remote_ok="CHECK"
+    fi
+
+    echo "  Branch: ${branch:-MISSING}"
+    echo "  Remote: ${remote:-MISSING}"
+    echo "  Email:  ${email:-MISSING}"
+    echo "  Manifest: $manifest"
+    echo "  Archetypes: $archetypes"
+    echo "  Working tree: $dirty"
+    echo "  Akasha remote: $remote_ok"
+}
+
+run_repo_checks() {
+    local found=0
+
+    for d in "$HOME_DIR"/akasha-* "$HOME_DIR"/engine-* "$HOME_DIR"/node-herald; do
+        if [ -d "$d" ]; then
+            check_repo "$d"
+            found=1
+        fi
+    done
+
+    if [ "$found" -eq 0 ]; then
+        echo "No Akasha repos found."
+        echo ""
+    fi
+}
+
+run_canon() {
+    echo ""
+    echo "=================================="
+    echo "         CANON CHECK"
+    echo "=================================="
+    if command -v akasha-canon >/dev/null 2>&1; then
+        akasha-canon check
+    else
+        echo "akasha-canon: not found"
+    fi
+}
+
+run_coverage() {
+    echo ""
+    echo "=================================="
+    echo "        COVERAGE UPDATE"
+    echo "=================================="
+    if command -v akasha-coverage-map >/dev/null 2>&1; then
+        akasha-coverage-map
+    else
+        echo "akasha-coverage-map: not found"
+    fi
+}
+
+run_sync() {
+    echo ""
+    echo "=================================="
+    echo "          CONSTELLATION SYNC"
+    echo "=================================="
+    if command -v akasha-sync >/dev/null 2>&1; then
+        akasha-sync
+    else
+        echo "akasha-sync: not found"
+    fi
+}
+
+print_footer() {
+    echo ""
+    echo "=================================="
+    echo "       AKASHA DOCTOR COMPLETE"
+    echo "=================================="
+}
+
+print_header
+run_repo_checks
+run_canon
+run_coverage
+
+if [ "$MODE" = "--sync" ]; then
+    run_sync
+fi
+
+print_footer

@@ -1,0 +1,32 @@
+repo: akasha-suggestion-engine
+type: organ
+family: unspecified
+role: suggestion-engine
+engine:
+  name: akasha-suggestion-engine
+  class: organ
+  maturity: seed
+identity:
+  repo: akasha-suggestion-engine
+  slug: akasha-suggestion-engine
+  title: Suggestion Engine
+ownership:
+  steward: JimmyDev
+  authority: local-first
+interfaces:
+  cli: []
+  files:
+  - README.md
+  - repo-manifest.yaml
+capabilities:
+- initialize
+- describe
+alignment:
+  constellation_role: engine
+  canon_status: provisional
+depends_on:
+- akasha-requests
+- akasha-suite
+name: akasha-suggestion-engine
+version: 1.0.0
+generated_by: akasha-canon

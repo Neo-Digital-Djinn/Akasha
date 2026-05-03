@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DOWNLOAD_DIR="/sdcard/Download"
+WORKROOT="$HOME/.akasha_tmp/archetype_seed"
+REQ_REPO="$HOME/akasha-requests"
+OPEN_DIR="$REQ_REPO/requests/open"
+INDEX_FILE="$REQ_REPO/index/REQUEST_INDEX.md"
+BIRTH_TOOL="$HOME/akasha-suite/bin/akasha-birth"
+
+MODE="${1:-install}"
+
+mkdir -p "$WORKROOT" "$OPEN_DIR" "$(dirname "$INDEX_FILE")"
+
+find_latest() {
+  local pattern="$1"
+  find "$DOWNLOAD_DIR" -maxdepth 1 -type f -name "$pattern" -print 2>/dev/null | xargs -r ls -t 2>/dev/null | head -n 1
+}
+
+REQ_ZIP="$(find_latest 'akasha_archetype_requests*.zip')"
+WRAP_ZIP="$(find_latest 'akasha_archetype_heredoc_wrappers*.zip')"
+
+if [[ -z "${REQ_ZIP:-}" && -z "${WRAP_ZIP:-}" ]]; then
+  echo "No archetype zip files found in $DOWNLOAD_DIR"
+  echo "Expected something like:"
+  echo "  akasha_archetype_requests.zip"
+  echo "  akasha_archetype_heredoc_wrappers.zip"
+  exit 1
+fi
+
+if ! command -v unzip >/dev/null 2>&1; then
+  echo "unzip is not installed."
+  echo "Install it with: pkg install unzip"
+  exit 1
+fi
+
+rm -rf "$WORKROOT"
+mkdir -p "$WORKROOT/reqs" "$WORKROOT/wrappers"
+
+echo "=== Akasha Archetype Seeder ==="
+
+if [[ -n "${REQ_ZIP:-}" ]]; then
+  cp "$REQ_ZIP" "$WORKROOT/"
+  unzip -oq "$WORKROOT/$(basename "$REQ_ZIP")" -d "$WORKROOT/reqs"
+  echo "Loaded request zip: $(basename "$REQ_ZIP")"
+fi
+
+if [[ -n "${WRAP_ZIP:-}" ]]; then
+  cp "$WRAP_ZIP" "$WORKROOT/"
+  unzip -oq "$WORKROOT/$(basename "$WRAP_ZIP")" -d "$WORKROOT/wrappers"
+  echo "Loaded wrapper zip: $(basename "$WRAP_ZIP")"
+fi
+
+installed_ids=()
+
+# Prefer wrapper scripts if present
+if compgen -G "$WORKROOT/wrappers/add-REQ-ARC-*.sh" >/dev/null; then
+  echo "Running heredoc wrapper scripts..."
+  chmod +x "$WORKROOT"/wrappers/add-REQ-ARC-*.sh
+  for script in "$WORKROOT"/wrappers/add-REQ-ARC-*.sh; do
+    bash "$script"
+    req_id="$(basename "$script" | sed -E 's/^add-(REQ-ARC-[0-9]+)-.*$/\1/')"
+    installed_ids+=("$req_id")
+  done
+elif compgen -G "$WORKROOT/reqs/REQ-ARC-*.json" >/dev/null; then
+  echo "Installing raw JSON request files..."
+  cp -f "$WORKROOT"/reqs/REQ-ARC-*.json "$OPEN_DIR"/
+  for f in "$WORKROOT"/reqs/REQ-ARC-*.json; do
+    req_id="$(basename "$f" | sed -E 's/^(REQ-ARC-[0-9]+)-.*$/\1/')"
+    installed_ids+=("$req_id")
+    echo "Installed $(basename "$f")"
+  done
+else
+  echo "No wrapper scripts or REQ-ARC JSON files found after unzip."
+  exit 1
+fi
+
+# Ensure index exists
+if [[ ! -f "$INDEX_FILE" ]]; then
+  cat > "$INDEX_FILE" <<'IDX'
+# Request Index
+
+| ID | Title | Status |
+|----|------|-------|
+IDX
+fi
+
+# Update index for installed open requests
+python <<'PY'
+import json
+from pathlib import Path
+
+req_repo = Path.home() / "akasha-requests"
+open_dir = req_repo / "requests" / "open"
+index_file = req_repo / "index" / "REQUEST_INDEX.md"
+
+existing = set()
+if index_file.exists():
+    for line in index_file.read_text(encoding="utf-8").splitlines():
+        if line.startswith("| REQ-"):
+            parts = [p.strip() for p in line.strip("|").split("|")]
+            if parts:
+                existing.add(parts[0])
+
+rows = []
+for path in sorted(open_dir.glob("REQ-ARC-*.json")):
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        continue
+    req_id = data.get("request_id", "")
+    title = data.get("title", "Untitled Request")
+    if req_id and req_id not in existing:
+        rows.append(f"| {req_id} | {title} | open |")
+
+if rows:
+    with index_file.open("a", encoding="utf-8") as f:
+        for row in rows:
+            f.write(row + "\n")
+PY
+
+# Optional birth mode
+if [[ "$MODE" == "--birth" ]]; then
+  echo "Birth mode enabled. Forging all REQ-ARC requests currently in open..."
+  if [[ ! -x "$BIRTH_TOOL" ]]; then
+    echo "Birth tool not found or not executable: $BIRTH_TOOL"
+    exit 1
+  fi
+
+  mapfile -t birth_ids < <(find "$OPEN_DIR" -maxdepth 1 -type f -name 'REQ-ARC-*.json' -printf '%f\n' \
+    | sed -E 's/^(REQ-ARC-[0-9]+)-.*$/\1/' | sort -u)
+
+  for req_id in "${birth_ids[@]}"; do
+    echo ""
+    echo ">>> Forging $req_id"
+    "$BIRTH_TOOL" "$req_id"
+  done
+fi
+
+rm -rf "$WORKROOT"
+
+echo ""
+echo "Done."
+echo "Open requests now live in: $OPEN_DIR"
+echo "Index updated: $INDEX_FILE"
+
+if [[ "$MODE" == "--birth" ]]; then
+  echo "All REQ-ARC requests in open were sent through akasha-birth."
+else
+  echo "Run this later if you want to forge them all:"
+  echo "  akasha-seed-archetypes --birth"
+fi

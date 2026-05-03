@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+BASE="$(cd "$(dirname "$0")/../../../.." && pwd)"
+while true; do
+clear
+echo "=== AKASHA ROOT GENESIS MENU ==="
+echo "1) Full Run"
+echo "2) Phase Engine"
+echo "3) Doctor Check"
+echo "4) Tail Latest Log"
+echo "5) Exit"
+read -rp "Choice: " c
+case "$c" in
+1) read -rp "Prompt: " q; "$BASE/akasha-run" "$q"; read -n1 -r -p "Enter to continue";;
+2) python3 "$BASE/akasha/akasha-phase-engine/src/main.py" "$BASE/akasha/akasha-domain-physics"; read -n1 -r -p "Enter";;
+3) "$BASE/akasha/akasha-suite/bin/akasha-doctor" || true; read -n1 -r -p "Enter";;
+4) ls -1t "$BASE/akasha-core/logs" 2>/dev/null | head -1 | xargs -I{} sh -c "tail -50 '$BASE/akasha-core/logs/{}'"; read -n1 -r -p "Enter";;
+5) exit 0;;
+esac
+done

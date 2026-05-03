@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+
+import json
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+HOME = Path.home()
+REQUESTS_REPO = next((p for p in [HOME / "akasha-requests", HOME / "akasha" / "akasha-requests"] if p.exists()), HOME / "akasha-requests")
+TRANSLATOR = next((p for p in [HOME / "akasha-request-translator/src/request_translator.py", HOME / "akasha/akasha-request-translator/src/request_translator.py"] if p.exists()), HOME / "akasha-request-translator/src/request_translator.py")
+OPEN_DIR = REQUESTS_REPO / "requests" / "open"
+INDEX_FILE = REQUESTS_REPO / "index" / "REQUEST_INDEX.md"
+
+
+def next_request_id() -> str:
+    pattern = re.compile(r"REQ-(\d+)")
+    max_id = 0
+
+    for path in (REQUESTS_REPO / "requests").rglob("REQ-*.json"):
+        match = pattern.search(path.name)
+        if match:
+            max_id = max(max_id, int(match.group(1)))
+
+    return f"REQ-{max_id + 1:03d}"
+
+
+def slugify_title(title: str) -> str:
+    slug = title.lower().strip()
+    slug = re.sub(r"[^a-z0-9]+", "-", slug)
+    slug = re.sub(r"-+", "-", slug).strip("-")
+    return slug
+
+
+def update_index(req_id: str, title: str, status: str = "open") -> None:
+    INDEX_FILE.parent.mkdir(parents=True, exist_ok=True)
+
+    if not INDEX_FILE.exists():
+        INDEX_FILE.write_text(
+            "# Request Index\n\n| ID | Title | Status |\n|----|------|-------|\n",
+            encoding="utf-8"
+        )
+
+    with INDEX_FILE.open("a", encoding="utf-8") as f:
+        f.write(f"| {req_id} | {title} | {status} |\n")
+
+
+def main():
+    if len(sys.argv) < 2:
+        print('Usage: akasha-capture "idea text here"')
+        sys.exit(1)
+
+    idea = " ".join(sys.argv[1:]).strip()
+
+    if not idea:
+        print("No idea text provided.")
+        sys.exit(1)
+
+    if not TRANSLATOR.exists():
+        print(f"Translator not found: {TRANSLATOR}")
+        sys.exit(1)
+
+    req_id = next_request_id()
+
+    result = subprocess.run(
+        ["python", str(TRANSLATOR), idea],
+        capture_output=True,
+        text=True
+    )
+
+    if result.returncode != 0:
+        print("Translator failed.")
+        print(result.stderr)
+        sys.exit(result.returncode)
+
+    try:
+        data = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        print("Translator output was not valid JSON.")
+        print(result.stdout)
+        sys.exit(1)
+
+    data["request_id"] = req_id
+
+    title = data.get("title", "Untitled Request")
+    slug = slugify_title(title)
+    filename = f"{req_id}-{slug}.json"
+
+    OPEN_DIR.mkdir(parents=True, exist_ok=True)
+    outpath = OPEN_DIR / filename
+
+    with outpath.open("w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+
+    update_index(req_id, title, "open")
+
+    print(f"Captured: {req_id}")
+    print(f"File: {outpath}")
+    print(f"Title: {title}")
+
+
+if __name__ == "__main__":
+    main()

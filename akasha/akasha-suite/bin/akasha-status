@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+from pathlib import Path
+
+HOME = Path.home()
+
+def find_repo(name):
+    for base in [HOME, HOME / "akasha"]:
+        candidate = base / name
+        if candidate.exists():
+            return candidate
+    return None
+
+req_repo = find_repo("akasha-requests")
+REQ = (req_repo / "requests") if req_repo else None
+
+stages = ["open", "exploring", "approved", "forged", "archived"]
+print("\nAKASHA REQUEST STATUS\n")
+for stage in stages:
+    if REQ:
+        path = REQ / stage
+        count = len(list(path.glob("REQ-*.json"))) if path.exists() else 0
+    else:
+        count = "?"
+    print(f"{stage:10} {count}")
+print("")
