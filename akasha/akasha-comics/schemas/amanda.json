@@ -1,0 +1,119 @@
+{
+  "id": "amanda_001",
+  "alias": "Commander Amanda",
+  "real_name_optional": "Amanda",
+
+  "archetype": "Frontline Enforcer",
+  "alignment": "hero",
+
+  "inspired_by": "co-worker",
+
+  "core_trait": "Assertive, no-nonsense leadership",
+  "trait_type": "positive",
+
+  "baseline_behavior": "Confident cashier who handles problems immediately and keeps the workplace energized",
+
+  "power_expression": "Instantly detects and confronts disruptions, projecting authority that stabilizes the environment",
+
+  "abilities": [
+    "Immediate response to conflict",
+    "Commanding presence that deters trouble",
+    "Boosts morale and energy of coworkers"
+  ],
+
+  "triggers": [
+    "Customer conflict",
+    "Store disruptions",
+    "High-energy situations"
+  ],
+
+  "limitations": [
+    "Can come off as intimidating",
+    "May escalate situations quickly"
+  ],
+
+  "fears_or_stressors": [
+    "Loss of control in environment"
+  ],
+
+  "motivations": [
+    "Keeping order",
+    "Supporting coworkers"
+  ],
+
+  "catchphrase": "",
+  "activation_phrase": "AMANDA POWERS ACTIVATE!",
+
+  "personality": {
+    "demeanor": "confident, bold",
+    "energy_level": "high",
+    "social_style": "direct",
+    "humor_style": "sharp"
+  },
+
+  "quirks_and_ticks": [
+    "Signature food order",
+    "Distinctive hair color"
+  ],
+
+  "speech_patterns": [
+    "Direct",
+    "No-nonsense",
+    "Clear commands"
+  ],
+
+  "appearance": {
+    "build": "",
+    "hair": "bright pink roots fading into dark green",
+    "default_expression": "focused, alert",
+    "notable_features": [
+      "high-contrast hair color"
+    ]
+  },
+
+  "work_profile": {
+    "role": "cashier",
+    "typical_tasks": [
+      "register",
+      "handling issues"
+    ],
+    "assigned_areas": [
+      "front counter"
+    ],
+    "shift_time": "morning"
+  },
+
+  "uniform": {
+    "standard": "store uniform",
+    "customizations": [
+      "styled hair as signature look"
+    ]
+  },
+
+  "superhero_form": {
+    "costume": "bold, high-contrast uniform",
+    "visual_theme": "authority and control",
+    "color_palette": [
+      "pink",
+      "green",
+      "black"
+    ],
+    "aura_or_effects": [
+      "sharp, focused energy lines"
+    ]
+  },
+
+  "environment": {
+    "primary_location": "front counter"
+  },
+
+  "relationships": [
+    {
+      "character": "Mavis",
+      "dynamic": "strong teamwork, high energy"
+    }
+  ],
+
+  "tone": "heroic_comedic",
+  "notes": "Central stabilizing force in chaotic situations"
+}

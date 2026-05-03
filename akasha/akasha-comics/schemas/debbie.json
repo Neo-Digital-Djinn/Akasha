@@ -1,0 +1,142 @@
+{
+  "id": "debbie_001",
+  "alias": "Boss Debbie",
+  "real_name_optional": "Debbie",
+
+  "archetype": "System Anchor",
+  "alignment": "hero",
+
+  "inspired_by": "co-worker (store owner/boss figure)",
+
+  "core_trait": "Compassionate authority",
+  "trait_type": "positive",
+
+  "baseline_behavior": "Kind, understanding, and steady leader who supports employees while maintaining order across the entire store",
+
+  "power_expression": "Her presence enforces structure and stability, restoring order to chaotic environments and aligning everyone back into their roles",
+
+  "abilities": [
+    "Instantly stabilizes chaotic situations",
+    "Projects calm authority that others naturally follow",
+    "Reinforces roles and responsibilities without confrontation",
+    "Maintains emotional balance across the team",
+    "Absorbs and redistributes stress within the environment"
+  ],
+
+  "triggers": [
+    "Workplace conflict",
+    "Team stress or burnout",
+    "Operational breakdowns",
+    "Moments of disorder or confusion"
+  ],
+
+  "limitations": [
+    "Takes on emotional weight of the entire team",
+    "Relies on others for physical execution of tasks",
+    "May delay decisive action to preserve harmony",
+    "Can become overwhelmed if too many issues stack at once"
+  ],
+
+  "fears_or_stressors": [
+    "Team dysfunction",
+    "Loss of control over the environment",
+    "Employees feeling unsupported"
+  ],
+
+  "motivations": [
+    "Maintain harmony and stability",
+    "Support and protect her team",
+    "Keep the operation running smoothly"
+  ],
+
+  "catchphrase": "",
+  "activation_phrase": "DEBBIE POWERS ACTIVATE!",
+
+  "personality": {
+    "demeanor": "warm, patient, authoritative",
+    "energy_level": "steady",
+    "social_style": "approachable leader",
+    "humor_style": "gentle, lighthearted"
+  },
+
+  "quirks_and_ticks": [
+    "Enjoys small moments of care like hair braiding",
+    "Welcomes gestures of appreciation like shoulder rubs",
+    "Observes more than she speaks"
+  ],
+
+  "speech_patterns": [
+    "Calm and measured",
+    "Reassuring tone",
+    "Uses simple, clear direction when needed"
+  ],
+
+  "appearance": {
+    "build": "average",
+    "hair": "",
+    "default_expression": "kind, composed",
+    "notable_features": [
+      "warm, reassuring presence"
+    ]
+  },
+
+  "work_profile": {
+    "role": "store owner / boss",
+    "typical_tasks": [
+      "overseeing operations",
+      "supporting employees",
+      "resolving issues"
+    ],
+    "assigned_areas": [
+      "entire store"
+    ],
+    "shift_time": ""
+  },
+
+  "uniform": {
+    "standard": "manager attire / store uniform",
+    "customizations": [
+      "practical, comfortable presentation"
+    ]
+  },
+
+  "superhero_form": {
+    "costume": "refined, elevated version of her work attire",
+    "visual_theme": "calm authority and balance",
+    "color_palette": [
+      "soft gold",
+      "warm neutrals"
+    ],
+    "aura_or_effects": [
+      "subtle calming glow",
+      "environment visually stabilizes around her"
+    ]
+  },
+
+  "environment": {
+    "primary_location": "entire store (full domain influence)",
+    "secondary_locations": [
+      "office area",
+      "front counter",
+      "employee spaces"
+    ]
+  },
+
+  "relationships": [
+    {
+      "character": "Mavis",
+      "dynamic": "trusted core worker, mutual respect"
+    },
+    {
+      "character": "Amanda",
+      "dynamic": "relies on for frontline control"
+    },
+    {
+      "character": "Kelsey",
+      "dynamic": "protective oversight, patient guidance"
+    }
+  ],
+
+  "tone": "grounded_heroic",
+  "notes": "Central authority figure; represents stability, care, and structure within the system"
+}

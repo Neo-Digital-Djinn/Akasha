@@ -1,0 +1,144 @@
+{
+  "id": "mavis_001",
+  "alias": "Mavis",
+  "real_name_optional": "Teresa",
+
+  "archetype": "Energy Engine",
+  "alignment": "hero",
+
+  "inspired_by": "co-worker (central figure)",
+
+  "core_trait": "Joyful, relentless, high-energy service",
+  "trait_type": "positive",
+
+  "baseline_behavior": "Friendly, polite, and constantly in motion; balances multiple tasks while maintaining a cheerful and slightly eccentric presence",
+
+  "power_expression": "Transforms energy, movement, and positivity into a continuous output that fuels both the workplace and the wider community",
+
+  "abilities": [
+    "Simultaneously manages multiple tasks with fluid, dance-like motion",
+    "Radiates energy that motivates coworkers and customers",
+    "Maintains high output without visible fatigue during peak demand",
+    "Turns routine service work into a rhythmic, almost hypnotic flow",
+    "Acts as the primary source of operational momentum"
+  ],
+
+  "triggers": [
+    "Busy rush periods",
+    "High customer demand",
+    "Early morning energy spikes",
+    "Music, rhythm, or repetitive motion"
+  ],
+
+  "limitations": [
+    "Can overwhelm slower-paced coworkers",
+    "May become scattered if flow is interrupted",
+    "Relies on continuous motion to maintain peak performance"
+  ],
+
+  "fears_or_stressors": [
+    "Being forced to slow down",
+    "Loss of rhythm or routine",
+    "Negative or stagnant environments"
+  ],
+
+  "motivations": [
+    "Helping people start their day right",
+    "Keeping the environment upbeat and productive",
+    "Expressing energy and movement"
+  ],
+
+  "catchphrase": "MAVIS POWERS ACTIVATE!",
+  "activation_phrase": "MAVIS POWERS ACTIVATE!",
+
+  "personality": {
+    "demeanor": "bubbly, upbeat, eccentric",
+    "energy_level": "very high",
+    "social_style": "friendly, expressive",
+    "humor_style": "playful, quirky"
+  },
+
+  "quirks_and_ticks": [
+    "Constant motion, rarely stands still",
+    "Rhythmic or dance-like movements while working",
+    "Unpredictable but harmless odd habits",
+    "Highly expressive body language"
+  ],
+
+  "speech_patterns": [
+    "Quick, upbeat tone",
+    "Positive phrasing",
+    "Occasional tangents or abstract thoughts"
+  ],
+
+  "appearance": {
+    "build": "",
+    "hair": "",
+    "default_expression": "bright, smiling",
+    "notable_features": [
+      "expressive movement",
+      "animated presence"
+    ]
+  },
+
+  "work_profile": {
+    "role": "primary food/service operator",
+    "typical_tasks": [
+      "food prep",
+      "multi-tasking service",
+      "customer interaction"
+    ],
+    "assigned_areas": [
+      "kitchen",
+      "prep area",
+      "service zones"
+    ],
+    "shift_time": "early morning"
+  },
+
+  "uniform": {
+    "standard": "store uniform",
+    "customizations": [
+      "worn in a way that allows movement and comfort"
+    ]
+  },
+
+  "superhero_form": {
+    "costume": "dynamic, multi-layered version of uniform with flowing elements",
+    "visual_theme": "motion, rhythm, radiant energy",
+    "color_palette": [
+      "bright neon tones",
+      "warm energetic colors"
+    ],
+    "aura_or_effects": [
+      "motion trails resembling multiple arms in action",
+      "rhythmic energy pulses",
+      "visual echo of repeated movements"
+    ]
+  },
+
+  "environment": {
+    "primary_location": "kitchen and service area",
+    "secondary_locations": [
+      "entire store during peak activity"
+    ]
+  },
+
+  "relationships": [
+    {
+      "character": "Debbie",
+      "dynamic": "trusted core operator, mutual respect"
+    },
+    {
+      "character": "Amanda",
+      "dynamic": "high-energy teamwork, synchronized workflow"
+    },
+    {
+      "character": "Kelsey",
+      "dynamic": "contrast; fast vs slow, supportive but overwhelming"
+    }
+  ],
+
+  "tone": "heroic_comedic",
+  "notes": "Central energy source of the environment; embodies motion, positivity, and controlled chaos"
+}

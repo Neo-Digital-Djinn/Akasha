@@ -1,0 +1,127 @@
+{
+  "id": "kelsey_001",
+  "alias": "Kalm Kelsey",
+  "real_name_optional": "Kelsey",
+
+  "archetype": "Gentle Drifter",
+  "alignment": "civilian",
+
+  "inspired_by": "co-worker (self-described encouraged)",
+
+  "core_trait": "Quiet, slowed, humble presence",
+  "trait_type": "neutral",
+
+  "baseline_behavior": "Comes in sleepy with bed head, keeps to himself, kind and soft-spoken, often ends up with less desirable tasks",
+
+  "power_expression": "Operates slightly out of sync with fast-paced environments, creating a calm but delayed response to everything around him",
+
+  "abilities": [
+    "Calm presence reduces tension in chaotic situations",
+    "Unaffected by stress or urgency",
+    "Naturally drifts into low-conflict, low-visibility roles"
+  ],
+
+  "triggers": [
+    "Busy rush periods",
+    "Being rushed or corrected",
+    "Loud or chaotic environments"
+  ],
+
+  "limitations": [
+    "Delayed reactions",
+    "Gets overlooked or underestimated",
+    "Assigned less desirable tasks like bathroom duty"
+  ],
+
+  "fears_or_stressors": [
+    "Being rushed",
+    "Being scolded publicly"
+  ],
+
+  "motivations": [
+    "Getting through the day peacefully",
+    "Avoiding conflict"
+  ],
+
+  "catchphrase": "",
+  "activation_phrase": "...Kelsey powers... activating...",
+
+  "personality": {
+    "demeanor": "quiet, gentle",
+    "energy_level": "low",
+    "social_style": "reserved",
+    "humor_style": "dry, subtle"
+  },
+
+  "quirks_and_ticks": [
+    "Often sleepy at start of shift",
+    "Uses phone when distracted",
+    "Same breakfast routine"
+  ],
+
+  "speech_patterns": [
+    "Short responses",
+    "Soft-spoken",
+    "Occasional delayed replies"
+  ],
+
+  "appearance": {
+    "build": "average",
+    "hair": "bed head, slightly messy",
+    "default_expression": "tired but calm",
+    "notable_features": [
+      "Occasional small scratch or mark near eye"
+    ]
+  },
+
+  "work_profile": {
+    "role": "store employee",
+    "typical_tasks": [
+      "cleaning",
+      "maintenance",
+      "bathroom duty"
+    ],
+    "assigned_areas": [
+      "bathrooms",
+      "back areas"
+    ],
+    "shift_time": ""
+  },
+
+  "uniform": {
+    "standard": "store uniform",
+    "customizations": [
+      "tucked in shirt",
+      "slightly unkempt hair"
+    ]
+  },
+
+  "superhero_form": {
+    "costume": "subtle variation of uniform",
+    "visual_theme": "soft, slowed motion effect",
+    "color_palette": [
+      "muted tones"
+    ],
+    "aura_or_effects": [
+      "slight motion delay or blur effect"
+    ]
+  },
+
+  "environment": {
+    "primary_location": "store interior",
+    "secondary_locations": [
+      "back rooms",
+      "bathrooms"
+    ]
+  },
+
+  "relationships": [
+    {
+      "character": "Debbie",
+      "dynamic": "managed by"
+    }
+  ],
+
+  "tone": "gentle_comedic",
+  "notes": "Inspired by a real person; emphasize kindness and calm over exaggeration"
+}

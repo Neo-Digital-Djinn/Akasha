@@ -1,0 +1,86 @@
+id: akasha-comics
+type: world-repo
+name: Akasha Comics
+version: 1.0.0
+status: active
+description: 'Structured narrative world representing a semi-realistic Appalachian
+  convenience store ecosystem. Designed for deterministic and generative comic storytelling
+  using Akasha systems.
+
+  '
+structure:
+  root: .
+  data_dir: data
+  scenes_dir: scenes
+  assets_dir: character_cards
+  lore_dir: json
+  scripts_dir: scripts
+world:
+  setting: modern_appalachia
+  primary_location: main_store
+  tone: grounded_with_absurdity
+  time_model: continuous_day_cycle
+canon:
+  priority:
+  - data/
+  - bible/
+  - scenes/
+  - json/
+  rules:
+    enforce_unique_ids: true
+    require_manifest_per_entity: false
+    allow_generated_fields: true
+story:
+  supports_bible: true
+  supports_arcs: true
+  supports_dynamic_generation: true
+  entry_points:
+    default_scene: scenes/scene_001_opening.json
+  generation_modes:
+  - deterministic
+  - variation
+  - simulation
+characters:
+  source: data/characters
+  require_ids: true
+  allow_aliases: true
+locations:
+  source: data/stores
+  primary: main_store
+rendering:
+  supports_cards: true
+  supports_prompt_generation: true
+  prompt_sources:
+  - character_cards/image_prompts
+  - reference/images
+variation:
+  enabled: true
+  hooks:
+  - customer_conflict
+  - equipment_failure
+  - staffing_shortage
+  - emotional_spike
+  - unexpected_arrival
+  intensity_scale: 1-5
+dependencies:
+- akasha-suite
+- mythology-engine
+checks:
+  required_files:
+  - README.md
+  - repo-manifest.yaml
+  recommended_dirs:
+  - data/characters
+  - scenes/
+  warnings:
+  - duplicate_character_defs
+  - orphan_scenes
+extensions:
+  bible_dir: bible/
+  arcs_dir: bible/arcs/
+  timeline_file: bible/timeline.json
+meta:
+  author: Akasha System
+  generated_by: akasha-canon
+  last_updated: 2026-04-23
+generated_by: akasha-canon

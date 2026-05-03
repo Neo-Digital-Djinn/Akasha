@@ -1,0 +1,43 @@
+{
+  "scene_id": "",
+  "title": "",
+  "location": "",
+  "time": "",
+
+  "summary": "",
+
+  "characters_present": [
+    ""
+  ],
+
+  "environment": {
+    "lighting": "",
+    "mood": "",
+    "background_elements": [
+      ""
+    ]
+  },
+
+  "panels": [
+    {
+      "panel_number": 1,
+      "type": "wide | medium | close | action",
+      "description": "",
+      "characters": [
+        ""
+      ],
+      "dialogue": [
+        {
+          "character": "",
+          "line": ""
+        }
+      ],
+      "caption": "",
+      "effects": [
+        ""
+      ]
+    }
+  ],
+
+  "notes": ""
+}

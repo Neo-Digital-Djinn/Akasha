@@ -1,0 +1,111 @@
+{
+  "id": "",
+  "alias": "",
+  "real_name_optional": "",
+
+  "archetype": "",
+  "alignment": "hero | antihero | civilian | wildcard",
+
+  "inspired_by": "real person (internal reference only, do not publish)",
+
+  "core_trait": "",
+  "trait_type": "positive | negative | neutral",
+
+  "baseline_behavior": "What are they like in real life day-to-day?",
+
+  "power_expression": "How does that behavior scale into a superpower?",
+
+  "abilities": [
+    ""
+  ],
+
+  "triggers": [
+    "What situations make their power stronger or more noticeable?"
+  ],
+
+  "limitations": [
+    "Weaknesses, downsides, or social friction caused by their trait"
+  ],
+
+  "fears_or_stressors": [
+    "What overwhelms or shuts them down?"
+  ],
+
+  "motivations": [
+    "What drives them? (money, helping people, routine, pride, etc.)"
+  ],
+
+  "catchphrase": "",
+  "activation_phrase": "",
+
+  "personality": {
+    "demeanor": "quiet | loud | anxious | confident | etc.",
+    "energy_level": "low | medium | high",
+    "social_style": "friendly | reserved | blunt | awkward | etc.",
+    "humor_style": "dry | goofy | none | sarcastic"
+  },
+
+  "quirks_and_ticks": [
+    "Small habits, sayings, repetitive behaviors, etc."
+  ],
+
+  "speech_patterns": [
+    "How do they talk? (slow, fast, pauses, filler words, etc.)"
+  ],
+
+  "appearance": {
+    "build": "",
+    "hair": "",
+    "default_expression": "",
+    "notable_features": [
+      ""
+    ]
+  },
+
+  "work_profile": {
+    "role": "job at location",
+    "typical_tasks": [
+      ""
+    ],
+    "assigned_areas": [
+      "register | kitchen | bathrooms | stockroom | etc."
+    ],
+    "shift_time": ""
+  },
+
+  "uniform": {
+    "standard": "normal work clothes",
+    "customizations": [
+      "how they wear it differently"
+    ]
+  },
+
+  "superhero_form": {
+    "costume": "",
+    "visual_theme": "",
+    "color_palette": [
+      ""
+    ],
+    "aura_or_effects": [
+      "visual exaggerations when powers are active"
+    ]
+  },
+
+  "environment": {
+    "primary_location": "",
+    "secondary_locations": [
+      ""
+    ]
+  },
+
+  "relationships": [
+    {
+      "character": "",
+      "dynamic": "friend | conflict | avoids | mentor | etc."
+    }
+  ],
+
+  "tone": "comedic | grounded | chaotic | heroic | mixed",
+
+  "notes": "Anything else important, funny, or weird"
+}
