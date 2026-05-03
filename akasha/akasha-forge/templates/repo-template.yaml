@@ -1,0 +1,44 @@
+template_name: akasha-standard-repository
+
+description: >
+  Standard template used by Akasha Forge to create new ecosystem repositories.
+
+required_files:
+
+  - README.md
+  - CHARTER.md
+  - CONTRIBUTING.md
+  - LICENSE
+  - repo-manifest.yaml
+
+structure:
+
+  docs:
+    purpose: documentation and specifications
+
+  src:
+    purpose: core system implementation
+
+  experiments:
+    purpose: exploratory prototypes and research
+
+  tools:
+    purpose: helper scripts and utilities
+
+  tests:
+    purpose: validation and verification
+
+metadata_requirements:
+
+  name: repository name
+  role: ecosystem role
+  layer: system layer
+  steward: responsible maintainer
+  status: experimental | operational | canonical
+
+rules:
+
+  - repository must align with Akasha axioms
+  - repository must register in akasha-constellation
+  - repository must define its role and layer
+  - repository must include documentation

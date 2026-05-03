@@ -1,0 +1,85 @@
+repo:
+  name: akasha-geometry
+  ecosystem: akasha
+  version: 0.3.0
+  status: experimental
+
+engine:
+  family: analysis
+  class: constraint_validation_engine
+  role: structural_geometry_analysis
+
+identity:
+  role: engine
+  layer: analysis
+  description: >
+    Structural geometry engine for the Akasha constellation. Responsible for
+    representing Constellation nodes and relationships as a typed graph, detecting
+    structural patterns (shapes, symmetry, bridges, frontiers), enforcing lattice
+    validity rules, auditing node role expectations, and generating ranked
+    discovery hypotheses with falsifiers. Reads from Constellation. Does not
+    mutate source data. Constellation remains the source of truth.
+
+ownership:
+  steward: human
+  approval_required: true
+
+interfaces:
+  consumes:
+    - constellation_node_data
+    - constellation_relationship_data
+    - akasha_table_schema
+    - akasha_lattice_schema
+  produces:
+    - shape_detections
+    - lattice_violation_reports
+    - role_audit_reports
+    - missing_link_predictions
+    - discovery_frontier_rankings
+    - compound_findings
+    - geometry_hypotheses
+    - request_json_exports
+
+capabilities:
+  - typed_graph_construction
+  - bfs_distance_computation
+  - shape_detection
+  - symmetry_detection
+  - spiral_path_detection
+  - lattice_violation_detection
+  - node_role_auditing
+  - missing_link_prediction
+  - scalar_field_propagation
+  - field_tension_mapping
+  - convergence_point_detection
+  - compound_finding_generation
+  - hypothesis_generation_with_falsifiers
+  - request_schema_export
+
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+  alignment_statement: >
+    This system is part of the Akasha ecosystem and aligns with
+    akasha-axioms, akasha-world, and akasha-constellation.
+    It enforces Coherence (Axiom 1) by detecting structural contradictions.
+    It enforces Traceability (Axiom 5) by requiring falsifiers on all hypotheses.
+    It enforces Modularity (Axiom 6) by reading from Constellation without mutation.
+    It enforces Transparency (Axiom 7) by exposing all detection logic as inspectable code.
+    It enforces Stewardship (Axiom 9) by flagging issues for human review, never resolving them autonomously.
+
+depends_on:
+  - akasha-axioms
+  - akasha-world
+  - akasha-constellation
+
+canonical_status: experimental
+maturity: prototype
+
+type: organ
+family: analysis
+role: geometry
+name: akasha-geometry
+version: 0.3.0
+generated_by: akasha-geometry-engine

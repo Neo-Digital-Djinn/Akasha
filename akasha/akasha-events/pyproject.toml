@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "akasha-events"
+version = "0.2.0"
+description = "Akasha event schema and persistent ledger"
+requires-python = ">=3.10"
+
+[project.scripts]
+akasha-events = "akasha_events.cli.main:main"
+
+[tool.setuptools.packages.find]
+include = ["akasha_events*"]

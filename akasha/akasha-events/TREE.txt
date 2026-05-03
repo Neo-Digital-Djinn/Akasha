@@ -1,0 +1,21 @@
+akasha-events-v2
+├── akasha_events
+│   ├── cli
+│   │   └── main.py
+│   ├── storage
+│   │   ├── schema.sql
+│   │   └── sqlite.py
+│   └── __init__.py
+├── docs
+│   ├── ARCHITECTURE.md
+│   └── INTEGRATION.md
+├── examples
+│   └── example_event.json
+├── schemas
+│   └── event.schema.json
+├── tests
+│   └── test_storage_smoke.py
+├── pyproject.toml
+├── README.md
+├── repo-manifest.yaml
+└── schemas_placeholder.txt

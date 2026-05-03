@@ -1,0 +1,43 @@
+repo:
+  name: akasha-events
+  ecosystem: akasha
+  version: 0.2.0
+  status: active
+engine:
+  family: observation
+  class: ledger_engine
+  role: canonical_event_store
+identity:
+  role: core
+  layer: ledger
+  description: 'Canonical event schema and persistent storage layer for the Akasha
+    ecosystem.
+
+    '
+ownership:
+  steward: human
+  approval_required: true
+interfaces:
+  consumes:
+  - akasha_event_payloads
+  produces:
+  - persistent_event_records
+  - event_queries
+  - event_exports
+capabilities:
+- canonical_event_schema
+- sqlite_event_storage
+- event_ingestion
+- event_query_support
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+depends_on:
+- akasha-time-nexus
+type: organ
+family: discovery
+role: events
+name: akasha-events
+version: 1.0.0
+generated_by: akasha-canon

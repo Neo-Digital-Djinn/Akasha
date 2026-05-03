@@ -1,0 +1,17 @@
+{
+  "event_id": "example-0001",
+  "timestamp": "2026-03-30T20:00:00Z",
+  "location": "38.42,-82.44",
+  "category": "observation",
+  "source": "human",
+  "payload": {
+    "title": "strange lights",
+    "notes": "three flashes near tree line",
+    "context": {
+      "clock": {
+        "timezone_name": "UTC"
+      }
+    }
+  },
+  "confidence": 0.72
+}

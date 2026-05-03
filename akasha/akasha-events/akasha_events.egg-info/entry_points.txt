@@ -1,0 +1,2 @@
+[console_scripts]
+akasha-events = akasha_events.cli.main:main

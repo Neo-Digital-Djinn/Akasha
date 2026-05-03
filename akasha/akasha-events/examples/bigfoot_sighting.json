@@ -1,0 +1,12 @@
+{
+  "event_id": "example-bigfoot-001",
+  "timestamp": "2026-03-30T20:00:00Z",
+  "location": "46.8523,-121.7603",
+  "category": "cryptid_observation",
+  "source": "human_report",
+  "payload": {
+    "description": "large bipedal figure seen near tree line",
+    "tracks_found": true
+  },
+  "confidence": 0.4
+}

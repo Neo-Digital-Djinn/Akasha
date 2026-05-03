@@ -1,0 +1,1 @@
+See schemas/event.schema.json for canonical event shape.

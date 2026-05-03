@@ -1,0 +1,48 @@
+repo:
+  name: akasha-forge
+  ecosystem: akasha
+  version: 0.1.0
+  status: active
+engine:
+  family: discovery
+  class: discovery_engine
+  role: artifact_and_structure_forging
+identity:
+  role: engine
+  layer: construction
+  description: 'Forge engine for the Akasha constellation. Responsible for shaping
+    candidate structures, bundles, and constructed outputs from upstream discovery
+    and relation layers into usable artifacts.
+
+    '
+ownership:
+  steward: human
+  approval_required: true
+interfaces:
+  consumes:
+  - discovery_candidates
+  - structure_proposals
+  - graph_models
+  - construction_inputs
+  produces:
+  - forged_artifacts
+  - constructed_bundles
+  - shaped_outputs
+capabilities:
+- artifact_forging
+- bundle_construction
+- candidate_shaping
+- discovery_output_materialization
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+depends_on:
+- akasha-discovery
+- akasha-graph-phases
+type: organ
+family: discovery
+role: forge
+name: akasha-forge
+version: 1.0.0
+generated_by: akasha-canon

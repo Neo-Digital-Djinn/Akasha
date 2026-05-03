@@ -1,0 +1,11 @@
+{
+  "event_id": "example-solarflare-001",
+  "timestamp": "2026-03-30T20:00:00Z",
+  "category": "astronomical",
+  "source": "nasa_api",
+  "payload": {
+    "flare_class": "M2",
+    "observatory": "SDO"
+  },
+  "confidence": 0.95
+}

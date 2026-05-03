@@ -1,0 +1,80 @@
+repo_name: akasha-gatekeeper
+role: engine
+layer: security-intelligence
+canonical_status: canonical
+maturity: stable
+source_lineage: Gatekeeper-v2.0 (Termux/Android) + Bridge-observer
+
+description: >
+  Security intelligence organ for the Akasha Constellation.
+  Gatekeeper observes system activity (via osquery, Falco, Suricata,
+  or basic procfs) and analyzes threats — but does NOT enforce.
+  All ActionIR is emitted to akasha-bridge/executor for hardened,
+  capability-scoped execution. Gatekeeper is the intelligence layer;
+  Bridge is the execution surface.
+
+  Architecture:
+    Sentinel (observe) → observations.log
+    Arbiter  (analyze) → action_ir.log → akasha-bridge Executor
+
+inputs:
+  - procfs snapshots
+  - osquery process/file/network queries
+  - Falco runtime alerts (JSONL)
+  - Suricata EVE.json alerts
+
+outputs:
+  - observations.log   (BehaviorIR JSONL, append-only)
+  - action_ir.log      (ActionIR JSONL — consumed by akasha-bridge executor)
+
+dependencies:
+  - akasha-axioms
+  - akasha-bridge      # executor consumes action_ir.log
+  - akasha-observer    # shares BehaviorIR schema
+  - akasha-events      # future: emit observations as Akasha events
+
+axiom_alignment:
+  axiom_1_coherence: >
+    Every threat is a named, scoped, expiring ActionIR. No silent actions.
+    Detection contradictions (false positives) surface as confidence < 0.7
+    and are visible in the action log.
+  axiom_2_discoverability: >
+    Missing tools (osquery, Falco, Suricata) produce named warnings,
+    not silent degradation. Gaps are structurally visible.
+  axiom_3_alignment: >
+    Declared role (security-intelligence), layer, I/O, constellation position.
+  axiom_4_augmentation: >
+    Adds multi-source security sensing to Akasha without changing any
+    existing organ. Gatekeeper is additive, not invasive.
+  axiom_5_traceability: >
+    Every ActionIR carries: evidence[], reasoning, source attribution,
+    CapabilityToken with HMAC signature, expiry, and reversal plan.
+  axiom_6_modularity: >
+    Sentinel and Arbiter are independent. Detection patterns are
+    registered functions — add or remove without touching the pipeline.
+  axiom_7_transparency: >
+    Sentinel emits only read-only observations. Arbiter emits only IR.
+    No enforcement code exists in this repo.
+  axiom_8_iteration: >
+    Gatekeeper-v2.0 (Termux) → v2.1.0: Enforcer removed, ActionIR
+    now feeds akasha-bridge executor. Tracked in CHANGELOG.md.
+  axiom_9_stewardship: >
+    Arbiter CANNOT enforce. Enforcement requires akasha-bridge executor,
+    which validates CapabilityTokens. Power is constrained by math.
+    Human steward controls signing key and executor deployment.
+  axiom_10_continuity: >
+    Source lineage from Gatekeeper v2.0 (Termux/Android) and Bridge
+    executor preserved. All architectural decisions documented.
+
+constellation_position:
+  layer: security-intelligence
+  feeds_into:
+    - akasha-bridge      # primary: ActionIR → executor
+    - akasha-events      # future: observation stream
+    - akasha-anomaly     # future: threat signals as anomaly inputs
+    - akasha-attractor   # future: burst detection from threat density
+  receives_from:
+    - akasha-axioms
+  peers:
+    - akasha-observer    # shares observation schema
+    - akasha-esce        # sibling security/transformation organ
