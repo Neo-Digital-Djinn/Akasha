@@ -1,0 +1,65 @@
+repo:
+  name: akasha-rcf
+  ecosystem: akasha
+  version: 0.1.0
+  status: candidate
+
+engine:
+  family: ontology
+  class: formal_substrate
+  role: constraint_calculus
+
+identity:
+  role: engine
+  layer: theory
+  description: >
+    Formal constraint calculus for the Akasha ecosystem.
+    Defines the mathematical substrate beneath the axioms —
+    how constraints behave under pressure, how states accumulate
+    entropy, how failures are classified and preserved.
+
+    The RCF (Reality Constraint Fuzzer) calculus was the pre-canonical
+    predecessor to the Akasha axiom set. This repo canonizes that work
+    and makes it computationally available to discovery engines and lenses.
+
+ownership:
+  steward: human
+  approval_required: true
+
+interfaces:
+  consumes:
+    - state_definitions
+    - constraint_declarations
+    - event_sequences
+  produces:
+    - admissibility_verdicts
+    - entropy_measurements
+    - scar_records
+    - constraint_stress_reports
+
+capabilities:
+  - state_admissibility_evaluation
+  - entropy_accumulation_tracking
+  - scar_recording
+  - constraint_backreaction_detection
+  - failure_mode_classification
+
+alignment:
+  axioms_required: true
+  canonical_structure: true
+  interpretation_free_core: true
+  alignment_statement: >
+    This system is part of the Akasha ecosystem and aligns with
+    akasha-axioms, akasha-world, and akasha-constellation.
+    It provides the formal substrate for Axiom 1 (Coherence),
+    Axiom 5 (Traceability), and Axiom 8 (Iteration).
+
+depends_on:
+  - akasha-axioms
+
+origin: stone
+stone_predecessor: Sages_Stone_Runtime (law.py, gate.py, RCF_Minimal_Law_Calculus.md)
+
+type: organ
+family: discovery
+role: formal_substrate
