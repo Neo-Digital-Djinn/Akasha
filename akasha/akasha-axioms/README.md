@@ -100,3 +100,17 @@ TODO: fill this section.
 ## Next Steps
 
 TODO: fill this section.
+
+---
+
+## Invariant System
+
+The axioms are enforced by a three-document invariant system:
+
+- `INVARIANTS.md` — the ten enforceable constraints
+- `INVARIANT_ENGINE.md` — the validation pipeline pseudocode
+- `INTEGRATION_CONTRACT.md` — the five-gate admission contract
+- `INVARIANT_INDEX.md` — index and implementation map
+
+Implementation lives in `akasha-alexandria/alexandria/invariants.py`.
+The `akasha-requests` pipeline wires enforcement at the `promote → approved` and `forge` gates.

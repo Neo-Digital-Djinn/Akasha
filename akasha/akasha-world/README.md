@@ -15,7 +15,7 @@ Akasha World provides:
 • a registry of domains and entities  
 • naming conventions for knowledge structures  
 • schemas describing Akasha repositories  
-• the canonical map of the system’s knowledge landscape  
+• the canonical map of the system's knowledge landscape  
 
 ---
 
@@ -60,45 +60,73 @@ archived — historical or rejected knowledge
 
 Human review remains the final authority for promoting candidate knowledge to canonical status.
 
-
-This repository participates in the Akasha ecosystem and is described by repo-manifest.yaml.
-
 ---
-
-This repository participates in the Akasha ecosystem and is described by repo-manifest.yaml.
 
 ## Engine Role
 
-TODO: fill this section.
+akasha-world is the **ontology and schema layer** — it is not a running engine.  
+It provides the structural definitions that all other engines reference.
 
 ## Why it exists
 
-TODO: fill this section.
+Without a shared definition of what knowledge looks like, each engine would invent  
+its own vocabulary. akasha-world provides a single source of truth for:
+
+- domain taxonomy (what subjects Akasha reasons about)  
+- lattice grammar (the structural roles entities can occupy)  
+- repository manifest schema (what a declared Akasha repo must contain)  
+- naming conventions (so repos stay recognisable and composable)
 
 ## Inputs
 
-TODO: fill this section.
+- Amendment proposals from akasha-axioms  
+- Discovery candidates promoted from akasha-discovery  
+- New domain pack requests from domain-* repos  
 
 ## Memory / Registry
 
-TODO: fill this section.
+- `schema/akasha_lattice.yaml` — structural grammar (phases, stability axes, constraints)  
+- `schema/akasha_table.yaml` — node and relation types  
+- `domains/` — declared domain lattices (e.g. STONE_DOMAIN_LATTICE.yaml)  
+- `candidates/` — promoted candidates awaiting full canonical admission  
+- `schemas/repo-manifest.schema.json` — machine-readable manifest schema  
 
 ## Relation Model
 
-TODO: fill this section.
+akasha-world sits at the base of the knowledge stack:
+
+```
+akasha-axioms (law)
+      │
+akasha-world (structure)
+      │
+akasha-discovery (exploration) ←→ akasha-constellation (map)
+      │
+all domain engines
+```
 
 ## Evaluator
 
-TODO: fill this section.
+There is no runtime evaluator in this repo.  
+Structural correctness is enforced by akasha-alexandria's invariant engine,  
+which reads the schemas declared here to validate candidates.
 
 ## Outputs
 
-TODO: fill this section.
+- Schema files consumed by all engines  
+- Domain lattices consumed by akasha-phase-engine, akasha-analogy-engine, etc.  
+- Naming conventions referenced by akasha-forge when generating new repos  
 
 ## Position in Constellation
 
-TODO: fill this section.
+Role: `registry`  
+Layer: `knowledge`  
+Canonical status: `canonical`  
 
 ## Next Steps
 
-TODO: fill this section.
+- Add `domains/` entries for physics, neuroscience, economics, music (specs exist in domain-* repos)  
+- Expand `NAMING.md` to cover the `akasha-*` prefix convention used by all current repos  
+- Wire `schemas/repo-manifest.schema.json` into the akasha-gatekeeper validation path  
+
+This repository participates in the Akasha ecosystem and is described by repo-manifest.yaml.

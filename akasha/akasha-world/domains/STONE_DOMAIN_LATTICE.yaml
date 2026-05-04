@@ -1,0 +1,300 @@
+# Stone Domain Lattice — Seed Registry
+#
+# This file seeds akasha-world with the domain stubs inherited
+# from Sages_Stone_Systems — the pre-canonical predecessor to Akasha.
+#
+# Each domain here was claimed as territory in the Stone architecture.
+# They are not canonical Akasha world entries yet.
+# They are candidates for world-layer admission.
+#
+# Status key:
+#   seed     — inherited from Stone, not yet structured for Akasha
+#   lattice  — has a structural position in akasha-world schema
+#   canonical — admitted as a full world-layer domain
+#
+# The structural grammar (phase/stability/constraint/process axes)
+# refers to the akasha-world schema/akasha_lattice.yaml coordinate system.
+
+domains:
+
+  physics:
+    status: lattice
+    origin: stone
+    stone_system: physics_system
+    structural_grammar:
+      phase: system
+      stability: dynamic
+      constraint: strong
+      process: transform
+    notes: >
+      Broadest physical domain. Phase transitions, conservation laws,
+      field interactions. The phase-engine repo already operates here.
+      Primary source of structural analogy for cross-domain discovery.
+    known_gaps:
+      - transitional microphase states between formally classified phases
+      - time-crystal boundary conditions in driven-Floquet systems
+      - topological phases requiring non-Abelian anyons
+
+  biology:
+    status: lattice
+    origin: stone
+    stone_system: biology_system
+    structural_grammar:
+      phase: system
+      stability: dynamic
+      constraint: strong
+      process: transform
+    notes: >
+      Evolutionary pressure, adaptive systems, lifecycle and death.
+      The Stone biology_system and death_system together define
+      the full lifecycle arc. Ecology and epidemiology are sub-domains.
+    known_gaps:
+      - formal model of evolutionary attractor (vs. local fitness optima)
+      - structural account of death as phase transition vs. attractor
+
+  ecology:
+    status: seed
+    origin: stone
+    stone_system: ecology_system
+    structural_grammar:
+      phase: system
+      stability: dynamic
+      constraint: weak
+      process: converge
+    notes: >
+      Ecosystem collapse, tipping points, resource flows, population dynamics.
+      Structurally analogous to financial market crashes and climate systems.
+      One of the primary cross-domain transfer targets in the suite README.
+
+  cosmology:
+    status: lattice
+    origin: stone
+    stone_system: cosmology_system
+    structural_grammar:
+      phase: system
+      stability: dynamic
+      constraint: strong
+      process: transform
+    notes: >
+      Large-scale structure, inflation, vacuum states, symmetry breaking
+      at universe scale. The Stone CosmologySystem uses allowed_axioms —
+      a direct structural parallel to Akasha's axiom alignment requirement.
+    known_gaps:
+      - vacuum manifold topology as structural primitive
+      - pre-inflationary phase as 'structured absence' (see Stone System_specs.md)
+
+  mathematics:
+    status: seed
+    origin: stone
+    stone_system: null
+    structural_grammar:
+      phase: system
+      stability: stable
+      constraint: maximal
+      process: none
+    notes: >
+      Pure structural domain. Category theory, topology, group theory.
+      Mathematics is the only domain where constraint is maximal and
+      process is none — structure that does not evolve, only unfolds.
+      Primary target for akasha-lens mathematical perspective.
+
+  ethics:
+    status: lattice
+    origin: stone
+    stone_system: ethical_system
+    structural_grammar:
+      phase: system
+      stability: dynamic
+      constraint: weak
+      process: converge
+    notes: >
+      Value systems, moral constraints, stakeholder trade-offs.
+      The Stone ethical_system is advisory, not prescriptive — this
+      is a model property that should carry into the Akasha world entry.
+      Ethics is an attractor domain: systems tend toward it but never
+      fully arrive. See akasha-axioms Axiom 9 (Stewardship).
+
+  cognition:
+    status: seed
+    origin: stone
+    stone_system: cognition_system
+    structural_grammar:
+      phase: system
+      stability: dynamic
+      constraint: weak
+      process: transform
+    notes: >
+      Reasoning, belief formation, memory, knowledge representation.
+      Overlaps with epistemology_system from Stone.
+      Structurally adjacent to akasha-discovery itself —
+      the discovery engine is a cognition system.
+
+  epistemology:
+    status: lattice
+    origin: stone
+    stone_system: epidemiology_system  # NOTE: mislabeled in Stone as epidemiology
+    structural_grammar:
+      phase: system
+      stability: dynamic
+      constraint: weak
+      process: converge
+    notes: >
+      Knowledge claims, evidence evaluation, confidence, uncertainty.
+      The Stone epidemiology_system.py is actually an EpistemologySystem —
+      a naming artifact from the pre-canonical period.
+      This is the formal substrate for akasha-discovery's candidate
+      confidence model and the traceability axiom.
+
+  energy:
+    status: seed
+    origin: stone
+    stone_system: energy_system
+    structural_grammar:
+      phase: system
+      stability: dynamic
+      constraint: strong
+      process: transform
+    notes: >
+      Energy flow, transformation, conservation, power systems.
+      The Stone energy_system includes invariants (conservation laws).
+      Structurally: energy is a gradient domain — flows from source to sink,
+      constrained by conservation, terminated at attractors.
+
+  information:
+    status: seed
+    origin: stone
+    stone_system: information_system
+    structural_grammar:
+      phase: system
+      stability: dynamic
+      constraint: weak
+      process: transform
+    notes: >
+      Entropy, signal, compression, communication.
+      Directly relevant to akasha-discovery's compression ratio model.
+      Shannon entropy is a world primitive here.
+
+  economics:
+    status: seed
+    origin: stone
+    stone_system: economic_system
+    structural_grammar:
+      phase: system
+      stability: unstable
+      constraint: weak
+      process: transform
+    notes: >
+      Markets, flows, crashes, allocation.
+      The Stone economic_system has lifecycle and invariants.
+      Structurally analogous to ecology (both are resource-flow systems
+      with tipping points). Primary cross-domain transfer target.
+
+  climate:
+    status: seed
+    origin: stone
+    stone_system: climate_system
+    structural_grammar:
+      phase: system
+      stability: unstable
+      constraint: weak
+      process: converge
+    notes: >
+      Tipping points, feedback loops, attractor states.
+      One of the three primary cross-domain analogies in the suite README
+      (climate tipping point / market crash / neural regime shift).
+
+  agent:
+    status: seed
+    origin: stone
+    stone_system: agent_system
+    structural_grammar:
+      phase: system
+      stability: dynamic
+      constraint: weak
+      process: transform
+    notes: >
+      Autonomous agents, intent, action, boundary.
+      The Stone agent_system is minimal — a stub.
+      The Labyrinth (Stone's AI safety stack) extends this domain
+      with intent courts and chain depth limits.
+
+  identity:
+    status: seed
+    origin: stone
+    stone_system: identity_system
+    structural_grammar:
+      phase: system
+      stability: stable
+      constraint: strong
+      process: none
+    notes: >
+      Persistent identity under transformation.
+      The Stone identity_system has tests for valid and invalid identity.
+      Structurally: identity is what persists through state change —
+      the invariant that survives transitions.
+
+  narrative:
+    status: seed
+    origin: stone
+    stone_system: narrative_system
+    structural_grammar:
+      phase: system
+      stability: dynamic
+      constraint: weak
+      process: converge
+    notes: >
+      Story structure, arc, meaning-making.
+      Narratives are attractor systems: they tend toward resolution.
+      Adjacent to akasha-lens Interpretation category.
+
+  mythology:
+    status: seed
+    origin: stone
+    stone_system: mythology_system
+    structural_grammar:
+      phase: system
+      stability: stable
+      constraint: strong
+      process: none
+    notes: >
+      Archetypal structures, cosmogonic patterns, symbolic systems.
+      Mythology is a high-constraint, stable domain — myths do not
+      evolve quickly; they encode compressed cultural structure.
+      Named for The Great Discovery's naming source (Alan Watts).
+      Mythology is where Akasha's name lives — the Akashic record.
+
+  death:
+    status: lattice
+    origin: stone
+    stone_system: death_system
+    structural_grammar:
+      phase: attractor
+      stability: terminal
+      constraint: maximal
+      process: converge
+    notes: >
+      Termination, finality, irreversibility.
+      Death is the only domain that maps cleanly to the attractor
+      primitive with terminal stability and maximal constraint.
+      In RCF terms: death is collapse. It is not failure.
+      It is resolution. The system settles into the only configuration
+      that no further transitions can disturb.
+      See: Stone RUNTIME_INVARIANTS.md — "Collapse is not failure.
+      Collapse is resolution."
+
+  alignment:
+    status: lattice
+    origin: stone
+    stone_system: alignment_system
+    structural_grammar:
+      phase: system
+      stability: dynamic
+      constraint: strong
+      process: converge
+    notes: >
+      Value alignment, intent-behavior coherence, authority boundaries.
+      The Stone alignment_system, authority_boundary_system, labyrinth,
+      and intent_clarity_system all operate in this domain.
+      Maps directly to Akasha Axiom 3 (Alignment) and Axiom 9 (Stewardship).
+      This is the domain that asks whether a system is doing what it
+      claims to be doing, for the reasons it claims to be doing it.
