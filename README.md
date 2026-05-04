@@ -1,208 +1,188 @@
-Akasha — Structural Discovery Framework
+# Akasha Root
 
-Akasha is an experimental research framework designed to explore the structure of systems and identify missing roles, transitions, and patterns across domains of knowledge.
-
-Rather than attempting to discover facts directly, Akasha analyzes the structural grammar of systems and searches for configurations that may correspond to unexplored or under-recognized phenomena.
-
-The framework is intended to support discovery by revealing structural gaps and transferable patterns between different scientific or conceptual domains.
+The monorepo root for the Akasha constellation — a unified launch point, runtime orchestrator, and working environment for all Akasha engines and tools.
 
 ---
 
-Core Idea
+## What this is
 
-Many complex systems share similar structural behavior.
+`akasha_root` is not itself an engine. It is the **ground** everything else stands on.
 
-Examples include:
+It wires together the constellation's individual repositories into a single coherent runtime, provides the `./akasha-run` entry point, and owns the live data directories (`events/`, `logs/`, `memory`) that accumulate across every run.
 
-• phase transitions in physics
-• ecosystem collapses in ecology
-• market crashes in economics
-• neural regime shifts in neuroscience
-• tipping points in climate systems
-
-Although these systems exist in different domains, they often follow similar structural patterns.
-
-Akasha attempts to represent these patterns using a shared system grammar so that insights discovered in one domain may help illuminate another.
+The suite tooling (`akasha-suite/bin/`) lives here as a submodule and is what gives you commands like `akasha-birth`, `akasha-doctor`, `akasha-sync`, and `akasha-coverage-map` on your `$PATH`.
 
 ---
 
-Cross-Domain Structural Transfer
+## Architecture overview
 
-A central hypothesis behind Akasha is:
+The diagram below shows how the three structural layers of Akasha — axioms, world, and discovery — relate to each other and to the pipeline stages that `akasha-run` orchestrates.
 
-«When two domains share the same structural configuration, knowledge from one domain may suggest the next step in the other.»
+<!-- akasha_overview.svg — rendered from akasha/akasha-suite/docs/ -->
 
-In practice this means:
+![Akasha overview](akasha/akasha-suite/docs/akasha_overview.svg)
 
-1. Encode systems using a shared structural vocabulary
-2. Detect configurations that appear across domains
-3. Compare how those configurations evolve
-4. Transfer insights from solved domains to unsolved ones
+**Layer 1 — Axioms (`akasha-axioms/`).**
+Ten enforceable invariants govern every part of the system: Coherence, Discoverability, Alignment, Modularity, Traceability, Augmentation, Iteration, Stewardship, Continuity, and a Discovery Doctrine. These are not guidelines — violations cause automatic rejection or rollback.
 
-Example:
+**Layer 2 — World (`akasha-alexandria/`).**
+The canonical knowledge registry. Defines the graph schema (nodes: phase, transition, equilibrium, instability, constraint, attractor; edges: transitions_to, stabilizes, destabilizes, tends_toward, emerges_from, triggers, constrained_by, settles_into) and a 4-axis lattice space used to locate structural positions that may correspond to unexplored phenomena.
 
-Domain A: climate system tipping point
-Domain B: financial market crash
-
-If both systems occupy a similar structural coordinate in the system lattice, mechanisms known in one domain may inform hypotheses in the other.
-
-Akasha therefore functions as a cross-domain structural reasoning engine.
+**Layer 3 — Discovery (pipeline stages 1–7).**
+The runtime pipeline. `./akasha-run` feeds your input through seven stages in sequence: ANOMALY → ANALOGY → EDGE → COMBINATOR → ATTRACTOR → PHASE → ATLAS → SUGGESTION. Each stage is a separate engine; the pipeline runs in degraded mode on failure so it never hard-stops mid-run.
 
 ---
 
-System Grammar
+## Quick start
 
-Akasha currently models systems using a minimal set of structural roles:
+```bash
+# Install Python dependencies (once)
+./akasha-core/requirements.sh
 
-Role| Meaning
-phase| stable configuration of a system
-transition| change between system states
-constraint| limiting influence on system behavior
-instability| condition where small changes produce large effects
-equilibrium| balanced or stabilized system state
-attractor| state toward which a system naturally evolves
+# Run the full pipeline
+./akasha-run "your input here"
+```
 
-These roles form a generalized grammar describing system dynamics.
+Set your location for accurate geo- and time-stamping (ANOMALY stage):
 
----
-
-How Discovery Works
-
-Akasha operates through several stages.
-
-1. Structural Ontology
-
-Define the roles and relations that systems can contain.
-
-2. Graph Validation
-
-Ensure models follow coherent causal structure.
-
-3. Lattice Exploration
-
-Enumerate possible combinations of system roles.
-
-4. Gap Detection
-
-Identify structural configurations not currently represented.
-
-5. Candidate Concept Generation
-
-Propose new roles such as:
-
-critical_transition
-recovery_boundary
-constraint_barrier
-volatile_transition
-
-These represent structural positions in system space that may correspond to real phenomena.
+```bash
+export AKASHA_LAT=38.5368
+export AKASHA_LON=-82.6824
+export AKASHA_TZ=America/New_York
+```
 
 ---
 
-Architecture
+## Pipeline stages
 
-Akasha is organized as a multi-repository ecosystem.
-
-akasha-axioms
-    philosophical and discovery doctrine
-
-akasha-world
-    shared ontology and schemas
-
-akasha-graph-phases
-    structural grammar of systems
-
-akasha-discovery
-    discovery engine and validators
-
-akasha-constellation
-    registry of candidate concepts
-
-akasha-suite
-    operational tools and interfaces
-
-Together these components form a framework for exploring the space of possible system behaviors.
+| # | Stage | Engine | Role |
+|---|-------|--------|------|
+| 1 | ANOMALY | `akasha-anomaly` `cli/pipeline.py` | Stamps input as a time-enriched observation |
+| 2 | ANALOGY | `akasha-analogy-engine` `src/main.py` | Structural analogy seeded by input concept |
+| 3 | EDGE | `akasha-edge-generator` `src/main.py` | Cross-domain candidate edges (discovery) |
+| 3b | COMBINATOR | `akasha-domain-combinator` `src/main.py` | Cross-domain overlap map, tensions, research questions |
+| 4 | ATTRACTOR | `akasha-attractor` `cli/pipeline.py` | Event ledger summary (reads `ledger.db`) |
+| 5 | PHASE | `akasha-phase-engine` `src/main.py` | Phase state estimation from physics domain |
+| 6 | ATLAS | `akasha-atlas-engine` `src/main.py` | Knowledge space map and growth frontiers |
+| 7 | SUGGESTION | `akasha-suggestion-engine` `src/main.py` | Ranked next-step suggestions (open items only) |
 
 ---
 
-Current Status
+## Runtime data
 
-Akasha currently provides:
+All persistent state lives under `akasha-core/`:
 
-• structural ontology
-• graph validation
-• lattice exploration
-• structural gap detection
-• candidate concept registry
+```
+akasha-core/
+  events/
+    ledger.db              # SQLite ledger — ATTRACTOR reads this
+    <uuid>.json            # JSON sidecar written per event by ANOMALY
+  logs/
+    run_<YYYYMMDD_HHMMSS>.log   # Full output of every run
+  memory.ndjson            # One record per run: ts + input
+```
 
-The framework is still experimental and requires real domain data to fully ground its models.
-
----
-
-Long-Term Vision
-
-Akasha aims to become a tool that helps researchers explore the space of possible system behaviors and identify structural gaps in existing theories.
-
-Rather than replacing domain expertise, the system is intended to assist humans in recognizing patterns that might otherwise remain hidden across disciplinary boundaries.
+The pipeline never modifies `akasha/` source directories at runtime. All output flows into `akasha-core/`.
 
 ---
 
-Support the Project
+## Environment variables
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `AKASHA_LAT` | `0.0` | Latitude for ANOMALY geo-stamping |
+| `AKASHA_LON` | `0.0` | Longitude for ANOMALY geo-stamping |
+| `AKASHA_TZ` | `UTC` | Timezone for ANOMALY clock context |
+
+---
+
+## Suite tools
+
+After installing via `akasha-suite/install.sh`, the following commands are available:
+
+| Command | Purpose |
+|---------|---------|
+| `akasha-run` | Run the full discovery pipeline |
+| `akasha-birth <name>` | Scaffold a new constellation repo with manifest, gitignore guard, and git init |
+| `akasha-doctor [--sync]` | Health-check all repos: branch, remote, manifest, archetypes, working tree state |
+| `akasha-sync` | Pull all repos and trigger mythology engine if supported |
+| `akasha-canon` | Enforce canonical structure across repos |
+| `akasha-coverage-map` | Generate `ARCHETYPE_COVERAGE_MAP.md` — which structural archetypes each repo covers |
+| `akasha-seed-archetypes` | Seed archetype request files from downloaded zip bundles |
+| `akasha-log` | Display run logs |
+| `akasha-status` | Print constellation status summary |
+| `akasha-map` | Print repo map |
+| `akasha-phase` | Query phase state |
+| `akasha-brainstorm` | Brainstorm mode |
+| `akasha-capture` | Capture an observation |
+| `akasha-clean` | Clean generated artifacts |
+| `akasha-remotes` | List and check git remotes |
+| `akasha-console` | Interactive console |
+| `akasha-populate` | Populate a repo from a template |
+| `akasha-menu` | Interactive menu |
+
+---
+
+## Repo layout
+
+```
+akasha_root/
+  akasha-run                    # Entry point → delegates to akasha-core/orchestrator.sh
+  akasha-core/                  # Live runtime data (events, logs, memory)
+  akasha/
+    akasha-suite/               # Coordination tooling and bin/ scripts
+    akasha-axioms/              # Ten enforceable invariants + discovery doctrine
+    akasha-alexandria/          # Canonical knowledge schema and registry
+    akasha-time-nexus/          # Time enrichment (solar, lunar, weather, clock)
+    akasha-rcf/                 # Request/candidate format definitions
+    build_outputs/              # Build artifacts and plans
+  .githooks/
+    pre-commit                  # Constellation gitignore guard
+```
+
+---
+
+## Invariants
+
+The ten invariants defined in `akasha-axioms/INVARIANTS.md` apply to everything in this repo:
+
+1. **Structural Integrity** — all entities conform to schema; all references resolve; all IDs are unique and stable.
+2. **Consistency** — no mutually exclusive properties; no contradicting relations; canon remains logically satisfiable.
+3. **Completeness Signals** — symmetry groups should be closed; orphan nodes tracked.
+4. **Provenance** — every entity must carry source, timestamp, and lineage.
+5. **Immutability of Canon History** — append-only; edits create new versions; deletion forbidden, only deprecation.
+6. **Determinism** — same input + same world state → identical output.
+7. **Auditability** — every change produces a human- and machine-readable diff.
+8. **Safety Boundary** — experimental artifacts never enter canon; `/world` vs `/candidates` separation is enforced.
+9. **Regression Protection** — no accepted change may break existing invariants.
+10. **Minimality** — new additions must solve a specific gap; redundant entities are rejected.
+
+---
+
+## Python dependencies
+
+```bash
+pip install -e akasha/akasha-time-nexus
+pip install -e akasha/akasha-anomaly
+pip install -e akasha/akasha-attractor
+pip install -e akasha/akasha-apis
+pip install PyYAML
+```
+
+Or run `./akasha-core/requirements.sh` which does all of the above.
+
+---
+
+## Support the project
 
 Akasha is an independent open research effort.
 
-If you would like to support development, you can do so here:
+☕ [Buy Me a Coffee](https://buymeacoffee.com/Thegreatoleander)
 
-☕ Buy Me a Coffee
-https://buymeacoffee.com/Thegreatoleander
-
-or via crypto:
-
-ETH / EVM Address
-0x185325DB018e6ECBb92Bf0443ABFBbB3a07cE713
-
-Support helps sustain development, infrastructure, and research time.
+ETH / EVM: `0x185325DB018e6ECBb92Bf0443ABFBbB3a07cE713`
 
 ---
 
-License
+## License
 
-This project is currently released under an open research license while the framework is under active development.
-
-Commercial licensing may be introduced in future versions.
-
-## Engine Role
-
-TODO: fill this section.
-
-## Why it exists
-
-TODO: fill this section.
-
-## Inputs
-
-TODO: fill this section.
-
-## Memory / Registry
-
-TODO: fill this section.
-
-## Relation Model
-
-TODO: fill this section.
-
-## Evaluator
-
-TODO: fill this section.
-
-## Outputs
-
-TODO: fill this section.
-
-## Position in Constellation
-
-TODO: fill this section.
-
-## Next Steps
-
-TODO: fill this section.
+Open research license while the framework is under active development. Commercial licensing may be introduced in future versions. See `LICENSE` for full terms.
