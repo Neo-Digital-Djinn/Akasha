@@ -1,4 +1,4 @@
-# Akasha Root
+# Akasha
 
 The monorepo root for the Akasha constellation — a unified launch point, runtime orchestrator, and working environment for all Akasha engines and tools.
 
@@ -6,7 +6,7 @@ The monorepo root for the Akasha constellation — a unified launch point, runti
 
 ## What this is
 
-`akasha_root` is not itself an engine. It is the **ground** everything else stands on.
+`akasha` is not itself an engine. It is the **ground** everything else stands on.
 
 It wires together the constellation's individual repositories into a single coherent runtime, provides the `./akasha-run` entry point, and owns the live data directories (`events/`, `logs/`, `memory`) that accumulate across every run.
 
@@ -126,7 +126,7 @@ After installing via `akasha-suite/install.sh`, the following commands are avail
 ## Repo layout
 
 ```
-akasha_root/
+akasha/                               # ~/akasha-root → /opt/akasha/
   akasha-run                    # Entry point → delegates to akasha-core/orchestrator.sh
   akasha-core/                  # Live runtime data (events, logs, memory)
   akasha/
